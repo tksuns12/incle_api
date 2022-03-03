@@ -4,16 +4,52 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-class IncleAPI {
-  static String _userToken = '';
+class InclePartnersAPI {
   static late Dio _dio;
+  static late FlutterSecureStorage _storage;
 
-  static initialize(String? userToken) {
-    if (userToken != null) {
-      _userToken = userToken;
-    }
+  static initialize() {
+    _storage = const FlutterSecureStorage(
+        aOptions: AndroidOptions(
+          encryptedSharedPreferences: true,
+        ),
+        iOptions: IOSOptions(
+          accessibility: IOSAccessibility.first_unlock,
+          accountName: 'incle_api',
+        ));
     _dio = Dio(BaseOptions(baseUrl: 'https://incle.api.wim.kro.kr/api/v1'));
+    _dio.interceptors
+        .add(InterceptorsWrapper(onRequest: (options, handler) async {
+      final _userToken = await _storage.read(key: 'token');
+      options.headers['Authorization'] = 'Bearer $_userToken';
+      return handler.next(options);
+    }, onError: (error, handler) async {
+      if (error.response?.statusCode == 401) {
+        final id = await _storage.read(key: 'id');
+        final password = await _storage.read(key: 'password');
+        try {
+          final response = await _dio.post(
+            '/partners/login',
+            data: {
+              'id': id,
+              'password': password,
+            },
+          );
+          if (response.statusCode == 200) {
+            _storage.write(key: 'id', value: id);
+            _storage.write(key: 'password', value: password);
+            _storage.write(key: 'token', value: response.data);
+            return response.data;
+          } else {
+            throw Exception(response.statusMessage);
+          }
+        } catch (e) {
+          rethrow;
+        }
+      }
+    }));
   }
 
   static Future<Map> signup({
@@ -165,9 +201,6 @@ class IncleAPI {
               filename: registration2.path.split('/').last)));
       final response = await _dio.put(
         '/partners',
-        options: Options(headers: {
-          'Token': 'Bearer $_userToken',
-        }),
         data: formData,
       );
       if (response.statusCode == 201) {
@@ -190,6 +223,9 @@ class IncleAPI {
         },
       );
       if (response.statusCode == 200) {
+        _storage.write(key: 'id', value: id);
+        _storage.write(key: 'password', value: password);
+        _storage.write(key: 'token', value: response.data);
         return response.data;
       } else {
         throw Exception(response.statusMessage);
@@ -203,11 +239,6 @@ class IncleAPI {
     try {
       final response = await _dio.get(
         '/partners',
-        options: Options(
-          headers: {
-            'Token': 'Bearer $_userToken',
-          },
-        ),
       );
       if (response.statusCode == 200) {
         return response.data;
@@ -223,11 +254,6 @@ class IncleAPI {
     try {
       final response = await _dio.delete(
         '/partners',
-        options: Options(
-          headers: {
-            'Token': 'Bearer $_userToken',
-          },
-        ),
       );
       if (response.statusCode == 200) {
         return response.data;
@@ -367,11 +393,6 @@ class IncleAPI {
           'limit_date':
               '${limitDate.year.toString().substring(2, 4)}.${limitDate.month.toString().padLeft(2, '0')}.${limitDate.day.toString().padLeft(2, '0')}',
         },
-        options: Options(
-          headers: {
-            'Token': 'Bearer $_userToken',
-          },
-        ),
       );
       if (response.statusCode == 201) {
         return response.data;
@@ -387,11 +408,6 @@ class IncleAPI {
     try {
       final response = await _dio.get(
         '/partners/coupon/list',
-        options: Options(
-          headers: {
-            'Token': 'Bearer $_userToken',
-          },
-        ),
       );
       if (response.statusCode == 200) {
         return response.data;
@@ -410,11 +426,6 @@ class IncleAPI {
         queryParameters: {
           'partners_coupon_uid': couponID,
         },
-        options: Options(
-          headers: {
-            'Token': 'Bearer $_userToken',
-          },
-        ),
       );
       if (response.statusCode == 200) {
         return response.data;
@@ -430,11 +441,6 @@ class IncleAPI {
     try {
       final response = await _dio.get(
         '/partners/deliver',
-        options: Options(
-          headers: {
-            'Token': 'Bearer $_userToken',
-          },
-        ),
       );
       if (response.statusCode == 200) {
         return response.data;
@@ -449,16 +455,13 @@ class IncleAPI {
   Future<Map> updateDeliver(
       List<Map<String, int>> deliveryConditions, int freeCondition) async {
     try {
-      final response = await _dio.post('/partners/deliver',
-          data: {
-            'delivery_conditions': deliveryConditions,
-            'free_condition': freeCondition,
-          },
-          options: Options(
-            headers: {
-              'Token': 'Bearer $_userToken',
-            },
-          ));
+      final response = await _dio.post(
+        '/partners/deliver',
+        data: {
+          'delivery_conditions': deliveryConditions,
+          'free_condition': freeCondition,
+        },
+      );
       if (response.statusCode == 200) {
         return response.data;
       } else {
@@ -473,11 +476,6 @@ class IncleAPI {
     try {
       final response = await _dio.post(
         '/partners/unpause',
-        options: Options(
-          headers: {
-            'Token': 'Bearer $_userToken',
-          },
-        ),
       );
       if (response.statusCode == 200) {
         return response.data;
@@ -499,11 +497,6 @@ class IncleAPI {
           'pause_end_date':
               '${endTime.hour.toString().padLeft(2, '0')}:${endTime.minute.toString().padLeft(2, '0')}',
         },
-        options: Options(
-          headers: {
-            'Token': 'Bearer $_userToken',
-          },
-        ),
       );
       if (response.statusCode == 200) {
         return response.data;
@@ -540,6 +533,56 @@ class IncleAPI {
       );
       if (response.statusCode == 200) {
         return response.data['is_holiday'];
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Map> uploadProduct(
+      String name,
+      String price,
+      bool todayGet,
+      List<File> images,
+      String description,
+      int modelHeight,
+      int modelWeight,
+      String modelSize,
+      Map<String, List<Map<String, List<dynamic>>>> options) async {
+    try {
+      final formData = FormData.fromMap({
+        'name': name,
+        'price': price,
+        'today_get': todayGet,
+        'description': description,
+        'model_height': modelHeight,
+        'model_weight': modelWeight,
+        'model_size': modelSize,
+        'options': options,
+      });
+      formData.files.addAll(images.map((image) {
+        return MapEntry(
+          'images',
+          MultipartFile.fromFileSync(image.path, filename: image.path),
+        );
+      }));
+      final response = await _dio.post(
+        '/partners/product',
+        data: {
+          'name': name,
+          'price': price,
+          'today_get': todayGet,
+          'description': description,
+          'model_height': modelHeight,
+          'model_weight': modelWeight,
+          'model_size': modelSize,
+          'options': options,
+        },
+      );
+      if (response.statusCode == 201) {
+        return response.data;
       } else {
         throw Exception(response.statusMessage);
       }
