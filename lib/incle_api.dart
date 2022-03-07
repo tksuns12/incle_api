@@ -6,11 +6,11 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:curl_logger_dio_interceptor/curl_logger_dio_interceptor.dart';
 
 class InclePartnersAPI {
   late Dio dio;
   late FlutterSecureStorage storage;
+  bool initialized = false;
 
   static final InclePartnersAPI _instance = InclePartnersAPI._internal();
 
@@ -32,51 +32,54 @@ class InclePartnersAPI {
   }
 
   void initialize() {
-    dio.options = BaseOptions(baseUrl: 'https://incle.api.wim.kro.kr/api/v1');
+    if (!initialized) {
+      dio.options = BaseOptions(baseUrl: 'https://incle.api.wim.kro.kr/api/v1');
 
-    dio.interceptors.addAll([
-      InterceptorsWrapper(onRequest: (options, handler) async {
-        print('Intercepted, ${options.method} ${options.path}');
+      dio.interceptors.addAll([
+        InterceptorsWrapper(onRequest: (options, handler) async {
+          print('Intercepted, ${options.method} ${options.path}');
 
-        final _userToken = await storage.read(key: 'token');
-        options.headers['Authorization'] = 'Bearer $_userToken';
-        return handler.next(options);
-      }, onError: (error, handler) async {
-        print('Error occured, ${error.response}');
-        if (error.response?.statusCode == 412) {
-          final id = await storage.read(key: 'id');
-          final password = await storage.read(key: 'password');
-          try {
-            final tempDio = Dio()
-              ..options =
-                  BaseOptions(baseUrl: 'https://incle.api.wim.kro.kr/api/v1');
-            final response = await tempDio.post(
-              '/partners/login',
-              data: {
-                'id': id,
-                'password': password,
-              },
-            );
-            if (response.statusCode == 200) {
-              storage.write(key: 'token', value: response.data['data']);
-              return response.data;
-            } else {
-              throw Exception(response.statusMessage);
+          final _userToken = await storage.read(key: 'token');
+          options.headers['Authorization'] = 'Bearer $_userToken';
+          return handler.next(options);
+        }, onError: (error, handler) async {
+          print('Error occured, ${error.response}');
+          if (error.response?.statusCode == 412) {
+            final id = await storage.read(key: 'id');
+            final password = await storage.read(key: 'password');
+            try {
+              final tempDio = Dio()
+                ..options =
+                    BaseOptions(baseUrl: 'https://incle.api.wim.kro.kr/api/v1');
+              final response = await tempDio.post(
+                '/partners/login',
+                data: {
+                  'id': id,
+                  'password': password,
+                },
+              );
+              if (response.statusCode == 200) {
+                storage.write(key: 'token', value: response.data['data']);
+                return response.data;
+              } else {
+                throw Exception(response.statusMessage);
+              }
+            } catch (e) {
+              rethrow;
             }
-          } catch (e) {
-            rethrow;
+          } else {
+            throw Exception(error.response);
           }
-        } else {
-          throw Exception(error.response);
-        }
-      }),
-      LogInterceptor(
-        request: true,
-        requestBody: true,
-        requestHeader: true,
-        error: true,
-      ),
-    ]);
+        }),
+        LogInterceptor(
+          request: true,
+          requestBody: true,
+          requestHeader: true,
+          error: true,
+        ),
+      ]);
+      initialized = true;
+    }
   }
 
   Future<bool> isSignedIn() async {
