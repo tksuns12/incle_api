@@ -19,6 +19,20 @@ void main() {
     expect(result, isA<bool>());
   });
 
+  test('test login - not approved', () async {
+    // Arrange
+    final client = InclePartnersAPI(mockStorage);
+    client.initialize();
+    when(
+          () =>
+              mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
+    // Act
+    final result = await client.login('notallow', 'notallow');
+    // Assert
+    print(result.toString());
+  });
+
   group('test isHoliday', () {
     test('test isHoliday with korean independence campaign day', () async {
       // Arrange
@@ -71,7 +85,7 @@ void main() {
         accountNumber: '3333017381547',
         accountOwner: '김사장',
         bank: '신한은행',
-        businessNumber: '1234547840',
+        businessNumber: '7840734638',
         closeTime: '22:00',
         dayoffs: [
           [false, false, false, false, true, true],
@@ -381,7 +395,7 @@ void main() {
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
     // Act
     final result = await client.uploadProduct(
-      name: '테스트 블라우스',
+      name: '테스트 블라우',
       price: '30000',
       todayGet: false,
       images: [

@@ -252,6 +252,19 @@ class InclePartnersAPI {
     }
   }
 
+  Future<bool> isApproved() async {
+    final id = await storage.read(key: 'id');
+    final password = await storage.read(key: 'password');
+    final response = await dio.post(
+      '/partners/login',
+      data: {
+        'id': id,
+        'password': password,
+      },
+    );
+    return response.statusMessage != '허가되지 않은 파트너스';
+  }
+
   Future<Map> login(String id, String password) async {
     try {
       final response = await dio.post(
@@ -261,7 +274,7 @@ class InclePartnersAPI {
           'password': password,
         },
       );
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         storage.write(key: 'id', value: id);
         storage.write(key: 'password', value: password);
         storage.write(key: 'token', value: response.data);
