@@ -1,58 +1,70 @@
 library incle_api;
 
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:curl_logger_dio_interceptor/curl_logger_dio_interceptor.dart';
 
 class InclePartnersAPI {
-  static late Dio _dio;
-  static late FlutterSecureStorage _storage;
+  final Dio dio;
+  final FlutterSecureStorage storage;
 
-  static initialize() {
-    _storage = const FlutterSecureStorage(
-        aOptions: AndroidOptions(
-          encryptedSharedPreferences: true,
-        ),
-        iOptions: IOSOptions(
-          accessibility: IOSAccessibility.first_unlock,
-          accountName: 'incle_api',
-        ));
-    _dio = Dio(BaseOptions(baseUrl: 'https://incle.api.wim.kro.kr/api/v1'));
-    _dio.interceptors
-        .add(InterceptorsWrapper(onRequest: (options, handler) async {
-      final _userToken = await _storage.read(key: 'token');
-      options.headers['Authorization'] = 'Bearer $_userToken';
-      return handler.next(options);
-    }, onError: (error, handler) async {
-      if (error.response?.statusCode == 401) {
-        final id = await _storage.read(key: 'id');
-        final password = await _storage.read(key: 'password');
-        try {
-          final response = await _dio.post(
-            '/partners/login',
-            data: {
-              'id': id,
-              'password': password,
-            },
-          );
-          if (response.statusCode == 200) {
-            _storage.write(key: 'id', value: id);
-            _storage.write(key: 'password', value: password);
-            _storage.write(key: 'token', value: response.data);
-            return response.data;
-          } else {
-            throw Exception(response.statusMessage);
+  InclePartnersAPI({required this.dio, required this.storage});
+
+  void initialize() {
+    dio.options = BaseOptions(baseUrl: 'https://incle.api.wim.kro.kr/api/v1');
+
+    dio.interceptors.addAll([
+      InterceptorsWrapper(onRequest: (options, handler) async {
+        print('Intercepted, ${options.method} ${options.path}');
+
+        final _userToken = await storage.read(key: 'token');
+        options.headers['Authorization'] = 'Bearer $_userToken';
+        return handler.next(options);
+      }, onError: (error, handler) async {
+        print('Error occured, ${error.response}');
+        if (error.response?.statusCode == 412) {
+          final id = await storage.read(key: 'id');
+          final password = await storage.read(key: 'password');
+          try {
+            final tempDio = Dio()
+              ..options =
+                  BaseOptions(baseUrl: 'https://incle.api.wim.kro.kr/api/v1');
+            final response = await tempDio.post(
+              '/partners/login',
+              data: {
+                'id': id,
+                'password': password,
+              },
+            );
+            if (response.statusCode == 200) {
+              storage.write(key: 'id', value: id);
+              storage.write(key: 'password', value: password);
+              storage.write(key: 'token', value: response.data['data']);
+              return response.data;
+            } else {
+              throw Exception(response.statusMessage);
+            }
+          } catch (e) {
+            rethrow;
           }
-        } catch (e) {
-          rethrow;
+        } else {
+          throw Exception(error.response);
         }
-      }
-    }));
+      }),
+      LogInterceptor(
+        request: true,
+        requestBody: true,
+        requestHeader: true,
+        error: true,
+      ),
+    ]);
   }
 
-  static Future<Map> signup({
+  Future<Map> signup({
     String? id,
     String? password,
     String? name,
@@ -85,10 +97,10 @@ class InclePartnersAPI {
         'isRestHoliday': isRestHolidy,
         'id': id,
         'password': password,
-        'name': name,
+        'name': storeName,
         'ownerPhone': phoneNumber,
         'email': email,
-        'ownerName': ownerName,
+        'ownerName': name,
         'businessNumber': businessNumber,
         'accountBank': bank,
         'accountNumber': accountNumber,
@@ -100,28 +112,30 @@ class InclePartnersAPI {
         'phone': storePhone,
         'startDate': openTime,
         'endDate': closeTime,
-        'closedDays': dayoffs,
-        'store_description': storeDescription,
-        'store_name': storeName,
+        'closedDays': '"closedDays":${jsonEncode(dayoffs)}',
+        'desc': storeDescription,
         'latitude': latitude,
         'longitude': longitude,
       });
-
-      formData.files.addAll(storePictures!.map((e) => MapEntry(
-          'storeImages',
-          MultipartFile.fromFileSync(e.path,
-              filename: e.path.split('/').last))));
+      for (var picture in storePictures!) {
+        formData.files.add(MapEntry(
+            'storeImages',
+            await MultipartFile.fromFile(picture.path,
+                filename: picture.path.split('/').last)));
+      }
       formData.files.add(MapEntry(
           'businessReport',
-          MultipartFile.fromFileSync(registration!.path,
+          await MultipartFile.fromFile(registration!.path,
               filename: registration.path.split('/').last)));
       formData.files.add(MapEntry(
           'businessRegistration',
-          MultipartFile.fromFileSync(registration2!.path,
+          await MultipartFile.fromFile(registration2!.path,
               filename: registration2.path.split('/').last)));
-
-      final response =
-          await _dio.post('/partners', data: formData, options: Options());
+      dio.options.contentType = 'multipart/form-data';
+      final response = await dio.post(
+        '/partners',
+        data: formData,
+      );
       if (response.statusCode == 201) {
         return response.data;
       } else {
@@ -132,7 +146,7 @@ class InclePartnersAPI {
     }
   }
 
-  static updateProfile({
+  updateProfile({
     String? id,
     String? password,
     String? name,
@@ -165,7 +179,6 @@ class InclePartnersAPI {
         'isRestHoliday': isRestHolidy,
         'id': id,
         'password': password,
-        'name': name,
         'ownerPhone': phoneNumber,
         'email': email,
         'ownerName': ownerName,
@@ -180,9 +193,8 @@ class InclePartnersAPI {
         'phone': storePhone,
         'startDate': openTime,
         'endDate': closeTime,
-        'closedDays': dayoffs,
-        'store_description': storeDescription,
-        'store_name': storeName,
+        'closedDays': '"closedDays":${jsonEncode(dayoffs)}',
+        'name': storeName,
         'latitude': latitude,
         'longitude': longitude,
       });
@@ -199,7 +211,7 @@ class InclePartnersAPI {
           'businessRegistration',
           MultipartFile.fromFileSync(registration2!.path,
               filename: registration2.path.split('/').last)));
-      final response = await _dio.put(
+      final response = await dio.put(
         '/partners',
         data: formData,
       );
@@ -215,7 +227,7 @@ class InclePartnersAPI {
 
   Future<Map> login(String id, String password) async {
     try {
-      final response = await _dio.post(
+      final response = await dio.post(
         '/partners/login',
         data: {
           'id': id,
@@ -223,9 +235,9 @@ class InclePartnersAPI {
         },
       );
       if (response.statusCode == 200) {
-        _storage.write(key: 'id', value: id);
-        _storage.write(key: 'password', value: password);
-        _storage.write(key: 'token', value: response.data);
+        storage.write(key: 'id', value: id);
+        storage.write(key: 'password', value: password);
+        storage.write(key: 'token', value: response.data);
         return response.data;
       } else {
         throw Exception(response.statusMessage);
@@ -237,7 +249,7 @@ class InclePartnersAPI {
 
   Future<Map> getPartnersProfile() async {
     try {
-      final response = await _dio.get(
+      final response = await dio.get(
         '/partners',
       );
       if (response.statusCode == 200) {
@@ -252,7 +264,7 @@ class InclePartnersAPI {
 
   Future<Map> deleteAccount() async {
     try {
-      final response = await _dio.delete(
+      final response = await dio.delete(
         '/partners',
       );
       if (response.statusCode == 200) {
@@ -265,9 +277,12 @@ class InclePartnersAPI {
     }
   }
 
-  Future<Map> findPasswordAllow(String email, String phone, String name) async {
+  Future<Map> findPasswordAllow(
+      {required String email,
+      required String phone,
+      required String name}) async {
     try {
-      final response = await _dio.post(
+      final response = await dio.post(
         '/partners/find/password/allow',
         data: {
           'email': email,
@@ -275,7 +290,7 @@ class InclePartnersAPI {
           'name': name,
         },
       );
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         return response.data;
       } else {
         throw Exception(response.statusMessage);
@@ -287,7 +302,7 @@ class InclePartnersAPI {
 
   Future<Map> finidPassword(String code, String password) async {
     try {
-      final response = await _dio.post(
+      final response = await dio.post(
         '/partners/find/password',
         data: {
           'code': code,
@@ -306,7 +321,7 @@ class InclePartnersAPI {
 
   Future<Map> findId(String email, String name, String phone) async {
     try {
-      final response = await _dio.post(
+      final response = await dio.post(
         '/partners/find/id',
         data: {
           'email': email,
@@ -314,7 +329,7 @@ class InclePartnersAPI {
           'phone': phone,
         },
       );
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         return response.data;
       } else {
         throw Exception(response.statusMessage);
@@ -327,7 +342,7 @@ class InclePartnersAPI {
   /// name 패러미터에는 email, id, phone 셋 중 하나만 입력해야 합니다.
   Future<Map> duplicateCheck(String name, String property) async {
     try {
-      final response = await _dio.get(
+      final response = await dio.get(
         '/partners/duplicate',
         queryParameters: {
           'name': name,
@@ -346,13 +361,13 @@ class InclePartnersAPI {
 
   Future<Map> sendVerifyNum(String phoneNumber) async {
     try {
-      final response = await _dio.post(
+      final response = await dio.post(
         '/partners/verification',
         queryParameters: {
           'phone': phoneNumber,
         },
       );
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         return response.data;
       } else {
         throw Exception(response.statusMessage);
@@ -364,14 +379,14 @@ class InclePartnersAPI {
 
   Future<Map> checkVerifyNum(String phoneNumber, String code) async {
     try {
-      final response = await _dio.post(
+      final response = await dio.post(
         '/partners/verification',
         queryParameters: {
           'phone': phoneNumber,
           'code': code,
         },
       );
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         return response.data;
       } else {
         throw Exception(response.statusMessage);
@@ -381,17 +396,17 @@ class InclePartnersAPI {
     }
   }
 
-  Future<Map> createCoupon(
-      String name, int price, int condition, DateTime limitDate) async {
+  Future<Map> createCoupon(String name, int price, int condition,
+      [DateTime? limitDate]) async {
     try {
-      final response = await _dio.post(
+      final response = await dio.post(
         '/partners/coupon',
         data: {
           'name': name,
           'price': price,
           'condition': condition,
           'limit_date':
-              '${limitDate.year.toString().substring(2, 4)}.${limitDate.month.toString().padLeft(2, '0')}.${limitDate.day.toString().padLeft(2, '0')}',
+              '${limitDate?.year.toString().substring(2, 4)}.${limitDate?.month.toString().padLeft(2, '0')}.${limitDate?.day.toString().padLeft(2, '0')}',
         },
       );
       if (response.statusCode == 201) {
@@ -406,7 +421,7 @@ class InclePartnersAPI {
 
   Future<Map> getCouponList() async {
     try {
-      final response = await _dio.get(
+      final response = await dio.get(
         '/partners/coupon/list',
       );
       if (response.statusCode == 200) {
@@ -421,13 +436,10 @@ class InclePartnersAPI {
 
   Future<Map> deleteCoupon(String couponID) async {
     try {
-      final response = await _dio.delete(
-        '/partners/coupon',
-        queryParameters: {
-          'partners_coupon_uid': couponID,
-        },
+      final response = await dio.delete(
+        '/partners/coupon/$couponID',
       );
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         return response.data;
       } else {
         throw Exception(response.statusMessage);
@@ -439,30 +451,33 @@ class InclePartnersAPI {
 
   Future<Map> getDeliver() async {
     try {
-      final response = await _dio.get(
+      final response = await dio.get(
         '/partners/deliver',
       );
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         return response.data;
       } else {
-        throw Exception(response.statusMessage);
+        throw Exception(response);
       }
-    } catch (e) {
-      throw Exception(e.toString());
+    } on Exception catch (e) {
+      rethrow;
     }
   }
 
   Future<Map> updateDeliver(
-      List<Map<String, int>> deliveryConditions, int freeCondition) async {
+      {required Map<int, int> deliveryConditions,
+      required int freeCondition}) async {
     try {
-      final response = await _dio.post(
+      final response = await dio.post(
         '/partners/deliver',
         data: {
-          'delivery_conditions': deliveryConditions,
-          'free_condition': freeCondition,
+          'deliver': deliveryConditions.entries
+              .map((e) => {'km': e.key, 'price': e.value})
+              .toList(),
+          'free': freeCondition,
         },
       );
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         return response.data;
       } else {
         throw Exception(response.statusMessage);
@@ -474,10 +489,10 @@ class InclePartnersAPI {
 
   Future<Map> unpausePartners() async {
     try {
-      final response = await _dio.post(
+      final response = await dio.post(
         '/partners/unpause',
       );
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         return response.data;
       } else {
         throw Exception(response.statusMessage);
@@ -489,7 +504,7 @@ class InclePartnersAPI {
 
   Future<Map> pausePartners(TimeOfDay startTime, TimeOfDay endTime) async {
     try {
-      final response = await _dio.post(
+      final response = await dio.post(
         '/partners/pause',
         data: {
           'pause_start_date':
@@ -498,7 +513,7 @@ class InclePartnersAPI {
               '${endTime.hour.toString().padLeft(2, '0')}:${endTime.minute.toString().padLeft(2, '0')}',
         },
       );
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         return response.data;
       } else {
         throw Exception(response.statusMessage);
@@ -510,7 +525,7 @@ class InclePartnersAPI {
 
   Future<bool> isServerHealthy() async {
     try {
-      final response = await _dio.get('/health');
+      final response = await dio.get('/health');
       if (response.statusCode == 200) {
         return true;
       } else {
@@ -523,8 +538,8 @@ class InclePartnersAPI {
 
   Future<bool> holidayCheck(String year, String month, String day) async {
     try {
-      final response = await _dio.get(
-        '/partners/holiday',
+      final response = await dio.get(
+        '/holiday',
         queryParameters: {
           'year': year,
           'month': month,
@@ -532,7 +547,7 @@ class InclePartnersAPI {
         },
       );
       if (response.statusCode == 200) {
-        return response.data['is_holiday'];
+        return response.data['data'];
       } else {
         throw Exception(response.statusMessage);
       }
@@ -542,44 +557,203 @@ class InclePartnersAPI {
   }
 
   Future<Map> uploadProduct(
-      String name,
-      String price,
-      bool todayGet,
-      List<File> images,
-      String description,
-      int modelHeight,
-      int modelWeight,
-      String modelSize,
-      Map<String, List<Map<String, List<dynamic>>>> options) async {
+      {required String name,
+      required String price,
+      required bool todayGet,
+      required List<File> images,
+      required String description,
+      required int modelHeight,
+      required int modelWeight,
+      required String modelNormalSize,
+      required String modelSize,
+      required Map<String, List<Map<String, dynamic>>> options,
+      required List<String> cody}) async {
     try {
       final formData = FormData.fromMap({
         'name': name,
         'price': price,
-        'today_get': todayGet,
-        'description': description,
-        'model_height': modelHeight,
-        'model_weight': modelWeight,
-        'model_size': modelSize,
-        'options': options,
+        'todayGet': todayGet,
+        'desc': description,
+        'modelHeight': modelHeight,
+        'modelWeight': modelWeight,
+        'modelSize': modelSize,
+        'modelNormalSize': modelNormalSize,
+        'options': jsonEncode(options),
+        'cody': cody,
       });
-      formData.files.addAll(images.map((image) {
-        return MapEntry(
-          'images',
-          MultipartFile.fromFileSync(image.path, filename: image.path),
+      for (var image in images) {
+        formData.files.add(
+          MapEntry(
+            'images',
+            await MultipartFile.fromFile(
+              image.path,
+              filename: image.path.split('/').last,
+            ),
+          ),
         );
-      }));
-      final response = await _dio.post(
-        '/partners/product',
+      }
+      final response = await dio.post('/partners/product', data: formData);
+      if (response.statusCode == 201) {
+        return response.data;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Map> getPartnersProductList(
+      {bool recommendedOnly = false, bool discountOnly = false}) async {
+    assert((recommendedOnly || discountOnly) ||
+        (!recommendedOnly || !discountOnly));
+    try {
+      Map<String, dynamic>? _queryParameter;
+      if (recommendedOnly) {
+        _queryParameter = {'option': 'owners_recommended'};
+      } else if (discountOnly) {
+        _queryParameter = {'option': 'discount_price'};
+      }
+      final response =
+          await dio.get('/partners/product', queryParameters: _queryParameter);
+      if (response.statusCode == 200) {
+        return response.data;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Map> updateProduct(
+      {required String uid,
+      required String name,
+      required String price,
+      required bool todayGet,
+      required List<File> images,
+      required String description,
+      required int modelHeight,
+      required int modelWeight,
+      required String modelNormalSize,
+      required String modelSize,
+      required Map<String, List<Map<String, dynamic>>> options,
+      required List<String> cody}) async {
+    try {
+      final formData = FormData.fromMap({
+        'name': name,
+        'price': price,
+        'todayGet': todayGet,
+        'desc': description,
+        'modelHeight': modelHeight,
+        'modelWeight': modelWeight,
+        'modelSize': modelSize,
+        'modelNormalSize': modelNormalSize,
+        'options': jsonEncode(options),
+        'cody': cody,
+      });
+      for (var image in images) {
+        formData.files.add(
+          MapEntry(
+            'images',
+            await MultipartFile.fromFile(
+              image.path,
+              filename: image.path.split('/').last,
+            ),
+          ),
+        );
+      }
+      final response = await dio.put('/partners/product/$uid', data: formData);
+      if (response.statusCode == 201) {
+        return response.data;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Map> deleteProduct({required String uid}) async {
+    try {
+      final response = await dio.delete('/partners/product/$uid');
+      if (response.statusCode == 201) {
+        return response.data;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  soldoutProduct({required String uid, required List<String> options}) async {
+    try {
+      final response = await dio.put(
+        '/partners/product/soldout/$uid',
         data: {
-          'name': name,
-          'price': price,
-          'today_get': todayGet,
-          'description': description,
-          'model_height': modelHeight,
-          'model_weight': modelWeight,
-          'model_size': modelSize,
           'options': options,
         },
+      );
+      if (response.statusCode == 201) {
+        return response.data;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Map> addProductOwnersRecommend({required String uid}) async {
+    try {
+      final response = await dio.put(
+        '/partners/product/ownersrecommended/$uid',
+      );
+      if (response.statusCode == 201) {
+        return response.data;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Map> addProductDiscount(
+      {required String uid, required int discountedPrice}) async {
+    try {
+      final response = await dio.put('/partners/product/discount/$uid',
+          queryParameters: {'price': discountedPrice});
+      if (response.statusCode == 201) {
+        return response.data;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Map> deleteProductOwnersRecommended({required String uid}) async {
+    try {
+      final response = await dio.delete(
+        '/partners/product/ownersrecommended/$uid',
+      );
+      if (response.statusCode == 201) {
+        return response.data;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Map> deleteProductDiscount({required String uid}) async {
+    try {
+      final response = await dio.delete(
+        '/partners/product/discount/$uid',
       );
       if (response.statusCode == 201) {
         return response.data;

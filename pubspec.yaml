@@ -1,5 +1,5 @@
 name: incle_api
-description: A new flutter plugin project.
+description: API Client for Incle
 version: 0.0.1
 homepage:
 
@@ -17,6 +17,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^1.0.0
+  mocktail:
+  curl_logger_dio_interceptor:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
