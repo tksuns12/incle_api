@@ -16,8 +16,17 @@ class InclePartnersAPI {
 
   InclePartnersAPI._internal();
 
-  factory InclePartnersAPI(FlutterSecureStorage storage) {
-    _instance.storage = storage;
+  factory InclePartnersAPI([FlutterSecureStorage? storage]) {
+    if (storage == null) {
+      _instance.storage = const FlutterSecureStorage(
+          aOptions: AndroidOptions(encryptedSharedPreferences: true),
+          iOptions: IOSOptions(
+            accountName: 'InclePartners',
+            accessibility: IOSAccessibility.first_unlock,
+          ));
+    } else {
+      _instance.storage = storage;
+    }
     _instance.dio = Dio();
     return _instance;
   }
