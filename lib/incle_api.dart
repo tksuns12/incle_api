@@ -87,6 +87,10 @@ class InclePartnersAPI {
         (await storage.read(key: 'password')) != null;
   }
 
+  Future<void> signout() async {
+    await storage.deleteAll();
+  }
+
   Future<Map> signup({
     String? id,
     String? password,
