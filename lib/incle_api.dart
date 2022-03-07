@@ -9,10 +9,18 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:curl_logger_dio_interceptor/curl_logger_dio_interceptor.dart';
 
 class InclePartnersAPI {
-  final Dio dio;
-  final FlutterSecureStorage storage;
+  late Dio dio;
+  late FlutterSecureStorage storage;
 
-  InclePartnersAPI({required this.dio, required this.storage});
+  static final InclePartnersAPI _instance = InclePartnersAPI._internal();
+
+  InclePartnersAPI._internal();
+
+  factory InclePartnersAPI(FlutterSecureStorage storage) {
+    _instance.storage = storage;
+    _instance.dio = Dio();
+    return _instance;
+  }
 
   void initialize() {
     dio.options = BaseOptions(baseUrl: 'https://incle.api.wim.kro.kr/api/v1');
@@ -41,8 +49,6 @@ class InclePartnersAPI {
               },
             );
             if (response.statusCode == 200) {
-              storage.write(key: 'id', value: id);
-              storage.write(key: 'password', value: password);
               storage.write(key: 'token', value: response.data['data']);
               return response.data;
             } else {
@@ -62,6 +68,11 @@ class InclePartnersAPI {
         error: true,
       ),
     ]);
+  }
+
+  Future<bool> isSignedIn() async {
+    return (await storage.read(key: 'id')) != null &&
+        (await storage.read(key: 'password')) != null;
   }
 
   Future<Map> signup({
@@ -268,6 +279,9 @@ class InclePartnersAPI {
         '/partners',
       );
       if (response.statusCode == 200) {
+        storage.delete(key: 'token');
+        storage.delete(key: 'id');
+        storage.delete(key: 'password');
         return response.data;
       } else {
         throw Exception(response.statusMessage);

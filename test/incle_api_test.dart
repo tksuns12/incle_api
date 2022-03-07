@@ -14,7 +14,7 @@ void main() {
   final mockStorage = MockFlutterSecureStoreage();
 
   test('test health_check', () async {
-    final client = InclePartnersAPI(dio: Dio(), storage: mockStorage);
+    final client = InclePartnersAPI(mockStorage);
     final result = await client.isServerHealthy();
     expect(result, isA<bool>());
   });
@@ -22,7 +22,7 @@ void main() {
   group('test isHoliday', () {
     test('test isHoliday with korean independence campaign day', () async {
       // Arrange
-      final client = InclePartnersAPI(dio: Dio(), storage: mockStorage);
+      final client = InclePartnersAPI(mockStorage);
       when(() => mockStorage.read(key: 'id'))
           .thenAnswer((invocation) async => 'testpartners');
       when(() => mockStorage.read(key: 'password'))
@@ -40,7 +40,7 @@ void main() {
 
     test('test isHoliday with normal day', () async {
       // Arrange
-      final client = InclePartnersAPI(dio: Dio(), storage: mockStorage);
+      final client = InclePartnersAPI(mockStorage);
       when(() => mockStorage.read(key: 'id'))
           .thenAnswer((invocation) async => 'testpartners');
       when(() => mockStorage.read(key: 'password'))
@@ -60,7 +60,7 @@ void main() {
   group('test signup', () {
     test('signup successfully', () async {
       // Arrange
-      final client = InclePartnersAPI(dio: Dio(), storage: mockStorage);
+      final client = InclePartnersAPI(mockStorage);
       client.initialize();
       when(
           () =>
@@ -108,7 +108,7 @@ void main() {
 
   test('test updateProfile', () async {
     // Arrange
-    final client = InclePartnersAPI(dio: Dio(), storage: mockStorage);
+    final client = InclePartnersAPI(mockStorage);
     client.initialize();
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
@@ -153,7 +153,7 @@ void main() {
 
   test('test getPartnersProfile', () async {
     // Arrange
-    final client = InclePartnersAPI(dio: Dio(), storage: mockStorage);
+    final client = InclePartnersAPI(mockStorage);
     client.initialize();
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
@@ -165,7 +165,7 @@ void main() {
 
   test('test checkVerifyNum', () async {
     // Arrange
-    final client = InclePartnersAPI(dio: Dio(), storage: mockStorage);
+    final client = InclePartnersAPI(mockStorage);
     client.initialize();
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
@@ -177,7 +177,7 @@ void main() {
 
   test('test findPasswordAllow', () async {
     // Arrange
-    final client = InclePartnersAPI(dio: Dio(), storage: mockStorage);
+    final client = InclePartnersAPI(mockStorage);
     client.initialize();
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
@@ -190,7 +190,7 @@ void main() {
 
   test('test findPassword', () async {
     // Arrange
-    final client = InclePartnersAPI(dio: Dio(), storage: mockStorage);
+    final client = InclePartnersAPI(mockStorage);
     client.initialize();
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
@@ -203,7 +203,7 @@ void main() {
 
   test('test findID', () async {
     // Arrange
-    final client = InclePartnersAPI(dio: Dio(), storage: mockStorage);
+    final client = InclePartnersAPI(mockStorage);
     client.initialize();
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
@@ -217,7 +217,7 @@ void main() {
   group('test DuplicateCheck', () {
     test('test ID DuplicateCheck', () async {
       // Arrange
-      final client = InclePartnersAPI(dio: Dio(), storage: mockStorage);
+      final client = InclePartnersAPI(mockStorage);
       client.initialize();
       when(
           () =>
@@ -231,7 +231,7 @@ void main() {
 
     test('test Email DuplicateCheck', () async {
       // Arrange
-      final client = InclePartnersAPI(dio: Dio(), storage: mockStorage);
+      final client = InclePartnersAPI(mockStorage);
       client.initialize();
       when(
           () =>
@@ -245,7 +245,7 @@ void main() {
 
     test('test phoneNumber DuplicateCheck', () async {
       // Arrange
-      final client = InclePartnersAPI(dio: Dio(), storage: mockStorage);
+      final client = InclePartnersAPI(mockStorage);
       client.initialize();
       when(
           () =>
@@ -260,7 +260,7 @@ void main() {
 
   test('test sendVerifyNum', () async {
     // Arrange
-    final client = InclePartnersAPI(dio: Dio(), storage: mockStorage);
+    final client = InclePartnersAPI(mockStorage);
     client.initialize();
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
@@ -272,7 +272,7 @@ void main() {
 
   test('test createCoupon without limit date', () async {
     // Arrange
-    final client = InclePartnersAPI(dio: Dio(), storage: mockStorage);
+    final client = InclePartnersAPI(mockStorage);
     client.initialize();
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
@@ -288,7 +288,7 @@ void main() {
 
   test('test createCoupon with limit date', () async {
     // Arrange
-    final client = InclePartnersAPI(dio: Dio(), storage: mockStorage);
+    final client = InclePartnersAPI(mockStorage);
     client.initialize();
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
@@ -301,7 +301,7 @@ void main() {
 
   test('test getCouponList', () async {
     // Arrange
-    final client = InclePartnersAPI(dio: Dio(), storage: mockStorage);
+    final client = InclePartnersAPI(mockStorage);
     client.initialize();
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
@@ -313,7 +313,7 @@ void main() {
 
   test('test deleteCoupon', () async {
     // Arrange
-    final client = InclePartnersAPI(dio: Dio(), storage: mockStorage);
+    final client = InclePartnersAPI(mockStorage);
     client.initialize();
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
@@ -325,7 +325,7 @@ void main() {
 
   test('test getDeliver', () async {
     // Arrange
-    final client = InclePartnersAPI(dio: Dio(), storage: mockStorage);
+    final client = InclePartnersAPI(mockStorage);
     client.initialize();
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
@@ -337,7 +337,7 @@ void main() {
 
   test('test updateDeliver', () async {
     // Arrange
-    final client = InclePartnersAPI(dio: Dio(), storage: mockStorage);
+    final client = InclePartnersAPI(mockStorage);
     client.initialize();
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
@@ -350,7 +350,7 @@ void main() {
 
   test('test unpausePartner', () async {
     // Arrange
-    final client = InclePartnersAPI(dio: Dio(), storage: mockStorage);
+    final client = InclePartnersAPI(mockStorage);
     client.initialize();
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
@@ -362,7 +362,7 @@ void main() {
 
   test('test pausePartners', () async {
     // Arrange
-    final client = InclePartnersAPI(dio: Dio(), storage: mockStorage);
+    final client = InclePartnersAPI(mockStorage);
     client.initialize();
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
@@ -375,7 +375,7 @@ void main() {
 
   test('test uploadProduct', () async {
     // Arrange
-    final client = InclePartnersAPI(dio: Dio(), storage: mockStorage);
+    final client = InclePartnersAPI(mockStorage);
     client.initialize();
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
@@ -439,7 +439,7 @@ void main() {
   group('test getPartnersProductList', () {
     test('test getPartnersProductList', () async {
       // Arrange
-      final client = InclePartnersAPI(dio: Dio(), storage: mockStorage);
+      final client = InclePartnersAPI(mockStorage);
       client.initialize();
       when(
           () =>
@@ -453,7 +453,7 @@ void main() {
 
     test('test getPartnersProductList for discounted products', () async {
       // Arrange
-      final client = InclePartnersAPI(dio: Dio(), storage: mockStorage);
+      final client = InclePartnersAPI(mockStorage);
       client.initialize();
       when(
           () =>
@@ -467,7 +467,7 @@ void main() {
 
     test('test getPartnersProductList for the recommended', () async {
       // Arrange
-      final client = InclePartnersAPI(dio: Dio(), storage: mockStorage);
+      final client = InclePartnersAPI(mockStorage);
       client.initialize();
       when(
           () =>
@@ -482,7 +482,7 @@ void main() {
 
   test('test updateProduct', () async {
     // Arrange
-    final client = InclePartnersAPI(dio: Dio(), storage: mockStorage);
+    final client = InclePartnersAPI(mockStorage);
     client.initialize();
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
@@ -546,7 +546,7 @@ void main() {
 
   test('test deleteProduct', () async {
     // Arrange
-    final client = InclePartnersAPI(dio: Dio(), storage: mockStorage);
+    final client = InclePartnersAPI(mockStorage);
     client.initialize();
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
@@ -560,7 +560,7 @@ void main() {
 
   test('test soldoutProduct', () async {
     // Arrange
-    final client = InclePartnersAPI(dio: Dio(), storage: mockStorage);
+    final client = InclePartnersAPI(mockStorage);
     client.initialize();
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
@@ -575,7 +575,7 @@ void main() {
 
   test('test addProductOwnersRecommend', () async {
     // Arrange
-    final client = InclePartnersAPI(dio: Dio(), storage: mockStorage);
+    final client = InclePartnersAPI(mockStorage);
     client.initialize();
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
@@ -588,7 +588,7 @@ void main() {
 
   test('test addProductDiscount', () async {
     // Arrange
-    final client = InclePartnersAPI(dio: Dio(), storage: mockStorage);
+    final client = InclePartnersAPI(mockStorage);
     client.initialize();
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
@@ -601,7 +601,7 @@ void main() {
 
   test('test deleteProductOwnersRecommended', () async {
     // Arrange
-    final client = InclePartnersAPI(dio: Dio(), storage: mockStorage);
+    final client = InclePartnersAPI(mockStorage);
     client.initialize();
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
@@ -614,7 +614,7 @@ void main() {
 
   test('test deleteProductDiscount', () async {
     // Arrange
-    final client = InclePartnersAPI(dio: Dio(), storage: mockStorage);
+    final client = InclePartnersAPI(mockStorage);
     client.initialize();
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
