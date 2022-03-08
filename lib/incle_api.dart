@@ -271,7 +271,7 @@ class InclePartnersAPI {
           'password': password,
         },
       );
-      if (response.statusCode == 201) {
+      if (response.statusCode == 200) {
         storage.write(key: 'id', value: id);
         storage.write(key: 'password', value: password);
         storage.write(key: 'token', value: response.data);
