@@ -32,11 +32,17 @@ void main() {
   test('test login - not approved', () async {
     // Arrange
     final client = InclePartnersAPI(mockStorage);
-
-    when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
     // Act
     final result = await client.login('notallow', 'notallow');
+    // Assert
+    print(result.toString());
+  });
+
+  test('test login', () async {
+    // Arrange
+    final client = InclePartnersAPI(mockStorage);
+    // Act
+    final result = await client.login('testpartners', 'testpartners');
     // Assert
     print(result.toString());
   });
