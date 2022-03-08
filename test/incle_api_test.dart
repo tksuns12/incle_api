@@ -15,6 +15,9 @@ void main() {
 
   test('test health_check', () async {
     final client = InclePartnersAPI(mockStorage);
+
+    when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
     final result = await client.isServerHealthy();
     expect(result, isA<bool>());
   });

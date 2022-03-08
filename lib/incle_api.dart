@@ -10,7 +10,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 class InclePartnersAPI {
   late Dio dio;
   late FlutterSecureStorage storage;
-  bool initialized = false;
 
   static final InclePartnersAPI _instance = InclePartnersAPI._internal();
 
@@ -34,14 +33,14 @@ class InclePartnersAPI {
       InterceptorsWrapper(onRequest: (options, handler) async {
         print('Intercepted, ${options.method} ${options.path}');
 
-        final _userToken = await storage!.read(key: 'token');
+        final _userToken = await _instance.storage.read(key: 'token');
         options.headers['Authorization'] = 'Bearer $_userToken';
         return handler.next(options);
       }, onError: (error, handler) async {
         print('Error occured, ${error.response}');
         if (error.response?.statusCode == 412) {
-          final id = await storage!.read(key: 'id');
-          final password = await storage.read(key: 'password');
+          final id = await _instance.storage.read(key: 'id');
+          final password = await _instance.storage.read(key: 'password');
           try {
             final tempDio = Dio()
               ..options =
@@ -54,7 +53,7 @@ class InclePartnersAPI {
               },
             );
             if (response.statusCode == 200) {
-              storage.write(key: 'token', value: response.data['data']);
+              _instance.storage.write(key: 'token', value: response.data['data']);
               return response.data;
             } else {
               throw Exception(response.statusMessage);
