@@ -140,6 +140,7 @@ void main() {
 
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
+    WidgetsFlutterBinding.ensureInitialized();
     // Act
     final result = await client.updateProfile(
       accountNumber: '3333017381547',
@@ -173,7 +174,10 @@ void main() {
       storePhone: '0534852345',
       registration: File('test_resources/registration.jpeg'),
       registration2: File('test_resources/registration.jpeg'),
-      storePictures: [File('test_resources/image1.jpeg')],
+      storePictures: [
+        File('test_resources/image1.jpeg'),
+        'http://file2.instiz.net/data/cached_img/upload/2015013123/a35bca117a0a5cc5cb2de28714936de9.jpg'
+      ],
     );
     // Assert
     print(result.toString());

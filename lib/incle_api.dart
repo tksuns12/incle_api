@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:path_provider/path_provider.dart';
 
 class InclePartnersAPI {
   late Dio dio;
@@ -177,8 +178,8 @@ class InclePartnersAPI {
     String? email,
     String? ownerName,
     String? businessNumber,
-    File? registration,
-    File? registration2,
+    dynamic registration,
+    dynamic registration2,
     String? bank,
     String? accountNumber,
     String? accountOwner,
@@ -190,12 +191,13 @@ class InclePartnersAPI {
     String? closeTime,
     List<List<bool>>? dayoffs,
     String? storeDescription,
-    List<File>? storePictures,
+    List? storePictures,
     String? storeName,
     bool? isRestHolidy,
     double? latitude,
     double? longitude,
     String? postCode,
+    dynamic profilePicture,
   }) async {
     try {
       dio.options.headers['Authorization'] = '';
@@ -222,19 +224,46 @@ class InclePartnersAPI {
         'latitude': latitude,
         'longitude': longitude,
       });
-
-      formData.files.addAll(storePictures!.map((e) => MapEntry(
-          'storeImages',
-          MultipartFile.fromFileSync(e.path,
-              filename: e.path.split('/').last))));
-      formData.files.add(MapEntry(
-          'businessReport',
-          MultipartFile.fromFileSync(registration!.path,
-              filename: registration.path.split('/').last)));
-      formData.files.add(MapEntry(
-          'businessRegistration',
-          MultipartFile.fromFileSync(registration2!.path,
-              filename: registration2.path.split('/').last)));
+      for (final picture in storePictures!) {
+        if (picture is File) {
+          formData.files.add(MapEntry(
+              'storeImages',
+              MultipartFile.fromFileSync(picture.path,
+                  filename: picture.path.split('/').last)));
+        } else {
+          final d = Dio();
+          final res = await d.downloadUri(
+              Uri.parse(picture), (await getTemporaryDirectory()).path);
+          return MapEntry(
+              'storeImages',
+              MultipartFile.fromFileSync(res.data.path,
+                  filename: res.data.path.split('/').last));
+        }
+      }
+      if (registration is File) {
+        formData.files.add(MapEntry(
+            'businessReport',
+            MultipartFile.fromFileSync(registration.path,
+                filename: registration.path.split('/').last)));
+      } else {
+        formData.fields.add(MapEntry('businessReport', registration));
+      }
+      if (registration2 is File) {
+        formData.files.add(MapEntry(
+            'businessRegistration',
+            MultipartFile.fromFileSync(registration2.path,
+                filename: registration2.path.split('/').last)));
+      } else {
+        formData.fields.add(MapEntry('businessRegistration', registration2));
+      }
+      if (profilePicture is File) {
+        formData.files.add(MapEntry(
+            'profileImage',
+            MultipartFile.fromFileSync(profilePicture.path,
+                filename: profilePicture.path.split('/').last)));
+      } else {
+        formData.fields.add(MapEntry('profileImage', profilePicture));
+      }
       final response = await dio.put(
         '/partners',
         data: formData,
@@ -440,7 +469,7 @@ class InclePartnersAPI {
 
   Future<Map> createCoupon(String name, int price, int condition,
       [DateTime? limitDate]) async {
-        dio.options.headers['Authorization'] = '';
+    dio.options.headers['Authorization'] = '';
     try {
       final response = await dio.post(
         '/partners/coupon',
@@ -513,7 +542,7 @@ class InclePartnersAPI {
   Future<Map> updateDeliver(
       {required Map<int, int> deliveryConditions,
       required int freeCondition}) async {
-        dio.options.headers['Authorization'] = '';
+    dio.options.headers['Authorization'] = '';
     try {
       final response = await dio.post(
         '/partners/deliver',
@@ -617,7 +646,7 @@ class InclePartnersAPI {
       required String modelSize,
       required Map<String, List<Map<String, dynamic>>> options,
       required List<String> cody}) async {
-        dio.options.headers['Authorization'] = '';
+    dio.options.headers['Authorization'] = '';
     try {
       final formData = FormData.fromMap({
         'name': name,
@@ -657,7 +686,7 @@ class InclePartnersAPI {
       {bool recommendedOnly = false, bool discountOnly = false}) async {
     assert((recommendedOnly || discountOnly) ||
         (!recommendedOnly || !discountOnly));
-        dio.options.headers['Authorization'] = '';
+    dio.options.headers['Authorization'] = '';
     try {
       Map<String, dynamic>? _queryParameter;
       if (recommendedOnly) {
@@ -690,7 +719,7 @@ class InclePartnersAPI {
       required String modelSize,
       required Map<String, List<Map<String, dynamic>>> options,
       required List<String> cody}) async {
-        dio.options.headers['Authorization'] = '';
+    dio.options.headers['Authorization'] = '';
     try {
       final formData = FormData.fromMap({
         'name': name,
@@ -741,7 +770,7 @@ class InclePartnersAPI {
   }
 
   soldoutProduct({required String uid, required List<String> options}) async {
-    dio.options.headers['Authorization'] = ''; 
+    dio.options.headers['Authorization'] = '';
     try {
       final response = await dio.put(
         '/partners/product/soldout/$uid',
@@ -777,7 +806,7 @@ class InclePartnersAPI {
 
   Future<Map> addProductDiscount(
       {required String uid, required int discountedPrice}) async {
-        dio.options.headers['Authorization'] = '';
+    dio.options.headers['Authorization'] = '';
     try {
       final response = await dio.put('/partners/product/discount/$uid',
           queryParameters: {'price': discountedPrice});
