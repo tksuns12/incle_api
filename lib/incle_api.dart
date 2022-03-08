@@ -28,58 +28,53 @@ class InclePartnersAPI {
       _instance.storage = storage;
     }
     _instance.dio = Dio();
-    return _instance;
-  }
+    _instance.dio.options =
+        BaseOptions(baseUrl: 'https://incle.api.wim.kro.kr/api/v1');
+    _instance.dio.interceptors.addAll([
+      InterceptorsWrapper(onRequest: (options, handler) async {
+        print('Intercepted, ${options.method} ${options.path}');
 
-  void initialize() {
-    if (!initialized) {
-      dio.options = BaseOptions(baseUrl: 'https://incle.api.wim.kro.kr/api/v1');
-
-      dio.interceptors.addAll([
-        InterceptorsWrapper(onRequest: (options, handler) async {
-          print('Intercepted, ${options.method} ${options.path}');
-
-          final _userToken = await storage.read(key: 'token');
-          options.headers['Authorization'] = 'Bearer $_userToken';
-          return handler.next(options);
-        }, onError: (error, handler) async {
-          print('Error occured, ${error.response}');
-          if (error.response?.statusCode == 412) {
-            final id = await storage.read(key: 'id');
-            final password = await storage.read(key: 'password');
-            try {
-              final tempDio = Dio()
-                ..options =
-                    BaseOptions(baseUrl: 'https://incle.api.wim.kro.kr/api/v1');
-              final response = await tempDio.post(
-                '/partners/login',
-                data: {
-                  'id': id,
-                  'password': password,
-                },
-              );
-              if (response.statusCode == 200) {
-                storage.write(key: 'token', value: response.data['data']);
-                return response.data;
-              } else {
-                throw Exception(response.statusMessage);
-              }
-            } catch (e) {
-              rethrow;
+        final _userToken = await storage!.read(key: 'token');
+        options.headers['Authorization'] = 'Bearer $_userToken';
+        return handler.next(options);
+      }, onError: (error, handler) async {
+        print('Error occured, ${error.response}');
+        if (error.response?.statusCode == 412) {
+          final id = await storage!.read(key: 'id');
+          final password = await storage.read(key: 'password');
+          try {
+            final tempDio = Dio()
+              ..options =
+                  BaseOptions(baseUrl: 'https://incle.api.wim.kro.kr/api/v1');
+            final response = await tempDio.post(
+              '/partners/login',
+              data: {
+                'id': id,
+                'password': password,
+              },
+            );
+            if (response.statusCode == 200) {
+              storage.write(key: 'token', value: response.data['data']);
+              return response.data;
+            } else {
+              throw Exception(response.statusMessage);
             }
-          } else {
-            throw Exception(error.response);
+          } catch (e) {
+            rethrow;
           }
-        }),
-        LogInterceptor(
-          request: true,
-          requestBody: true,
-          requestHeader: true,
-          error: true,
-        ),
-      ]);
-      initialized = true;
-    }
+        } else {
+          throw Exception(error.response);
+        }
+      }),
+      LogInterceptor(
+        request: true,
+        requestBody: true,
+        requestHeader: true,
+        error: true,
+      ),
+    ]);
+
+    return _instance;
   }
 
   Future<bool> isSignedIn() async {
@@ -502,7 +497,7 @@ class InclePartnersAPI {
       } else {
         throw Exception(response);
       }
-    } on Exception catch (e) {
+    } catch (e) {
       rethrow;
     }
   }
