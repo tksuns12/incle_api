@@ -13,11 +13,18 @@ import 'mock_services.dart';
 void main() {
   final mockStorage = MockFlutterSecureStoreage();
 
-  test('test health_check', () async {
+  test('test dio option', () async {
+    // Arrange
     final client = InclePartnersAPI(mockStorage);
-
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
+    // Act
+    final res1 = await client.getPartnersProductList();
+    final res2 = await client.isServerHealthy();
+  });
+
+  test('test health_check', () async {
+    final client = InclePartnersAPI(mockStorage);
     final result = await client.isServerHealthy();
     expect(result, isA<bool>());
   });
@@ -25,7 +32,7 @@ void main() {
   test('test login - not approved', () async {
     // Arrange
     final client = InclePartnersAPI(mockStorage);
-    
+
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
     // Act
@@ -46,7 +53,7 @@ void main() {
           () =>
               mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
-      
+
       // Act
       final result = await client.holidayCheck('2022', '03', '01');
       // Assert
@@ -64,7 +71,7 @@ void main() {
           () =>
               mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
-      
+
       // Act
       final result = await client.holidayCheck('2022', '03', '03');
       // Assert
@@ -76,7 +83,7 @@ void main() {
     test('signup successfully', () async {
       // Arrange
       final client = InclePartnersAPI(mockStorage);
-      
+
       when(
           () =>
               mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
@@ -124,7 +131,7 @@ void main() {
   test('test updateProfile', () async {
     // Arrange
     final client = InclePartnersAPI(mockStorage);
-    
+
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
     // Act
@@ -169,7 +176,7 @@ void main() {
   test('test getPartnersProfile', () async {
     // Arrange
     final client = InclePartnersAPI(mockStorage);
-    
+
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
     // Act
@@ -181,7 +188,7 @@ void main() {
   test('test checkVerifyNum', () async {
     // Arrange
     final client = InclePartnersAPI(mockStorage);
-    
+
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
     // Act
@@ -193,7 +200,7 @@ void main() {
   test('test findPasswordAllow', () async {
     // Arrange
     final client = InclePartnersAPI(mockStorage);
-    
+
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
     // Act
@@ -206,7 +213,7 @@ void main() {
   test('test findPassword', () async {
     // Arrange
     final client = InclePartnersAPI(mockStorage);
-    
+
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
     // Act
@@ -219,7 +226,7 @@ void main() {
   test('test findID', () async {
     // Arrange
     final client = InclePartnersAPI(mockStorage);
-    
+
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
     // Act
@@ -233,21 +240,18 @@ void main() {
     test('test ID DuplicateCheck', () async {
       // Arrange
       final client = InclePartnersAPI(mockStorage);
-      
-      when(
-          () =>
-              mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
+      when(() => mockStorage.read(key: 'token'))
+          .thenAnswer((invocation) async => Future.value(''));
       // Act
       final result = await client.duplicateCheck('id', 'tksuns12');
       // Assert
-      expect(result['data'], true);
+      expect(result['data'], false);
     });
 
     test('test Email DuplicateCheck', () async {
       // Arrange
       final client = InclePartnersAPI(mockStorage);
-      
+
       when(
           () =>
               mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
@@ -261,7 +265,7 @@ void main() {
     test('test phoneNumber DuplicateCheck', () async {
       // Arrange
       final client = InclePartnersAPI(mockStorage);
-      
+
       when(
           () =>
               mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
@@ -276,7 +280,7 @@ void main() {
   test('test sendVerifyNum', () async {
     // Arrange
     final client = InclePartnersAPI(mockStorage);
-    
+
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
     // Act
@@ -288,7 +292,7 @@ void main() {
   test('test createCoupon without limit date', () async {
     // Arrange
     final client = InclePartnersAPI(mockStorage);
-    
+
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
     // Act
@@ -304,12 +308,12 @@ void main() {
   test('test createCoupon with limit date', () async {
     // Arrange
     final client = InclePartnersAPI(mockStorage);
-    
+
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
     // Act
     final result = await client.createCoupon(
-        'specialCoupon3', 1000, 10000, DateTime(2023,03,04));
+        'specialCoupon3', 1000, 10000, DateTime(2023, 03, 04));
     // Assert
     print(result.toString());
   });
@@ -317,7 +321,7 @@ void main() {
   test('test getCouponList', () async {
     // Arrange
     final client = InclePartnersAPI(mockStorage);
-    
+
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
     // Act
@@ -329,7 +333,7 @@ void main() {
   test('test deleteCoupon', () async {
     // Arrange
     final client = InclePartnersAPI(mockStorage);
-    
+
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
     // Act
@@ -341,7 +345,7 @@ void main() {
   test('test getDeliver', () async {
     // Arrange
     final client = InclePartnersAPI(mockStorage);
-    
+
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
     // Act
@@ -353,7 +357,7 @@ void main() {
   test('test updateDeliver', () async {
     // Arrange
     final client = InclePartnersAPI(mockStorage);
-    
+
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
     // Act
@@ -366,7 +370,7 @@ void main() {
   test('test unpausePartner', () async {
     // Arrange
     final client = InclePartnersAPI(mockStorage);
-    
+
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
     // Act
@@ -378,7 +382,7 @@ void main() {
   test('test pausePartners', () async {
     // Arrange
     final client = InclePartnersAPI(mockStorage);
-    
+
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
     // Act
@@ -391,7 +395,7 @@ void main() {
   test('test uploadProduct', () async {
     // Arrange
     final client = InclePartnersAPI(mockStorage);
-    
+
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
     // Act
@@ -455,7 +459,7 @@ void main() {
     test('test getPartnersProductList', () async {
       // Arrange
       final client = InclePartnersAPI(mockStorage);
-      
+
       when(
           () =>
               mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
@@ -469,7 +473,7 @@ void main() {
     test('test getPartnersProductList for discounted products', () async {
       // Arrange
       final client = InclePartnersAPI(mockStorage);
-      
+
       when(
           () =>
               mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
@@ -483,7 +487,7 @@ void main() {
     test('test getPartnersProductList for the recommended', () async {
       // Arrange
       final client = InclePartnersAPI(mockStorage);
-      
+
       when(
           () =>
               mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
@@ -498,7 +502,7 @@ void main() {
   test('test updateProduct', () async {
     // Arrange
     final client = InclePartnersAPI(mockStorage);
-    
+
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
     // Act
@@ -562,7 +566,7 @@ void main() {
   test('test deleteProduct', () async {
     // Arrange
     final client = InclePartnersAPI(mockStorage);
-    
+
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
     // Act
@@ -576,7 +580,7 @@ void main() {
   test('test soldoutProduct', () async {
     // Arrange
     final client = InclePartnersAPI(mockStorage);
-    
+
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
     // Act
@@ -591,7 +595,7 @@ void main() {
   test('test addProductOwnersRecommend', () async {
     // Arrange
     final client = InclePartnersAPI(mockStorage);
-    
+
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
     // Act
@@ -604,7 +608,7 @@ void main() {
   test('test addProductDiscount', () async {
     // Arrange
     final client = InclePartnersAPI(mockStorage);
-    
+
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
     // Act
@@ -617,7 +621,7 @@ void main() {
   test('test deleteProductOwnersRecommended', () async {
     // Arrange
     final client = InclePartnersAPI(mockStorage);
-    
+
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
     // Act
@@ -630,7 +634,7 @@ void main() {
   test('test deleteProductDiscount', () async {
     // Arrange
     final client = InclePartnersAPI(mockStorage);
-    
+
     when(() => mockStorage.read(key: 'token')).thenAnswer((invocation) async =>
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
     // Act
@@ -639,5 +643,4 @@ void main() {
     // Assert
     print(result.toString());
   });
-
 }

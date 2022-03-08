@@ -32,9 +32,10 @@ class InclePartnersAPI {
     _instance.dio.interceptors.addAll([
       InterceptorsWrapper(onRequest: (options, handler) async {
         print('Intercepted, ${options.method} ${options.path}');
-
-        final _userToken = await _instance.storage.read(key: 'token');
-        options.headers['Authorization'] = 'Bearer $_userToken';
+        if (options.headers['Authorization'] != null) {
+          final _userToken = await _instance.storage.read(key: 'token');
+          options.headers['Authorization'] = 'Bearer $_userToken';
+        }
         return handler.next(options);
       }, onError: (error, handler) async {
         print('Error occured, ${error.response}');
@@ -53,7 +54,8 @@ class InclePartnersAPI {
               },
             );
             if (response.statusCode == 200) {
-              _instance.storage.write(key: 'token', value: response.data['data']);
+              _instance.storage
+                  .write(key: 'token', value: response.data['data']);
               return response.data;
             } else {
               throw Exception(response.statusMessage);
@@ -196,6 +198,7 @@ class InclePartnersAPI {
     String? postCode,
   }) async {
     try {
+      dio.options.headers['Authorization'] = '';
       final formData = FormData.fromMap({
         'isRestHoliday': isRestHolidy,
         'id': id,
@@ -283,6 +286,7 @@ class InclePartnersAPI {
 
   Future<Map> getPartnersProfile() async {
     try {
+      dio.options.headers['Authorization'] = '';
       final response = await dio.get(
         '/partners',
       );
@@ -298,6 +302,7 @@ class InclePartnersAPI {
 
   Future<Map> deleteAccount() async {
     try {
+      dio.options.headers['Authorization'] = '';
       final response = await dio.delete(
         '/partners',
       );
@@ -435,6 +440,7 @@ class InclePartnersAPI {
 
   Future<Map> createCoupon(String name, int price, int condition,
       [DateTime? limitDate]) async {
+        dio.options.headers['Authorization'] = '';
     try {
       final response = await dio.post(
         '/partners/coupon',
@@ -457,6 +463,7 @@ class InclePartnersAPI {
   }
 
   Future<Map> getCouponList() async {
+    dio.options.headers['Authorization'] = '';
     try {
       final response = await dio.get(
         '/partners/coupon/list',
@@ -472,6 +479,7 @@ class InclePartnersAPI {
   }
 
   Future<Map> deleteCoupon(String couponID) async {
+    dio.options.headers['Authorization'] = '';
     try {
       final response = await dio.delete(
         '/partners/coupon/$couponID',
@@ -487,6 +495,7 @@ class InclePartnersAPI {
   }
 
   Future<Map> getDeliver() async {
+    dio.options.headers['Authorization'] = '';
     try {
       final response = await dio.get(
         '/partners/deliver',
@@ -504,6 +513,7 @@ class InclePartnersAPI {
   Future<Map> updateDeliver(
       {required Map<int, int> deliveryConditions,
       required int freeCondition}) async {
+        dio.options.headers['Authorization'] = '';
     try {
       final response = await dio.post(
         '/partners/deliver',
@@ -525,6 +535,7 @@ class InclePartnersAPI {
   }
 
   Future<Map> unpausePartners() async {
+    dio.options.headers['Authorization'] = '';
     try {
       final response = await dio.post(
         '/partners/unpause',
@@ -540,6 +551,7 @@ class InclePartnersAPI {
   }
 
   Future<Map> pausePartners(TimeOfDay startTime, TimeOfDay endTime) async {
+    dio.options.headers['Authorization'] = '';
     try {
       final response = await dio.post(
         '/partners/pause',
@@ -605,6 +617,7 @@ class InclePartnersAPI {
       required String modelSize,
       required Map<String, List<Map<String, dynamic>>> options,
       required List<String> cody}) async {
+        dio.options.headers['Authorization'] = '';
     try {
       final formData = FormData.fromMap({
         'name': name,
@@ -644,6 +657,7 @@ class InclePartnersAPI {
       {bool recommendedOnly = false, bool discountOnly = false}) async {
     assert((recommendedOnly || discountOnly) ||
         (!recommendedOnly || !discountOnly));
+        dio.options.headers['Authorization'] = '';
     try {
       Map<String, dynamic>? _queryParameter;
       if (recommendedOnly) {
@@ -676,6 +690,7 @@ class InclePartnersAPI {
       required String modelSize,
       required Map<String, List<Map<String, dynamic>>> options,
       required List<String> cody}) async {
+        dio.options.headers['Authorization'] = '';
     try {
       final formData = FormData.fromMap({
         'name': name,
@@ -712,6 +727,7 @@ class InclePartnersAPI {
   }
 
   Future<Map> deleteProduct({required String uid}) async {
+    dio.options.headers['Authorization'] = '';
     try {
       final response = await dio.delete('/partners/product/$uid');
       if (response.statusCode == 201) {
@@ -725,6 +741,7 @@ class InclePartnersAPI {
   }
 
   soldoutProduct({required String uid, required List<String> options}) async {
+    dio.options.headers['Authorization'] = ''; 
     try {
       final response = await dio.put(
         '/partners/product/soldout/$uid',
@@ -743,6 +760,7 @@ class InclePartnersAPI {
   }
 
   Future<Map> addProductOwnersRecommend({required String uid}) async {
+    dio.options.headers['Authorization'] = '';
     try {
       final response = await dio.put(
         '/partners/product/ownersrecommended/$uid',
@@ -759,6 +777,7 @@ class InclePartnersAPI {
 
   Future<Map> addProductDiscount(
       {required String uid, required int discountedPrice}) async {
+        dio.options.headers['Authorization'] = '';
     try {
       final response = await dio.put('/partners/product/discount/$uid',
           queryParameters: {'price': discountedPrice});
@@ -773,6 +792,7 @@ class InclePartnersAPI {
   }
 
   Future<Map> deleteProductOwnersRecommended({required String uid}) async {
+    dio.options.headers['Authorization'] = '';
     try {
       final response = await dio.delete(
         '/partners/product/ownersrecommended/$uid',
@@ -788,6 +808,7 @@ class InclePartnersAPI {
   }
 
   Future<Map> deleteProductDiscount({required String uid}) async {
+    dio.options.headers['Authorization'] = '';
     try {
       final response = await dio.delete(
         '/partners/product/discount/$uid',
