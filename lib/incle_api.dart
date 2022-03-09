@@ -6,78 +6,15 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:incle_api/dio_client.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:http/http.dart' as http;
 
 class InclePartnersAPI {
-  late Dio dio;
-  late FlutterSecureStorage storage;
+  final baseUrl = "https://incle.api.wim.kro.kr/api/v1/partners";
+  final FlutterSecureStorage storage;
 
-  static final InclePartnersAPI _instance = InclePartnersAPI._internal();
-
-  InclePartnersAPI._internal();
-
-  factory InclePartnersAPI([FlutterSecureStorage? storage]) {
-    if (storage == null) {
-      _instance.storage = const FlutterSecureStorage(
-          aOptions: AndroidOptions(encryptedSharedPreferences: true),
-          iOptions: IOSOptions(
-            accountName: 'InclePartners',
-            accessibility: IOSAccessibility.first_unlock,
-          ));
-    } else {
-      _instance.storage = storage;
-    }
-    _instance.dio = Dio();
-    _instance.dio.options =
-        BaseOptions(baseUrl: 'https://incle.api.wim.kro.kr/api/v1');
-    _instance.dio.interceptors.addAll([
-      InterceptorsWrapper(onRequest: (options, handler) async {
-        print('Intercepted, ${options.method} ${options.path}');
-        if (options.headers['Authorization'] != null) {
-          final _userToken = await _instance.storage.read(key: 'token');
-          options.headers['Authorization'] = 'Bearer $_userToken';
-        }
-        return handler.next(options);
-      }, onError: (error, handler) async {
-        print('Error occured, ${error.response}');
-        if (error.response?.statusCode == 412) {
-          final id = await _instance.storage.read(key: 'id');
-          final password = await _instance.storage.read(key: 'password');
-          try {
-            final tempDio = Dio()
-              ..options =
-                  BaseOptions(baseUrl: 'https://incle.api.wim.kro.kr/api/v1');
-            final response = await tempDio.post(
-              '/partners/login',
-              data: {
-                'id': id,
-                'password': password,
-              },
-            );
-            if (response.statusCode == 200) {
-              _instance.storage
-                  .write(key: 'token', value: response.data['data']);
-              return response.data;
-            } else {
-              throw Exception(response.statusMessage);
-            }
-          } catch (e) {
-            rethrow;
-          }
-        } else {
-          throw Exception(error.response);
-        }
-      }),
-      LogInterceptor(
-        request: true,
-        requestBody: true,
-        requestHeader: true,
-        error: true,
-      ),
-    ]);
-
-    return _instance;
-  }
+  InclePartnersAPI(this.storage);
 
   Future<bool> isSignedIn() async {
     return (await storage.read(key: 'id')) != null &&
@@ -117,6 +54,7 @@ class InclePartnersAPI {
     String? postCode,
   }) async {
     try {
+      final dio = getDioClient(baseUrl: baseUrl, secureStorage: storage);
       final formData = FormData.fromMap({
         'isRestHoliday': isRestHolidy,
         'id': id,
@@ -157,7 +95,7 @@ class InclePartnersAPI {
               filename: registration2.path.split('/').last)));
       dio.options.contentType = 'multipart/form-data';
       final response = await dio.post(
-        '/partners',
+        '',
         data: formData,
       );
       if (response.statusCode == 201) {
@@ -200,6 +138,8 @@ class InclePartnersAPI {
     dynamic profilePicture,
   }) async {
     try {
+      final dio = getDioClient(
+          baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
       dio.options.headers['Authorization'] = '';
       final formData = FormData.fromMap({
         'isRestHoliday': isRestHolidy,
@@ -224,6 +164,28 @@ class InclePartnersAPI {
         'latitude': latitude,
         'longitude': longitude,
       });
+
+      if (registration is File){
+        formData.files.add(MapEntry(
+            'businessReport',
+            await MultipartFile.fromFile(registration.path,
+                filename: registration.path.split('/').last)));
+      }
+      if (registration2 is File){
+        formData.files.add(MapEntry(
+            'businessRegistration',
+            await MultipartFile.fromFile(registration2.path,
+                filename: registration2.path.split('/').last)));
+      }
+
+      if (profilePicture is File) {
+        formData.files.add(MapEntry(
+            'profile',
+            await MultipartFile.fromFile(profilePicture.path,
+                filename: profilePicture.path.split('/').last)));
+      }
+      
+
       for (final picture in storePictures!) {
         if (picture is File) {
           formData.files.add(MapEntry(
@@ -231,39 +193,18 @@ class InclePartnersAPI {
               MultipartFile.fromFileSync(picture.path,
                   filename: picture.path.split('/').last)));
         } else {
-          final d = Dio();
+          final res = await http.Client().get(picture);
           final direc = await getTemporaryDirectory();
-          final path = direc.path;
-          final res = await d.download(picture,
-              path + '/storeImage${storePictures.indexOf(picture)}.jpg');
-          final data = res.data;
+          final path =
+              direc.path + '/storeImage${storePictures.indexOf(picture)}.jpg';
+          await File(path).writeAsBytes(res.bodyBytes);
 
-          return MapEntry(
-              'storeImages',
-              MultipartFile.fromFileSync(res.data.path,
-                  filename: res.data.path.split('/').last));
+          return MapEntry('storeImages',
+              MultipartFile.fromFileSync(path, filename: path.split('/').last));
         }
       }
-      if (registration is File) {
-        formData.files.add(MapEntry(
-            'businessReport',
-            MultipartFile.fromFileSync(registration.path,
-                filename: registration.path.split('/').last)));
-      }
-      if (registration2 is File) {
-        formData.files.add(MapEntry(
-            'businessRegistration',
-            MultipartFile.fromFileSync(registration2.path,
-                filename: registration2.path.split('/').last)));
-      }
-      if (profilePicture is File) {
-        formData.files.add(MapEntry(
-            'profile',
-            MultipartFile.fromFileSync(profilePicture.path,
-                filename: profilePicture.path.split('/').last)));
-      }
       final response = await dio.put(
-        '/partners',
+        '',
         data: formData,
       );
       if (response.statusCode == 201) {
@@ -277,10 +218,11 @@ class InclePartnersAPI {
   }
 
   Future<bool> isApproved() async {
+    final dio = getDioClient(baseUrl: baseUrl, secureStorage: storage);
     final id = await storage.read(key: 'id');
     final password = await storage.read(key: 'password');
     final response = await dio.post(
-      '/partners/login',
+      '/login',
       data: {
         'id': id,
         'password': password,
@@ -290,9 +232,10 @@ class InclePartnersAPI {
   }
 
   Future<Map> login(String id, String password) async {
+    final dio = getDioClient(baseUrl: baseUrl, secureStorage: storage);
     try {
       final response = await dio.post(
-        '/partners/login',
+        '/login',
         data: {
           'id': id,
           'password': password,
@@ -312,10 +255,11 @@ class InclePartnersAPI {
   }
 
   Future<Map> getPartnersProfile() async {
+    final dio = getDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
-      dio.options.headers['Authorization'] = '';
       final response = await dio.get(
-        '/partners',
+        '',
       );
       if (response.statusCode == 200) {
         return response.data;
@@ -328,10 +272,11 @@ class InclePartnersAPI {
   }
 
   Future<Map> deleteAccount() async {
+    final dio = getDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
-      dio.options.headers['Authorization'] = '';
       final response = await dio.delete(
-        '/partners',
+        '',
       );
       if (response.statusCode == 200) {
         storage.delete(key: 'token');
@@ -350,9 +295,10 @@ class InclePartnersAPI {
       {required String email,
       required String phone,
       required String name}) async {
+    final dio = getDioClient(baseUrl: baseUrl, secureStorage: storage);
     try {
       final response = await dio.post(
-        '/partners/find/password/allow',
+        '/find/password/allow',
         data: {
           'email': email,
           'phone': phone,
@@ -370,9 +316,10 @@ class InclePartnersAPI {
   }
 
   Future<Map> finidPassword(String code, String password) async {
+    final dio = getDioClient(baseUrl: baseUrl, secureStorage: storage);
     try {
       final response = await dio.post(
-        '/partners/find/password',
+        '/find/password',
         data: {
           'code': code,
           'password': password,
@@ -389,9 +336,10 @@ class InclePartnersAPI {
   }
 
   Future<Map> findId(String email, String name, String phone) async {
+    final dio = getDioClient(baseUrl: baseUrl, secureStorage: storage);
     try {
       final response = await dio.post(
-        '/partners/find/id',
+        '/find/id',
         data: {
           'email': email,
           'name': name,
@@ -410,9 +358,10 @@ class InclePartnersAPI {
 
   /// name 패러미터에는 email, id, phone 셋 중 하나만 입력해야 합니다.
   Future<Map> duplicateCheck(String name, String property) async {
+    final dio = getDioClient(baseUrl: baseUrl, secureStorage: storage);
     try {
       final response = await dio.get(
-        '/partners/duplicate',
+        '/duplicate',
         queryParameters: {
           'name': name,
           'property': property,
@@ -429,9 +378,10 @@ class InclePartnersAPI {
   }
 
   Future<Map> sendVerifyNum(String phoneNumber) async {
+    final dio = getDioClient(baseUrl: baseUrl, secureStorage: storage);
     try {
       final response = await dio.post(
-        '/partners/verification',
+        '/verification',
         queryParameters: {
           'phone': phoneNumber,
         },
@@ -447,9 +397,10 @@ class InclePartnersAPI {
   }
 
   Future<Map> checkVerifyNum(String phoneNumber, String code) async {
+    final dio = getDioClient(baseUrl: baseUrl, secureStorage: storage);
     try {
       final response = await dio.post(
-        '/partners/verification',
+        '/verification',
         queryParameters: {
           'phone': phoneNumber,
           'code': code,
@@ -467,10 +418,11 @@ class InclePartnersAPI {
 
   Future<Map> createCoupon(String name, int price, int condition,
       [DateTime? limitDate]) async {
-    dio.options.headers['Authorization'] = '';
+    final dio = getDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
       final response = await dio.post(
-        '/partners/coupon',
+        '/coupon',
         data: {
           'name': name,
           'price': price,
@@ -490,10 +442,11 @@ class InclePartnersAPI {
   }
 
   Future<Map> getCouponList() async {
-    dio.options.headers['Authorization'] = '';
+    final dio = getDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
       final response = await dio.get(
-        '/partners/coupon/list',
+        '/coupon/list',
       );
       if (response.statusCode == 200) {
         return response.data;
@@ -506,10 +459,11 @@ class InclePartnersAPI {
   }
 
   Future<Map> deleteCoupon(String couponID) async {
-    dio.options.headers['Authorization'] = '';
+    final dio = getDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
       final response = await dio.delete(
-        '/partners/coupon/$couponID',
+        '/coupon/$couponID',
       );
       if (response.statusCode == 201) {
         return response.data;
@@ -522,10 +476,11 @@ class InclePartnersAPI {
   }
 
   Future<Map> getDeliver() async {
-    dio.options.headers['Authorization'] = '';
+    final dio = getDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
       final response = await dio.get(
-        '/partners/deliver',
+        '/deliver',
       );
       if (response.statusCode == 201) {
         return response.data;
@@ -540,10 +495,11 @@ class InclePartnersAPI {
   Future<Map> updateDeliver(
       {required Map<int, int> deliveryConditions,
       required int freeCondition}) async {
-    dio.options.headers['Authorization'] = '';
+    final dio = getDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
       final response = await dio.post(
-        '/partners/deliver',
+        '/deliver',
         data: {
           'deliver': deliveryConditions.entries
               .map((e) => {'km': e.key, 'price': e.value})
@@ -562,10 +518,11 @@ class InclePartnersAPI {
   }
 
   Future<Map> unpausePartners() async {
-    dio.options.headers['Authorization'] = '';
+    final dio = getDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
       final response = await dio.post(
-        '/partners/unpause',
+        '/unpause',
       );
       if (response.statusCode == 201) {
         return response.data;
@@ -578,10 +535,11 @@ class InclePartnersAPI {
   }
 
   Future<Map> pausePartners(TimeOfDay startTime, TimeOfDay endTime) async {
-    dio.options.headers['Authorization'] = '';
+    final dio = getDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
       final response = await dio.post(
-        '/partners/pause',
+        '/pause',
         data: {
           'pause_start_date':
               '${startTime.hour.toString().padLeft(2, '0')}:${startTime.minute.toString().padLeft(2, '0')}',
@@ -601,6 +559,8 @@ class InclePartnersAPI {
 
   Future<bool> isServerHealthy() async {
     try {
+      final dio = getDioClient(
+          baseUrl: 'https://incle.api.wim.kro.kr/api/v1', secureStorage: storage);
       final response = await dio.get('/health');
       if (response.statusCode == 200) {
         return true;
@@ -613,6 +573,8 @@ class InclePartnersAPI {
   }
 
   Future<bool> holidayCheck(String year, String month, String day) async {
+    final dio = getDioClient(
+        baseUrl: 'https://incle.api.wim.kro.kr/api/v1', secureStorage: storage);
     try {
       final response = await dio.get(
         '/holiday',
@@ -644,7 +606,8 @@ class InclePartnersAPI {
       required String modelSize,
       required Map<String, List<Map<String, dynamic>>> options,
       required List<String> cody}) async {
-    dio.options.headers['Authorization'] = '';
+    final dio = getDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
       final formData = FormData.fromMap({
         'name': name,
@@ -669,7 +632,7 @@ class InclePartnersAPI {
           ),
         );
       }
-      final response = await dio.post('/partners/product', data: formData);
+      final response = await dio.post('/product', data: formData);
       if (response.statusCode == 201) {
         return response.data;
       } else {
@@ -684,7 +647,8 @@ class InclePartnersAPI {
       {bool recommendedOnly = false, bool discountOnly = false}) async {
     assert((recommendedOnly || discountOnly) ||
         (!recommendedOnly || !discountOnly));
-    dio.options.headers['Authorization'] = '';
+    final dio = getDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
       Map<String, dynamic>? _queryParameter;
       if (recommendedOnly) {
@@ -693,7 +657,7 @@ class InclePartnersAPI {
         _queryParameter = {'option': 'discount_price'};
       }
       final response =
-          await dio.get('/partners/product', queryParameters: _queryParameter);
+          await dio.get('/product', queryParameters: _queryParameter);
       if (response.statusCode == 200) {
         return response.data;
       } else {
@@ -717,7 +681,9 @@ class InclePartnersAPI {
       required String modelSize,
       required Map<String, List<Map<String, dynamic>>> options,
       required List<String> cody}) async {
-    dio.options.headers['Authorization'] = '';
+    final dio = getDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+    
     try {
       final formData = FormData.fromMap({
         'name': name,
@@ -758,7 +724,7 @@ class InclePartnersAPI {
           );
         }
       }
-      final response = await dio.put('/partners/product/$uid', data: formData);
+      final response = await dio.put('/product/$uid', data: formData);
       if (response.statusCode == 201) {
         return response.data;
       } else {
@@ -770,9 +736,10 @@ class InclePartnersAPI {
   }
 
   Future<Map> deleteProduct({required String uid}) async {
-    dio.options.headers['Authorization'] = '';
+    final dio = getDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
-      final response = await dio.delete('/partners/product/$uid');
+      final response = await dio.delete('/product/$uid');
       if (response.statusCode == 201) {
         return response.data;
       } else {
@@ -784,10 +751,11 @@ class InclePartnersAPI {
   }
 
   soldoutProduct({required String uid, required List<String> options}) async {
-    dio.options.headers['Authorization'] = '';
+    final dio = getDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
       final response = await dio.put(
-        '/partners/product/soldout/$uid',
+        '/product/soldout/$uid',
         data: {
           'options': options,
         },
@@ -803,10 +771,11 @@ class InclePartnersAPI {
   }
 
   Future<Map> addProductOwnersRecommend({required String uid}) async {
-    dio.options.headers['Authorization'] = '';
+    final dio = getDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
       final response = await dio.put(
-        '/partners/product/ownersrecommended/$uid',
+        '/product/ownersrecommended/$uid',
       );
       if (response.statusCode == 201) {
         return response.data;
@@ -820,9 +789,10 @@ class InclePartnersAPI {
 
   Future<Map> addProductDiscount(
       {required String uid, required int discountedPrice}) async {
-    dio.options.headers['Authorization'] = '';
+    final dio = getDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
-      final response = await dio.put('/partners/product/discount/$uid',
+      final response = await dio.put('/product/discount/$uid',
           queryParameters: {'price': discountedPrice});
       if (response.statusCode == 201) {
         return response.data;
@@ -835,10 +805,11 @@ class InclePartnersAPI {
   }
 
   Future<Map> deleteProductOwnersRecommended({required String uid}) async {
-    dio.options.headers['Authorization'] = '';
+    final dio = getDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
       final response = await dio.delete(
-        '/partners/product/ownersrecommended/$uid',
+        '/product/ownersrecommended/$uid',
       );
       if (response.statusCode == 201) {
         return response.data;
@@ -851,10 +822,11 @@ class InclePartnersAPI {
   }
 
   Future<Map> deleteProductDiscount({required String uid}) async {
-    dio.options.headers['Authorization'] = '';
+    final dio = getDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
       final response = await dio.delete(
-        '/partners/product/discount/$uid',
+        '/product/discount/$uid',
       );
       if (response.statusCode == 201) {
         return response.data;
