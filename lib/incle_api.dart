@@ -232,8 +232,12 @@ class InclePartnersAPI {
                   filename: picture.path.split('/').last)));
         } else {
           final d = Dio();
-          final res = await d.downloadUri(
-              Uri.parse(picture), (await getTemporaryDirectory()).path);
+          final direc = await getTemporaryDirectory();
+          final path = direc.path;
+          final res = await d.download(picture,
+              path + '/storeImage${storePictures.indexOf(picture)}.jpg');
+          final data = res.data;
+
           return MapEntry(
               'storeImages',
               MultipartFile.fromFileSync(res.data.path,
@@ -245,24 +249,18 @@ class InclePartnersAPI {
             'businessReport',
             MultipartFile.fromFileSync(registration.path,
                 filename: registration.path.split('/').last)));
-      } else {
-        formData.fields.add(MapEntry('businessReport', registration));
       }
       if (registration2 is File) {
         formData.files.add(MapEntry(
             'businessRegistration',
             MultipartFile.fromFileSync(registration2.path,
                 filename: registration2.path.split('/').last)));
-      } else {
-        formData.fields.add(MapEntry('businessRegistration', registration2));
       }
       if (profilePicture is File) {
         formData.files.add(MapEntry(
-            'profileImage',
+            'profile',
             MultipartFile.fromFileSync(profilePicture.path,
                 filename: profilePicture.path.split('/').last)));
-      } else {
-        formData.fields.add(MapEntry('profileImage', profilePicture));
       }
       final response = await dio.put(
         '/partners',
@@ -711,7 +709,7 @@ class InclePartnersAPI {
       required String name,
       required String price,
       required bool todayGet,
-      required List<File> images,
+      required List images,
       required String description,
       required int modelHeight,
       required int modelWeight,
@@ -734,15 +732,31 @@ class InclePartnersAPI {
         'cody': cody,
       });
       for (var image in images) {
-        formData.files.add(
-          MapEntry(
-            'images',
-            await MultipartFile.fromFile(
-              image.path,
-              filename: image.path.split('/').last,
+        if (image is File) {
+          formData.files.add(
+            MapEntry(
+              'images',
+              await MultipartFile.fromFile(
+                image.path,
+                filename: image.path.split('/').last,
+              ),
             ),
-          ),
-        );
+          );
+        } else if (image is String) {
+          final d = Dio();
+          final filePath =
+              '${(await getTemporaryDirectory()).path}/temp_product${images.indexOf(image)}.jpg';
+          await d.download(image, filePath);
+          formData.files.add(
+            MapEntry(
+              'images',
+              await MultipartFile.fromFile(
+                filePath,
+                filename: image.split('/').last,
+              ),
+            ),
+          );
+        }
       }
       final response = await dio.put('/partners/product/$uid', data: formData);
       if (response.statusCode == 201) {
