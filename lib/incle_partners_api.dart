@@ -372,17 +372,23 @@ class InclePartnersAPI {
   // }
 
   /// name 패러미터에는 email, id, phone, partnersNames 넷 중 하나만 입력해야 합니다.
-  Future<Map> duplicateCheck(
+  Future<List> duplicateCheck(
       {String? userName, String? phoneNumber, String? email}) async {
     final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
     try {
+      final queryParameters = <String, String>{};
+      if (userName != null) {
+        queryParameters['name'] = userName;
+      }
+      if (phoneNumber != null) {
+        queryParameters['phone'] = phoneNumber;
+      }
+      if (email != null) {
+        queryParameters['email'] = email;
+      }
       final response = await dio.get(
-        '/partners/duplicatation',
-        queryParameters: {
-          'userName': userName,
-          'phone': phoneNumber,
-          'email': email,
-        },
+        '/partners/duplication',
+        queryParameters: queryParameters,
       );
       if (response.statusCode == 200) {
         return response.data;
@@ -446,7 +452,7 @@ class InclePartnersAPI {
   // Delivery
   //
 
-  Future<Map> getDeliver(String storeUid) async {
+  Future<List<Map>> getDeliver(String storeUid) async {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
@@ -454,7 +460,7 @@ class InclePartnersAPI {
         '/stores/$storeUid/deliveries',
       );
       if (response.statusCode == 201) {
-        return response.data;
+        return response.data['rows'];
       } else {
         throw Exception(response);
       }
@@ -568,6 +574,30 @@ class InclePartnersAPI {
   }
 
   //
+  // Product Questions
+  //
+
+  Future<void> replyQuestion({required String questionUid, required String reply}) async {
+    final dio = getPartnersDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+    try {
+      final response = await dio.post(
+        '/store/products/questions/$questionUid',
+        data: {
+          'reply': reply,
+        },
+      );
+      if (response.statusCode == 201) {
+        return;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  //
   // Product
   //
 
@@ -657,44 +687,6 @@ class InclePartnersAPI {
       }
       final response = await dio.post('/products', data: formData);
       if (response.statusCode == 201) {
-        return response.data;
-      } else {
-        throw Exception(response.statusMessage);
-      }
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future<Map<String, dynamic>> getPartnersProductList({
-    OrderProperty orderProperty = OrderProperty.createdDate,
-    OrderValue orderValue = OrderValue.DESC,
-    String? findProperty,
-    String? findValue,
-    FindType? findType,
-    int page = 0,
-    int perPage = 10,
-    String? storeUid,
-    String? productParentCategoryUid,
-    FilterType discoundFilter = FilterType.all,
-    FilterType recommendedFilter = FilterType.all,
-  }) async {
-    final dio = getPartnersDioClient(
-        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
-    try {
-      Map<String, dynamic> _queryParameter = {
-        'orderProperty': orderProperty.toString(),
-        'orderValue': orderValue.toString(),
-        'page': page,
-        'perPage': perPage,
-        'storeUid': storeUid,
-        'productParentCategoryUid': productParentCategoryUid,
-        'isDiscountedProduct': discoundFilter.value,
-        'isRecommendedProduct': recommendedFilter.value,
-      };
-      final response =
-          await dio.get('/products', queryParameters: _queryParameter);
-      if (response.statusCode == 200) {
         return response.data;
       } else {
         throw Exception(response.statusMessage);
@@ -838,6 +830,50 @@ class InclePartnersAPI {
           queryParameters: {
             'discountedPrice': isDiscounted ? discountedPrice : 0
           });
+      if (response.statusCode == 200) {
+        return response.data;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  //
+  // Order
+  //
+
+  Future<List<Map<String, dynamic>>> getOrderSummaryList(
+      {int page = 0,
+      int perPage = 10,
+      required BackendOrderStatus orderStatusFilter}) async {
+    final dio = getPartnersDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+    try {
+      final response = await dio.get(
+        '/orders',
+        queryParameters: {
+          'page': page,
+          'perPage': perPage,
+          'orderStatus': orderStatusFilter.index,
+        },
+      );
+      if (response.statusCode == 200) {
+        return response.data['rows'];
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  Future<Map<String, dynamic>> getOrderDetail({required String uid}) async {
+    final dio = getPartnersDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+    try {
+      final response = await dio.get('/orders/$uid');
       if (response.statusCode == 200) {
         return response.data;
       } else {

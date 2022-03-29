@@ -1,17 +1,17 @@
-// import 'dart:developer';
-// import 'dart:io';
+import 'dart:developer';
+import 'dart:io';
 
-// import 'package:dio/dio.dart';
-// import 'package:flutter/foundation.dart';
-// import 'package:flutter/material.dart';
-// import 'package:flutter_test/flutter_test.dart';
-// import 'package:incle_api/incle_api.dart';
-// import 'package:mocktail/mocktail.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:incle_api/incle_api.dart';
+import 'package:mocktail/mocktail.dart';
 
-// import 'mock_services.dart';
+import 'mock_services.dart';
 
 // void main() {
-//   final mockStorage = MockFlutterSecureStoreage();
+//   
 
 //   test('test dio option', () async {
 //     // Arrange
@@ -654,3 +654,19 @@
 //     print(result.toString());
 //   });
 // }
+
+void main() {
+  final mockStorage = MockFlutterSecureStoreage();
+test('test duplicate check', () async {
+  // Arrange
+  final client = InclePartnersAPI(mockStorage);
+
+  when(() => mockStorage.read(key: 'accesToken')).thenAnswer((invocation) async =>
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4MjUwMWE5LTc0ZDgtNGI0Yy1hMzRiLTI1ZWRjNGY1YjJlYyIsImlhdCI6MTY0NTc1NTA1OCwiZXhwIjo1MjQ1NzU1MDU4fQ.jPt7oFHB2ZRtIj60fjAwm91T8CuSJpMCBrDF-fyG_sw');
+  // Act
+  final result = await client.duplicateCheck(userName: 'gur');
+
+  // Assert
+  print(result.toString());
+});
+}

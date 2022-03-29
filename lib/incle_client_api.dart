@@ -266,6 +266,13 @@ class IncleClientAPI {
   }
 
   //
+  // Product Questions
+  //
+
+  // Future<void> postQuestion({required String productID, required String comment})
+
+
+  //
   // Product Subscription
   //
 
@@ -288,6 +295,50 @@ class IncleClientAPI {
         } else {
           throw Exception(res.statusMessage);
         }
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+   //
+  // Order
+  //
+
+  Future<List<Map<String, dynamic>>> getOrderSummaryList(
+      {int page = 0,
+      int perPage = 10,
+      required BackendOrderStatus orderStatusFilter}) async {
+    final dio = getClientDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+    try {
+      final response = await dio.get(
+        '/orders',
+        queryParameters: {
+          'page': page,
+          'perPage': perPage,
+          'orderStatus': orderStatusFilter.index,
+        },
+      );
+      if (response.statusCode == 200) {
+        return response.data['rows'];
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  Future<Map<String, dynamic>> getOrderDetail({required String uid}) async {
+    final dio = getClientDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+    try {
+      final response = await dio.get('/orders/$uid');
+      if (response.statusCode == 200) {
+        return response.data;
+      } else {
+        throw Exception(response.statusMessage);
       }
     } catch (e) {
       rethrow;

@@ -74,7 +74,7 @@ class IncleGeneralAPI {
   // Store
   //
 
-  Future<Map<String, dynamic>> getStoreList(
+  Future<List<Map<String, dynamic>>> getStoreList(
       {int page = 0,
       int perPage = 10,
       String? storeName,
@@ -97,7 +97,7 @@ class IncleGeneralAPI {
         },
       );
       if (response.statusCode == 200) {
-        return response.data;
+        return response.data['rows'];
       } else {
         throw Exception(response.statusMessage);
       }
@@ -106,7 +106,7 @@ class IncleGeneralAPI {
     }
   }
 
-  Future<Map<String, dynamic>> getStoreCategories() async {
+  Future<List<Map<String, dynamic>>> getStoreCategories() async {
     final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
     try {
       final response = await dio.get('/stores/tags');
@@ -120,7 +120,7 @@ class IncleGeneralAPI {
     }
   }
 
-  Future<Map> getCouponList() async {
+  Future<List<Map<String, dynamic>>> getCouponList() async {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
@@ -128,7 +128,7 @@ class IncleGeneralAPI {
         '/coupons',
       );
       if (response.statusCode == 200) {
-        return response.data;
+        return response.data['rows'];
       } else {
         throw Exception(response.statusMessage);
       }
@@ -141,7 +141,7 @@ class IncleGeneralAPI {
   // Category
   //
 
-  Future<Map<String, dynamic>> getProductParentCategories() async {
+  Future<List<Map<String, dynamic>>> getProductParentCategories() async {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
@@ -149,7 +149,7 @@ class IncleGeneralAPI {
         '/categories',
       );
       if (response.statusCode == 200) {
-        return response.data;
+        return response.data['rows'];
       } else {
         throw Exception(response.statusMessage);
       }
@@ -158,7 +158,8 @@ class IncleGeneralAPI {
     }
   }
 
-  Future<Map<String, dynamic>> getSubCategories(String parentCategoryID) async {
+  Future<List<Map<String, dynamic>>> getSubCategories(
+      String parentCategoryID) async {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
@@ -166,7 +167,7 @@ class IncleGeneralAPI {
         '/categories/$parentCategoryID',
       );
       if (response.statusCode == 200) {
-        return response.data;
+        return response.data['rows'];
       } else {
         throw Exception(response.statusMessage);
       }
@@ -179,14 +180,39 @@ class IncleGeneralAPI {
   // Banner
   //
 
-  Future<Map<String, dynamic>> getBanners() async {
+  Future<List<Map<String, dynamic>>> getBanners() async {
     final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
     try {
       final response = await dio.get(
         '/banners',
       );
       if (response.statusCode == 200) {
-        return response.data;
+        return response.data['rows'];
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  //
+  // Product Question
+  //
+
+  Future<List<Map<String, dynamic>>> getProductQuestions({int page = 0, int perPage = 10, String? productUid}) async {
+    final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
+    try {
+      final response = await dio.get(
+        '/stores/product/questions',
+        queryParameters: {
+          'page': page,
+          'perPage': perPage,
+          'productUid': productUid,
+        },
+      );
+      if (response.statusCode == 200) {
+        return response.data['rows'];
       } else {
         throw Exception(response.statusMessage);
       }
@@ -213,6 +239,44 @@ class IncleGeneralAPI {
       }
     } catch (e) {
       throw Exception(e.toString());
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getProductList({
+    OrderProperty orderProperty = OrderProperty.createdDate,
+    OrderValue orderValue = OrderValue.DESC,
+    String? findProperty,
+    String? findValue,
+    FindType? findType,
+    int page = 0,
+    int perPage = 10,
+    String? storeUid,
+    String? productParentCategoryUid,
+    FilterType discoundFilter = FilterType.all,
+    FilterType recommendedFilter = FilterType.all,
+  }) async {
+    final dio = getPartnersDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+    try {
+      Map<String, dynamic> _queryParameter = {
+        'orderProperty': orderProperty.toString(),
+        'orderValue': orderValue.toString(),
+        'page': page,
+        'perPage': perPage,
+        'storeUid': storeUid,
+        'productParentCategoryUid': productParentCategoryUid,
+        'isDiscountedProduct': discoundFilter.value,
+        'isRecommendedProduct': recommendedFilter.value,
+      };
+      final response =
+          await dio.get('/products', queryParameters: _queryParameter);
+      if (response.statusCode == 200) {
+        return response.data;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      rethrow;
     }
   }
 
@@ -262,7 +326,8 @@ class IncleGeneralAPI {
     }
   }
 
-  Future<Map<String, dynamic>> completePayment({required String paymentServiceUid, required String merchantUid}) async {
+  Future<Map<String, dynamic>> completePayment(
+      {required String paymentServiceUid, required String merchantUid}) async {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
@@ -274,6 +339,49 @@ class IncleGeneralAPI {
         },
       );
       if (response.statusCode == 201) {
+        return response.data;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  //
+  // Review
+  //
+
+  Future<List<Map<String, dynamic>>> getReviewList(
+      {int page = 0, int perPage = 10, String? productUid}) async {
+    final dio = getPartnersDioClient(
+        baseUrl: baseUrl, secureStorage: storage);
+    try {
+      Map<String, dynamic> _queryParameter = {
+        'page': page,
+        'perPage': perPage,
+        'productUid': productUid,
+      };
+      final response =
+          await dio.get('/reviews', queryParameters: _queryParameter);
+      if (response.statusCode == 200) {
+        return response.data['rows'];
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  Future<Map<String, dynamic>> getDetailReview(String reviewID) async {
+    final dio = getPartnersDioClient(
+        baseUrl: baseUrl, secureStorage: storage);
+    try {
+      final response = await dio.get(
+        '/reviews/$reviewID',
+      );
+      if (response.statusCode == 200) {
         return response.data;
       } else {
         throw Exception(response.statusMessage);
