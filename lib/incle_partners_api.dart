@@ -1,6 +1,5 @@
 part of 'incle_api.dart';
 
-
 class InclePartnersAPI {
   final baseUrl = "http://backend.wim.kro.kr:5000/api/v1";
   final FlutterSecureStorage storage;
@@ -373,14 +372,16 @@ class InclePartnersAPI {
   // }
 
   /// name 패러미터에는 email, id, phone, partnersNames 넷 중 하나만 입력해야 합니다.
-  Future<Map> duplicateCheck(String name, String property) async {
+  Future<Map> duplicateCheck(
+      {String? userName, String? phoneNumber, String? email}) async {
     final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
     try {
       final response = await dio.get(
         '/partners/duplicatation',
         queryParameters: {
-          'name': name,
-          'property': property,
+          'userName': userName,
+          'phone': phoneNumber,
+          'email': email,
         },
       );
       if (response.statusCode == 200) {

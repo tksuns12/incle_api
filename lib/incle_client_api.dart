@@ -138,9 +138,9 @@ class IncleClientAPI {
   }
 
   Future<Map<String, dynamic>> checkDuplicate(
-      {required String userName,
-      required String phoneNumber,
-      required String email}) async {
+      {String? userName,
+      String? phoneNumber,
+      String? email}) async {
     try {
       final dio = getClientDioClient(baseUrl: baseUrl, secureStorage: storage);
       final res = await dio.get('/users/duplication', queryParameters: {
