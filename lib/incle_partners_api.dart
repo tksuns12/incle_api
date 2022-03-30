@@ -173,6 +173,66 @@ class InclePartnersAPI {
     }
   }
 
+  Future<Map<String, dynamic>> updateUserInfo(
+      {required String password,
+      required String name,
+      required String phoneNumber,
+      required String email,
+      required File profileImage}) async {
+    try {
+      final dio = getPartnersDioClient(
+          baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+      final formData = FormData.fromMap({
+        'password': password,
+        'name': name,
+        'phone': phoneNumber,
+        'email': email,
+      });
+      formData.files.add(MapEntry(
+          'profileImage',
+          await MultipartFile.fromFile(profileImage.path,
+              filename: profileImage.path.split('/').last)));
+      dio.options.contentType = 'multipart/form-data';
+      final response = await dio.patch(
+        '/partners/profile',
+        data: formData,
+      );
+      if (response.statusCode == 200) {
+        return response.data;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>> updateBankAccountInfo(
+      {required String bankName,
+      required String accountNumber,
+      required String accountOwnerName}) async {
+    try {
+      final dio = getPartnersDioClient(
+          baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+
+      final response = await dio.patch(
+        '/partners/account',
+        data: {
+          'accountBank': bankName,
+          'accountNumber': accountNumber,
+          'accountName': accountOwnerName,
+        },
+      );
+      if (response.statusCode == 200) {
+        return response.data;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   // updateProfile({
   //   String? id,
   //   String? password,
@@ -901,11 +961,13 @@ class InclePartnersAPI {
   // Review
   //
 
-  Future<Map<String, dynamic>> replyReview({required String reviewUid, required String reply }) async {
+  Future<Map<String, dynamic>> replyReview(
+      {required String reviewUid, required String reply}) async {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
-      final response = await dio.post('/reviews/$reviewUid', data: {'reply': reply});
+      final response =
+          await dio.post('/reviews/$reviewUid', data: {'reply': reply});
       if (response.statusCode == 201) {
         return response.data;
       } else {

@@ -197,7 +197,11 @@ class IncleGeneralAPI {
   //
 
   Future<List<Map<String, dynamic>>> getProductQuestions(
-      {int page = 0, int perPage = 10, String? productUid}) async {
+      {int page = 0,
+      int perPage = 10,
+      String? productUid,
+      String? storeUid,
+      required bool? isReplied}) async {
     final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
     try {
       final response = await dio.get(
@@ -206,6 +210,12 @@ class IncleGeneralAPI {
           'page': page,
           'perPage': perPage,
           'productUid': productUid,
+          'storeUid': storeUid,
+          'isReplied': isReplied == null
+              ? 0
+              : isReplied
+                  ? 1
+                  : 0,
         },
       );
       if (response.statusCode == 200) {
