@@ -17,11 +17,7 @@ class IncleGeneralAPI {
           secureStorage: storage,
           needAuthorization: false);
       final response = await dio.get('/health');
-      if (response.statusCode == 200) {
-        return true;
-      } else {
-        return false;
-      }
+      return (response.statusCode == 200);
     } catch (e) {
       return false;
     }

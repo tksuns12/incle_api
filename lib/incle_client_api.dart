@@ -16,7 +16,7 @@ class IncleClientAPI {
       final dio = getClientDioClient(baseUrl: baseUrl, secureStorage: storage);
       final res = await dio
           .post('/login-user', data: {'userName': id, 'password': password});
-      if (res.statusCode == 200) {
+      if (res.statusCode == 201) {
         storage.write(key: 'id', value: id);
         storage.write(key: 'password', value: password);
         storage.write(key: 'accessToken', value: res.data['accessToken']);
@@ -34,8 +34,12 @@ class IncleClientAPI {
     try {
       final dio = getClientDioClient(
           baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
-      await dio.post('/logout');
-      await storage.deleteAll();
+      final res = await dio.post('/logout');
+      if (res.statusCode == 201) {
+        await storage.deleteAll();
+      } else {
+        throw Exception(res.statusMessage);
+      }
     } catch (e) {
       rethrow;
     }
@@ -439,6 +443,52 @@ class IncleClientAPI {
       }
     } catch (e) {
       throw Exception(e.toString());
+    }
+  }
+
+  //
+  // Review
+  //
+
+  Future<Map<String, dynamic>> postReview(
+      {required String orderUid,
+      required int rating,
+      required int height,
+      required int weight,
+      required String comment,
+      required String suitability,
+      List<File>? images}) async {
+    final dio = getClientDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+    try {
+      final formData = FormData.fromMap({
+        'orderUid': orderUid,
+        'rating': rating,
+        'height': height,
+        'weight': weight,
+        'comment': comment,
+        'suitability': suitability,
+      });
+
+      if (images != null) {
+        for (var file in images) {
+          formData.files.add(MapEntry(
+              'reviewFile',
+              await MultipartFile.fromFile(file.path,
+                  filename: file.path.split('/').last)));
+        }
+      }
+      final response = await dio.post(
+        '/reviews',
+        data: formData,
+      );
+      if (response.statusCode == 201) {
+        return response.data;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      rethrow;
     }
   }
 }

@@ -19,8 +19,12 @@ class InclePartnersAPI {
     try {
       final dio = getPartnersDioClient(
           baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
-      await dio.post('/logout');
-      await storage.deleteAll();
+      final res = await dio.post('/logout');
+      if (res.statusCode == 201) {
+        await storage.deleteAll();
+      } else {
+        throw Exception(res.statusMessage);
+      }
     } catch (e) {
       rethrow;
     }
@@ -467,7 +471,7 @@ class InclePartnersAPI {
       final response = await dio.get(
         '/stores/$storeUid/deliveries',
       );
-      if (response.statusCode == 201) {
+      if (response.statusCode == 200) {
         return response.data['rows'];
       } else {
         throw Exception(response);
@@ -778,7 +782,7 @@ class InclePartnersAPI {
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
       final response = await dio.delete('/products/$uid');
-      if (response.statusCode == 201) {
+      if (response.statusCode == 200) {
         return response.data;
       } else {
         throw Exception(response.statusMessage);
@@ -884,6 +888,25 @@ class InclePartnersAPI {
     try {
       final response = await dio.get('/orders/$uid');
       if (response.statusCode == 200) {
+        return response.data;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  //
+  // Review
+  //
+
+  Future<Map<String, dynamic>> replyReview({required String reviewUid, required String reply }) async {
+    final dio = getPartnersDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+    try {
+      final response = await dio.post('/reviews/$reviewUid', data: {'reply': reply});
+      if (response.statusCode == 201) {
         return response.data;
       } else {
         throw Exception(response.statusMessage);

@@ -29,7 +29,7 @@ Dio getClientDioClient(
         final response = await refreshDio.post(
           '/refresh',
         );
-        if (response.statusCode == 200) {
+        if (response.statusCode == 201) {
           storage.write(
               key: 'accessToken', value: response.data['accessToken']);
           storage.write(
@@ -42,7 +42,7 @@ Dio getClientDioClient(
                 headers: error.requestOptions.headers,
               ));
           return handler.resolve(retryReq);
-        } else if (response.statusCode == 412) {
+        } else if (response.statusCode == 401) {
           final id = await storage.read(key: 'id');
           final password = await storage.read(key: 'password');
           final loginDio = Dio()
@@ -52,7 +52,7 @@ Dio getClientDioClient(
             '/login-user',
             data: {'id': id, 'password': password},
           );
-          if (response.statusCode == 200) {
+          if (response.statusCode == 201) {
             storage.write(
                 key: 'accessToken', value: response.data['accessToken']);
             storage.write(
