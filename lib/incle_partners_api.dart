@@ -53,7 +53,9 @@ class InclePartnersAPI {
       if (response.statusCode == 200) {
         storage.write(key: 'id', value: id);
         storage.write(key: 'password', value: password);
-        storage.write(key: 'token', value: response.data['data']);
+        storage.write(key: 'accessToken', value: response.data['accessToken']);
+        storage.write(
+            key: 'refreshToken', value: response.data['refreshToken']);
         return response.data;
       } else {
         throw Exception(response.statusMessage);

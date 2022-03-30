@@ -1,6 +1,6 @@
 name: incle_api
 description: API Client for Incle
-version: 0.1.5
+version: 0.1.6
 homepage:
 
 environment:
@@ -15,13 +15,13 @@ dependencies:
   path_provider:
   http: ^0.13.4
   tuple: ^2.0.0
+  logger:
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^1.0.0
   mocktail:
-  curl_logger_dio_interceptor:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

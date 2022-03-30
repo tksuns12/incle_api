@@ -16,7 +16,15 @@ class IncleClientAPI {
       final dio = getClientDioClient(baseUrl: baseUrl, secureStorage: storage);
       final res = await dio
           .post('/login-user', data: {'userName': id, 'password': password});
-      return res.data;
+      if (res.statusCode == 200) {
+        storage.write(key: 'id', value: id);
+        storage.write(key: 'password', value: password);
+        storage.write(key: 'accessToken', value: res.data['accessToken']);
+        storage.write(key: 'refreshToken', value: res.data['refreshToken']);
+        return res.data;
+      } else {
+        throw Exception(res.statusMessage);
+      }
     } catch (e) {
       rethrow;
     }

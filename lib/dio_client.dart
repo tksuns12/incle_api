@@ -1,10 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:logger/logger.dart';
 
-Dio getClientDioClient({bool needAuthorization = false,
+Dio getClientDioClient(
+    {bool needAuthorization = false,
     required String baseUrl,
     required FlutterSecureStorage secureStorage}) {
-        final _dio = Dio();
+      final logger = Logger();
+  final _dio = Dio();
   final storage = secureStorage;
   _dio.options.baseUrl = baseUrl;
   if (needAuthorization) {
@@ -12,10 +15,10 @@ Dio getClientDioClient({bool needAuthorization = false,
         .add(InterceptorsWrapper(onRequest: (options, handler) async {
       final _userToken = await storage.read(key: 'accessToken');
       options.headers['Authorization'] = 'Bearer $_userToken';
-      print('Intercepted, ${options.method} ${options.path}');
+      logger.d('Intercepted, ${options.method} ${options.path}');
       return handler.next(options);
     }, onError: (error, handler) async {
-      print('Error occured, ${error.response}');
+      logger.e('Error occured, ${error.response}');
       if (error.response?.statusCode == 412) {
         final refreshToken = await storage.read(key: 'refreshToken');
         final refreshDio = Dio()
@@ -81,7 +84,7 @@ Dio getClientDioClient({bool needAuthorization = false,
       request: true,
       error: true));
   return _dio;
-    }
+}
 
 Dio getPartnersDioClient(
     {bool needAuthorization = false,
