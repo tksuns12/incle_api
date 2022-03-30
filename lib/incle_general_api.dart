@@ -70,7 +70,7 @@ class IncleGeneralAPI {
   // Store
   //
 
-  Future<List<Map<String, dynamic>>> getStoreList(
+  Future<List<Map>> getStoreList(
       {int page = 0,
       int perPage = 10,
       String? storeName,
@@ -102,7 +102,7 @@ class IncleGeneralAPI {
     }
   }
 
-  Future<List<Map<String, dynamic>>> getStoreCategories() async {
+  Future<List<Map>> getStoreCategories() async {
     final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
     try {
       final response = await dio.get('/stores/tags');
@@ -116,7 +116,7 @@ class IncleGeneralAPI {
     }
   }
 
-  Future<List<Map<String, dynamic>>> getCouponList() async {
+  Future<List<Map>> getCouponList() async {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
@@ -137,7 +137,7 @@ class IncleGeneralAPI {
   // Category
   //
 
-  Future<List<Map<String, dynamic>>> getProductParentCategories() async {
+  Future<List<Map>> getProductParentCategories() async {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
@@ -154,7 +154,7 @@ class IncleGeneralAPI {
     }
   }
 
-  Future<List<Map<String, dynamic>>> getSubCategories(
+  Future<List<Map>> getSubCategories(
       String parentCategoryID) async {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
@@ -176,7 +176,7 @@ class IncleGeneralAPI {
   // Banner
   //
 
-  Future<List<Map<String, dynamic>>> getBanners() async {
+  Future<List<Map>> getBanners() async {
     final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
     try {
       final response = await dio.get(
@@ -196,7 +196,7 @@ class IncleGeneralAPI {
   // Product Question
   //
 
-  Future<List<Map<String, dynamic>>> getProductQuestions(
+  Future<List<Map>> getProductQuestions(
       {int page = 0,
       int perPage = 10,
       String? productUid,
@@ -232,7 +232,7 @@ class IncleGeneralAPI {
   // Product
   //
 
-  Future<Map<String, dynamic>> getProductDetail(
+  Future<Map> getProductDetail(
       {required String productID}) async {
     final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
     try {
@@ -249,7 +249,7 @@ class IncleGeneralAPI {
     }
   }
 
-  Future<List<Map<String, dynamic>>> getProductList({
+  Future<List<Map>> getProductList({
     OrderProperty orderProperty = OrderProperty.createdDate,
     OrderValue orderValue = OrderValue.DESC,
     String? findProperty,
@@ -264,7 +264,7 @@ class IncleGeneralAPI {
   }) async {
     final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
     try {
-      Map<String, dynamic> _queryParameter = {
+      var _queryParameter = {
         'orderProperty': orderProperty.toString(),
         'orderValue': orderValue.toString(),
         'page': page,
@@ -290,11 +290,11 @@ class IncleGeneralAPI {
   // Review
   //
 
-  Future<List<Map<String, dynamic>>> getReviewList(
+  Future<List<Map>> getReviewList(
       {int page = 0, int perPage = 10, String? productUid}) async {
     final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
     try {
-      Map<String, dynamic> _queryParameter = {
+      var _queryParameter = {
         'page': page,
         'perPage': perPage,
         'productUid': productUid,
@@ -311,7 +311,7 @@ class IncleGeneralAPI {
     }
   }
 
-  Future<Map<String, dynamic>> getDetailReview(String reviewID) async {
+  Future<Map> getDetailReview(String reviewID) async {
     final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
     try {
       final response = await dio.get(

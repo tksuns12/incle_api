@@ -10,7 +10,7 @@ class IncleClientAPI {
   // Auth
   //
 
-  Future<Map<String, dynamic>> signin(
+  Future<Map> signin(
       {required String id, required String password}) async {
     try {
       final dio = getClientDioClient(baseUrl: baseUrl, secureStorage: storage);
@@ -45,7 +45,7 @@ class IncleClientAPI {
     }
   }
 
-  Future<Map<String, dynamic>> signup(
+  Future<Map> signup(
       {required String id,
       required String password,
       required String name,
@@ -83,7 +83,7 @@ class IncleClientAPI {
     }
   }
 
-  Future<Map<String, dynamic>> editUserInfo({
+  Future<Map> editUserInfo({
     required String password,
     required String name,
     required String displayName,
@@ -114,7 +114,7 @@ class IncleClientAPI {
     }
   }
 
-  Future<Map<String, dynamic>> findID({required String phoneNumber}) async {
+  Future<Map> findID({required String phoneNumber}) async {
     try {
       final dio = getClientDioClient(baseUrl: baseUrl, secureStorage: storage);
       final res =
@@ -129,7 +129,7 @@ class IncleClientAPI {
     }
   }
 
-  Future<Map<String, dynamic>> findPassword(
+  Future<Map> findPassword(
       {required String id, required String email}) async {
     try {
       final dio = getClientDioClient(baseUrl: baseUrl, secureStorage: storage);
@@ -145,7 +145,7 @@ class IncleClientAPI {
     }
   }
 
-  Future<Map<String, dynamic>> getUserProfile() async {
+  Future<Map> getUserProfile() async {
     try {
       final dio = getClientDioClient(
           baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
@@ -160,7 +160,7 @@ class IncleClientAPI {
     }
   }
 
-  Future<Map<String, dynamic>> checkDuplicate(
+  Future<Map> checkDuplicate(
       {String? userName, String? phoneNumber, String? email}) async {
     try {
       final dio = getClientDioClient(baseUrl: baseUrl, secureStorage: storage);
@@ -183,7 +183,7 @@ class IncleClientAPI {
   // Store Subscription
   //
 
-  Future<Map<String, dynamic>> favoriteStore(
+  Future<Map> favoriteStore(
       {required String storeID, required bool isFavorite}) async {
     try {
       final dio = getClientDioClient(
@@ -214,7 +214,7 @@ class IncleClientAPI {
   // Store
   //
 
-  Future<Map<String, dynamic>> getFavoriteStores(
+  Future<Map> getFavoriteStores(
       {int page = 0,
       int perPage = 10,
       String? storeName,
@@ -244,7 +244,7 @@ class IncleClientAPI {
     }
   }
 
-  Future<Map<String, dynamic>> getStoreDeliveryFee(
+  Future<Map> getStoreDeliveryFee(
       {required String storeID,
       required double longitude,
       required double latitude}) async {
@@ -271,7 +271,7 @@ class IncleClientAPI {
   // Coupon
   //
 
-  Future<Map<String, dynamic>> downloadCoupon(
+  Future<Map> downloadCoupon(
       {required String couponUid}) async {
     try {
       final dio = getClientDioClient(
@@ -310,7 +310,7 @@ class IncleClientAPI {
   // Product Subscription
   //
 
-  Future<Map<String, dynamic>> favoriteProduct(
+  Future<Map> favoriteProduct(
       {required String productID, required bool isFavorite}) async {
     try {
       final dio = getClientDioClient(
@@ -339,7 +339,7 @@ class IncleClientAPI {
   // Order
   //
 
-  Future<List<Map<String, dynamic>>> getOrderSummaryList(
+  Future<List<Map>> getOrderSummaryList(
       {int page = 0,
       int perPage = 10,
       required BackendOrderStatus orderStatusFilter}) async {
@@ -364,7 +364,7 @@ class IncleClientAPI {
     }
   }
 
-  Future<Map<String, dynamic>> getOrderDetail({required String uid}) async {
+  Future<Map> getOrderDetail({required String uid}) async {
     final dio = getClientDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
@@ -383,9 +383,9 @@ class IncleClientAPI {
   // Payment
   //
 
-  Future<Map<String, dynamic>> generatePayment({
+  Future<Map> generatePayment({
     required String merchanUid,
-    required List<Map<String, dynamic>> orders,
+    required List<Map> orders,
     required int point,
     required bool isQuick,
     required String recipient,
@@ -425,7 +425,7 @@ class IncleClientAPI {
     }
   }
 
-  Future<Map<String, dynamic>> completePayment(
+  Future<Map> completePayment(
       {required String paymentServiceUid, required String merchantUid}) async {
     final dio = getClientDioClient(baseUrl: baseUrl, secureStorage: storage);
     try {
@@ -450,7 +450,7 @@ class IncleClientAPI {
   // Review
   //
 
-  Future<Map<String, dynamic>> postReview(
+  Future<Map> postReview(
       {required String orderUid,
       required int rating,
       required int height,

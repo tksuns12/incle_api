@@ -173,7 +173,7 @@ class InclePartnersAPI {
     }
   }
 
-  Future<Map<String, dynamic>> updateUserInfo(
+  Future<Map> updateUserInfo(
       {required String password,
       required String name,
       required String phoneNumber,
@@ -207,7 +207,7 @@ class InclePartnersAPI {
     }
   }
 
-  Future<Map<String, dynamic>> updateBankAccountInfo(
+  Future<Map> updateBankAccountInfo(
       {required String bankName,
       required String accountNumber,
       required String accountOwnerName}) async {
@@ -674,7 +674,7 @@ class InclePartnersAPI {
   // Product
   //
 
-  Future<Map<String, dynamic>> uploadProduct(
+  Future<Map> uploadProduct(
       {required String name,
       required String price,
       required bool todayGet,
@@ -837,7 +837,7 @@ class InclePartnersAPI {
     }
   }
 
-  Future<Map<String, dynamic>> deleteProduct({required String uid}) async {
+  Future<Map> deleteProduct({required String uid}) async {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
@@ -852,7 +852,7 @@ class InclePartnersAPI {
     }
   }
 
-  Future<Map<String, dynamic>> soldoutProduct(
+  Future<Map> soldoutProduct(
       {required String uid, required bool isSoldOut}) async {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
@@ -917,7 +917,7 @@ class InclePartnersAPI {
   // Order
   //
 
-  Future<List<Map<String, dynamic>>> getOrderSummaryList(
+  Future<List<Map>> getOrderSummaryList(
       {int page = 0,
       int perPage = 10,
       required BackendOrderStatus orderStatusFilter}) async {
@@ -942,7 +942,7 @@ class InclePartnersAPI {
     }
   }
 
-  Future<Map<String, dynamic>> getOrderDetail({required String uid}) async {
+  Future<Map> getOrderDetail({required String uid}) async {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
@@ -961,7 +961,7 @@ class InclePartnersAPI {
   // Review
   //
 
-  Future<Map<String, dynamic>> replyReview(
+  Future<Map> replyReview(
       {required String reviewUid, required String reply}) async {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
