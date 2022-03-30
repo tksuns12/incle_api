@@ -16,7 +16,14 @@ class InclePartnersAPI {
   }
 
   Future<void> signout() async {
-    await storage.deleteAll();
+    try {
+      final dio = getPartnersDioClient(
+          baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+      await dio.post('/logout');
+      await storage.deleteAll();
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<bool> isApproved() async {
@@ -576,7 +583,8 @@ class InclePartnersAPI {
   // Product Questions
   //
 
-  Future<void> replyQuestion({required String questionUid, required String reply}) async {
+  Future<void> replyQuestion(
+      {required String questionUid, required String reply}) async {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {

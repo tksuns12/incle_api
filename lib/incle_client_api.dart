@@ -23,6 +23,17 @@ class IncleClientAPI {
     }
   }
 
+  Future<void> signout() async {
+    try {
+      final dio = getClientDioClient(
+          baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+      await dio.post('/logout');
+      await storage.deleteAll();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<Map<String, dynamic>> signup(
       {required String id,
       required String password,
@@ -138,9 +149,7 @@ class IncleClientAPI {
   }
 
   Future<Map<String, dynamic>> checkDuplicate(
-      {String? userName,
-      String? phoneNumber,
-      String? email}) async {
+      {String? userName, String? phoneNumber, String? email}) async {
     try {
       final dio = getClientDioClient(baseUrl: baseUrl, secureStorage: storage);
       final res = await dio.get('/users/duplication', queryParameters: {
@@ -250,7 +259,8 @@ class IncleClientAPI {
   // Coupon
   //
 
-  Future<Map<String, dynamic>> downloadCoupon({required String couponUid}) async {
+  Future<Map<String, dynamic>> downloadCoupon(
+      {required String couponUid}) async {
     try {
       final dio = getClientDioClient(
           baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
@@ -271,18 +281,17 @@ class IncleClientAPI {
 
   // Future<void> postQuestion({required String productID, required String comment})
 
-
   //
   // Product Subscription
   //
 
-  Future<Map<String, dynamic>> favoriteProduct({required String productID, required bool isFavorite}) async {
+  Future<Map<String, dynamic>> favoriteProduct(
+      {required String productID, required bool isFavorite}) async {
     try {
       final dio = getClientDioClient(
           baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
       if (isFavorite) {
-        final res = await dio
-            .post('/products/$productID/subscription');
+        final res = await dio.post('/products/$productID/subscription');
         if (res.statusCode == 201) {
           return res.data;
         } else {
@@ -301,7 +310,7 @@ class IncleClientAPI {
     }
   }
 
-   //
+  //
   // Order
   //
 
