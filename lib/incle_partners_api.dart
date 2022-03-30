@@ -524,7 +524,7 @@ class InclePartnersAPI {
   // Delivery
   //
 
-  Future<List<Map>> getDeliver(String storeUid) async {
+  Future<List> getDeliver(String storeUid) async {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
@@ -917,7 +917,7 @@ class InclePartnersAPI {
   // Order
   //
 
-  Future<List<Map>> getOrderSummaryList(
+  Future<List> getOrderSummaryList(
       {int page = 0,
       int perPage = 10,
       required BackendOrderStatus orderStatusFilter}) async {

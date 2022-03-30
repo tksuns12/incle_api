@@ -10,8 +10,7 @@ class IncleClientAPI {
   // Auth
   //
 
-  Future<Map> signin(
-      {required String id, required String password}) async {
+  Future<Map> signin({required String id, required String password}) async {
     try {
       final dio = getClientDioClient(baseUrl: baseUrl, secureStorage: storage);
       final res = await dio
@@ -129,8 +128,7 @@ class IncleClientAPI {
     }
   }
 
-  Future<Map> findPassword(
-      {required String id, required String email}) async {
+  Future<Map> findPassword({required String id, required String email}) async {
     try {
       final dio = getClientDioClient(baseUrl: baseUrl, secureStorage: storage);
       final res = await dio
@@ -271,8 +269,7 @@ class IncleClientAPI {
   // Coupon
   //
 
-  Future<Map> downloadCoupon(
-      {required String couponUid}) async {
+  Future<Map> downloadCoupon({required String couponUid}) async {
     try {
       final dio = getClientDioClient(
           baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
@@ -339,7 +336,7 @@ class IncleClientAPI {
   // Order
   //
 
-  Future<List<Map>> getOrderSummaryList(
+  Future<List> getOrderSummaryList(
       {int page = 0,
       int perPage = 10,
       required BackendOrderStatus orderStatusFilter}) async {
@@ -385,7 +382,7 @@ class IncleClientAPI {
 
   Future<Map> generatePayment({
     required String merchanUid,
-    required List<Map> orders,
+    required List orders,
     required int point,
     required bool isQuick,
     required String recipient,
