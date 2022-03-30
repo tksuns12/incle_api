@@ -200,7 +200,8 @@ class IncleGeneralAPI {
   // Product Question
   //
 
-  Future<List<Map<String, dynamic>>> getProductQuestions({int page = 0, int perPage = 10, String? productUid}) async {
+  Future<List<Map<String, dynamic>>> getProductQuestions(
+      {int page = 0, int perPage = 10, String? productUid}) async {
     final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
     try {
       final response = await dio.get(
@@ -255,8 +256,7 @@ class IncleGeneralAPI {
     FilterType discoundFilter = FilterType.all,
     FilterType recommendedFilter = FilterType.all,
   }) async {
-    final dio = getPartnersDioClient(
-        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+    final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
     try {
       Map<String, dynamic> _queryParameter = {
         'orderProperty': orderProperty.toString(),
@@ -281,81 +281,12 @@ class IncleGeneralAPI {
   }
 
   //
-  // Payment
-  //
-
-  Future<Map<String, dynamic>> generatePayment({
-    required String merchanUid,
-    required List<Map<String, dynamic>> orders,
-    required int point,
-    required bool isQuick,
-    required String recipient,
-    required String phone,
-    required String address,
-    required String addressDetail,
-    required String deliveryRemart,
-    required double longitude,
-    required double latitude,
-  }) async {
-    final dio = getPartnersDioClient(
-        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
-    try {
-      final response = await dio.post(
-        '/payments',
-        data: {
-          'merchantUid': merchanUid,
-          'orders': orders,
-          'point': point,
-          'isQuick': isQuick,
-          'recipient': recipient,
-          'phone': phone,
-          'address': address,
-          'addressDetail': addressDetail,
-          'deliveryRemark': deliveryRemart,
-          'longitude': longitude,
-          'latitude': latitude,
-        },
-      );
-      if (response.statusCode == 201) {
-        return response.data;
-      } else {
-        throw Exception(response.statusMessage);
-      }
-    } catch (e) {
-      throw Exception(e.toString());
-    }
-  }
-
-  Future<Map<String, dynamic>> completePayment(
-      {required String paymentServiceUid, required String merchantUid}) async {
-    final dio = getPartnersDioClient(
-        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
-    try {
-      final response = await dio.post(
-        '/payments/complete',
-        data: {
-          'merchantUid': merchantUid,
-          'impUid': paymentServiceUid,
-        },
-      );
-      if (response.statusCode == 201) {
-        return response.data;
-      } else {
-        throw Exception(response.statusMessage);
-      }
-    } catch (e) {
-      throw Exception(e.toString());
-    }
-  }
-
-  //
   // Review
   //
 
   Future<List<Map<String, dynamic>>> getReviewList(
       {int page = 0, int perPage = 10, String? productUid}) async {
-    final dio = getPartnersDioClient(
-        baseUrl: baseUrl, secureStorage: storage);
+    final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
     try {
       Map<String, dynamic> _queryParameter = {
         'page': page,
@@ -375,8 +306,7 @@ class IncleGeneralAPI {
   }
 
   Future<Map<String, dynamic>> getDetailReview(String reviewID) async {
-    final dio = getPartnersDioClient(
-        baseUrl: baseUrl, secureStorage: storage);
+    final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
     try {
       final response = await dio.get(
         '/reviews/$reviewID',

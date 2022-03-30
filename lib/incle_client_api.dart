@@ -13,8 +13,7 @@ class IncleClientAPI {
   Future<Map<String, dynamic>> signin(
       {required String id, required String password}) async {
     try {
-      final dio = getClientDioClient(
-          baseUrl: baseUrl, secureStorage: storage, needAuthorization: false);
+      final dio = getClientDioClient(baseUrl: baseUrl, secureStorage: storage);
       final res = await dio
           .post('/login-user', data: {'userName': id, 'password': password});
       return res.data;
@@ -80,7 +79,8 @@ class IncleClientAPI {
     required File profileImage,
   }) async {
     try {
-      final dio = getClientDioClient(baseUrl: baseUrl, secureStorage: storage);
+      final dio = getClientDioClient(
+          baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
       final formData = FormData.fromMap({
         'password': password,
         'name': name,
@@ -279,7 +279,20 @@ class IncleClientAPI {
   // Product Questions
   //
 
-  // Future<void> postQuestion({required String productID, required String comment})
+  Future<void> postQuestion(
+      {required String productID, required String comment}) async {
+    try {
+      final dio = getClientDioClient(
+          baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+      final res = await dio.post('/stores/products/questions',
+          data: {'comment': comment, 'productUid': productID});
+      if (res.statusCode != 201) {
+        throw Exception(res.statusMessage);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
 
   //
   // Product Subscription
@@ -351,6 +364,73 @@ class IncleClientAPI {
       }
     } catch (e) {
       rethrow;
+    }
+  }
+
+  //
+  // Payment
+  //
+
+  Future<Map<String, dynamic>> generatePayment({
+    required String merchanUid,
+    required List<Map<String, dynamic>> orders,
+    required int point,
+    required bool isQuick,
+    required String recipient,
+    required String phone,
+    required String address,
+    required String addressDetail,
+    required String deliveryRemart,
+    required double longitude,
+    required double latitude,
+  }) async {
+    final dio = getClientDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+    try {
+      final response = await dio.post(
+        '/payments',
+        data: {
+          'merchantUid': merchanUid,
+          'orders': orders,
+          'point': point,
+          'isQuick': isQuick,
+          'recipient': recipient,
+          'phone': phone,
+          'address': address,
+          'addressDetail': addressDetail,
+          'deliveryRemark': deliveryRemart,
+          'longitude': longitude,
+          'latitude': latitude,
+        },
+      );
+      if (response.statusCode == 201) {
+        return response.data;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  Future<Map<String, dynamic>> completePayment(
+      {required String paymentServiceUid, required String merchantUid}) async {
+    final dio = getClientDioClient(baseUrl: baseUrl, secureStorage: storage);
+    try {
+      final response = await dio.post(
+        '/payments/complete',
+        data: {
+          'merchantUid': merchantUid,
+          'impUid': paymentServiceUid,
+        },
+      );
+      if (response.statusCode == 201) {
+        return response.data;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      throw Exception(e.toString());
     }
   }
 }
