@@ -135,6 +135,7 @@ Dio getPartnersDioClient(
                         ));
                 return handler.resolve(retryReq);
               } else {
+                await storage.deleteAll();
                 throw Exception(response.statusMessage);
               }
             },
