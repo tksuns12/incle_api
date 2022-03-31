@@ -177,7 +177,7 @@ class InclePartnersAPI {
       required String name,
       required String phoneNumber,
       required String email,
-      required File profileImage}) async {
+      required File? profileImage}) async {
     try {
       final dio = getPartnersDioClient(
           baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
@@ -187,10 +187,12 @@ class InclePartnersAPI {
         'phone': phoneNumber,
         'email': email,
       });
-      formData.files.add(MapEntry(
-          'profileImage',
-          await MultipartFile.fromFile(profileImage.path,
-              filename: profileImage.path.split('/').last)));
+      if (profileImage != null) {
+        formData.files.add(MapEntry(
+            'profileImage',
+            await MultipartFile.fromFile(profileImage.path,
+                filename: profileImage.path.split('/').last)));
+      }
       dio.options.contentType = 'multipart/form-data';
       final response = await dio.patch(
         '/partners/profile',
