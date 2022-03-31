@@ -491,7 +491,9 @@ class InclePartnersAPI {
           'name': name,
           'amount': price,
           'condition': condition,
-          'limitDate': limitDate?.toIso8601String(),
+          'limitDate': limitDate == null
+              ? null
+              : limitDate.millisecondsSinceEpoch / 1000,
         },
       );
       if (response.statusCode == 201) {
