@@ -547,7 +547,7 @@ class InclePartnersAPI {
       final response = await dio.post(
         '/stores/deliveries',
         data: {
-          'distance': distance,
+          'km': distance,
           'price': price,
         },
       );
