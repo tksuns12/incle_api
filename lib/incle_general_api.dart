@@ -27,7 +27,7 @@ class IncleGeneralAPI {
   // Auth
   //
 
-  Future<Map> sendVerifyNum(String phoneNumber) async {
+  Future<void> sendVerifyNum(String phoneNumber) async {
     final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
     try {
       final response = await dio.post(
@@ -37,7 +37,7 @@ class IncleGeneralAPI {
         },
       );
       if (response.statusCode == 201) {
-        return response.data;
+        return;
       } else {
         throw Exception(response.statusMessage);
       }

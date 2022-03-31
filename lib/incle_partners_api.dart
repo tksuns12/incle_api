@@ -44,7 +44,7 @@ class InclePartnersAPI {
     return response.statusMessage != '허가되지 않은 파트너스';
   }
 
-  Future<Map> login(String id, String password) async {
+  Future<void> login(String id, String password) async {
     final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
     try {
       final response = await dio.post(
@@ -60,7 +60,6 @@ class InclePartnersAPI {
         storage.write(key: 'accessToken', value: response.data['accessToken']);
         storage.write(
             key: 'refreshToken', value: response.data['refreshToken']);
-        return response.data;
       } else {
         throw Exception(response.statusMessage);
       }
@@ -73,7 +72,7 @@ class InclePartnersAPI {
   // Partners
   //
 
-  Future<Map> signup({
+  Future<void> signup({
     String? id,
     String? password,
     String? name,
@@ -164,7 +163,7 @@ class InclePartnersAPI {
         data: formData,
       );
       if (response.statusCode == 201) {
-        return response.data;
+        return;
       } else {
         throw Exception(response.statusMessage);
       }
@@ -173,7 +172,7 @@ class InclePartnersAPI {
     }
   }
 
-  Future<Map> updateUserInfo(
+  Future<void> updateUserInfo(
       {required String password,
       required String name,
       required String phoneNumber,
@@ -198,7 +197,7 @@ class InclePartnersAPI {
         data: formData,
       );
       if (response.statusCode == 200) {
-        return response.data;
+        return;
       } else {
         throw Exception(response.statusMessage);
       }
@@ -207,7 +206,7 @@ class InclePartnersAPI {
     }
   }
 
-  Future<Map> updateBankAccountInfo(
+  Future<void> updateBankAccountInfo(
       {required String bankName,
       required String accountNumber,
       required String accountOwnerName}) async {
@@ -224,7 +223,7 @@ class InclePartnersAPI {
         },
       );
       if (response.statusCode == 200) {
-        return response.data;
+        return;
       } else {
         throw Exception(response.statusMessage);
       }
@@ -476,7 +475,7 @@ class InclePartnersAPI {
   // Coupon
   //
 
-  Future<Map> createCoupon(
+  Future<void> createCoupon(
       {required String name,
       required int price,
       required int condition,
@@ -494,7 +493,7 @@ class InclePartnersAPI {
         },
       );
       if (response.statusCode == 201) {
-        return response.data;
+        return;
       } else {
         throw Exception(response.statusMessage);
       }
@@ -503,7 +502,7 @@ class InclePartnersAPI {
     }
   }
 
-  Future<Map> deleteCoupon(String couponID) async {
+  Future<void> deleteCoupon(String couponID) async {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
@@ -511,7 +510,7 @@ class InclePartnersAPI {
         '/coupons/$couponID',
       );
       if (response.statusCode == 200) {
-        return response.data;
+        return;
       } else {
         throw Exception(response.statusMessage);
       }
@@ -541,7 +540,7 @@ class InclePartnersAPI {
     }
   }
 
-  Future<Map> addDeliver({required int distance, required int price}) async {
+  Future<void> addDeliver({required int distance, required int price}) async {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
@@ -553,7 +552,7 @@ class InclePartnersAPI {
         },
       );
       if (response.statusCode == 201) {
-        return response.data;
+        return;
       } else {
         throw Exception(response);
       }
@@ -562,7 +561,7 @@ class InclePartnersAPI {
     }
   }
 
-  Future<Map> updateDeliver({required int distance, required int price}) async {
+  Future<void> updateDeliver({required int distance, required int price}) async {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
@@ -574,7 +573,7 @@ class InclePartnersAPI {
         },
       );
       if (response.statusCode == 200) {
-        return response.data;
+        return;
       } else {
         throw Exception(response.statusMessage);
       }
@@ -583,7 +582,7 @@ class InclePartnersAPI {
     }
   }
 
-  Future<Map> deleteDeliver(int distance) async {
+  Future<void> deleteDeliver(int distance) async {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
@@ -592,7 +591,7 @@ class InclePartnersAPI {
         data: {'km': distance},
       );
       if (response.statusCode == 200) {
-        return response.data;
+        return;
       } else {
         throw Exception(response.statusMessage);
       }
@@ -605,7 +604,7 @@ class InclePartnersAPI {
   // Store
   //
 
-  Future<Map> unpausePartners() async {
+  Future<void> unpausePartners() async {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
@@ -613,7 +612,7 @@ class InclePartnersAPI {
         '/store/pause',
       );
       if (response.statusCode == 200) {
-        return response.data;
+        return;
       } else {
         throw Exception(response.statusMessage);
       }
@@ -622,7 +621,7 @@ class InclePartnersAPI {
     }
   }
 
-  Future<Map> pausePartners(TimeOfDay startTime, TimeOfDay endTime) async {
+  Future<void> pausePartners(TimeOfDay startTime, TimeOfDay endTime) async {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
@@ -637,7 +636,7 @@ class InclePartnersAPI {
         },
       );
       if (response.statusCode == 201) {
-        return response.data;
+        return;
       } else {
         throw Exception(response.statusMessage);
       }
@@ -675,7 +674,7 @@ class InclePartnersAPI {
   // Product
   //
 
-  Future<Map> uploadProduct(
+  Future<void> uploadProduct(
       {required String name,
       required String price,
       required bool todayGet,
@@ -761,7 +760,7 @@ class InclePartnersAPI {
       }
       final response = await dio.post('/products', data: formData);
       if (response.statusCode == 201) {
-        return response.data;
+        return;
       } else {
         throw Exception(response.statusMessage);
       }
@@ -771,7 +770,7 @@ class InclePartnersAPI {
   }
 
   @experimental
-  Future<Map> updateProduct(
+  Future<void> updateProduct(
       {required String uid,
       required String name,
       required String price,
@@ -827,9 +826,9 @@ class InclePartnersAPI {
           );
         }
       }
-      final response = await dio.put('/products/$uid', data: formData);
-      if (response.statusCode == 201) {
-        return response.data;
+      final response = await dio.patch('/products/$uid', data: formData);
+      if (response.statusCode == 200) {
+        return;
       } else {
         throw Exception(response.statusMessage);
       }
@@ -838,13 +837,13 @@ class InclePartnersAPI {
     }
   }
 
-  Future<Map> deleteProduct({required String uid}) async {
+  Future<void> deleteProduct({required String uid}) async {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
       final response = await dio.delete('/products/$uid');
       if (response.statusCode == 200) {
-        return response.data;
+        return;
       } else {
         throw Exception(response.statusMessage);
       }
@@ -853,19 +852,19 @@ class InclePartnersAPI {
     }
   }
 
-  Future<Map> soldoutProduct(
+  Future<void> soldoutProduct(
       {required String uid, required bool isSoldOut}) async {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
-      final response = await dio.put(
+      final response = await dio.patch(
         '/products/$uid/soldout',
         data: {
           'isSoldOut': isSoldOut ? 1 : 0,
         },
       );
       if (response.statusCode == 200) {
-        return response.data;
+        return;
       } else {
         throw Exception(response.statusMessage);
       }
@@ -874,17 +873,17 @@ class InclePartnersAPI {
     }
   }
 
-  Future<Map> addProductOwnersRecommend(
+  Future<void> addProductOwnersRecommend(
       {required String uid, required bool isRecommended}) async {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
-      final response = await dio.put(
+      final response = await dio.patch(
         '/products/$uid/recommendation',
         data: {'ownersRecommended': isRecommended ? 1 : 0},
       );
       if (response.statusCode == 200) {
-        return response.data;
+        return;
       } else {
         throw Exception(response.statusMessage);
       }
@@ -893,19 +892,19 @@ class InclePartnersAPI {
     }
   }
 
-  Future<Map> addProductDiscount(
+  Future<void> addProductDiscount(
       {required String uid,
       int? discountedPrice,
       required bool isDiscounted}) async {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
-      final response = await dio.put('/product/$uid/discount/',
+      final response = await dio.patch('/product/$uid/discount/',
           queryParameters: {
             'discountedPrice': isDiscounted ? discountedPrice : 0
           });
       if (response.statusCode == 200) {
-        return response.data;
+        return;
       } else {
         throw Exception(response.statusMessage);
       }
@@ -962,7 +961,7 @@ class InclePartnersAPI {
   // Review
   //
 
-  Future<Map> replyReview(
+  Future<void> replyReview(
       {required String reviewUid, required String reply}) async {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
@@ -970,7 +969,7 @@ class InclePartnersAPI {
       final response =
           await dio.post('/reviews/$reviewUid', data: {'reply': reply});
       if (response.statusCode == 201) {
-        return response.data;
+        return;
       } else {
         throw Exception(response.statusMessage);
       }

@@ -10,7 +10,7 @@ class IncleClientAPI {
   // Auth
   //
 
-  Future<Map> signin({required String id, required String password}) async {
+  Future<void> signin({required String id, required String password}) async {
     try {
       final dio = getClientDioClient(baseUrl: baseUrl, secureStorage: storage);
       final res = await dio
@@ -20,7 +20,6 @@ class IncleClientAPI {
         storage.write(key: 'password', value: password);
         storage.write(key: 'accessToken', value: res.data['accessToken']);
         storage.write(key: 'refreshToken', value: res.data['refreshToken']);
-        return res.data;
       } else {
         throw Exception(res.statusMessage);
       }
@@ -44,7 +43,7 @@ class IncleClientAPI {
     }
   }
 
-  Future<Map> signup(
+  Future<void> signup(
       {required String id,
       required String password,
       required String name,
@@ -73,7 +72,7 @@ class IncleClientAPI {
               filename: profileImage.path.split('/').last)));
       final res = await dio.post('/users', data: formData);
       if (res.statusCode == 201) {
-        return res.data;
+        return;
       } else {
         throw Exception(res.statusMessage);
       }
@@ -82,7 +81,7 @@ class IncleClientAPI {
     }
   }
 
-  Future<Map> editUserInfo({
+  Future<void> editUserInfo({
     required String password,
     required String name,
     required String displayName,
@@ -104,7 +103,7 @@ class IncleClientAPI {
               filename: profileImage.path.split('/').last)));
       final res = await dio.patch('/users', data: formData);
       if (res.statusCode == 200) {
-        return res.data;
+        return;
       } else {
         throw Exception(res.statusMessage);
       }
@@ -158,7 +157,7 @@ class IncleClientAPI {
     }
   }
 
-  Future<Map> checkDuplicate(
+  Future<List> checkDuplicate(
       {String? userName, String? phoneNumber, String? email}) async {
     try {
       final dio = getClientDioClient(baseUrl: baseUrl, secureStorage: storage);
