@@ -90,6 +90,7 @@ Dio getPartnersDioClient(
     {bool needAuthorization = false,
     required String baseUrl,
     required FlutterSecureStorage secureStorage}) {
+  final logger = Logger();
   final _dio = Dio();
   final storage = secureStorage;
   _dio.options.baseUrl = baseUrl;
@@ -98,11 +99,11 @@ Dio getPartnersDioClient(
         .add(InterceptorsWrapper(onRequest: (options, handler) async {
       final _userToken = await storage.read(key: 'accessToken');
       options.headers['Authorization'] = 'Bearer $_userToken';
-      print('Intercepted, ${options.method} ${options.path}');
+      logger.d('Intercepted, ${options.method} ${options.path}');
       return handler.next(options);
     }, onError: (error, handler) async {
-      print('Error occured, ${error.response}');
-      if (error.response?.statusCode == 412) {
+      logger.e('Error occured, ${error.response}');
+      if (error.response?.statusCode == 401) {
         final refreshToken = await storage.read(key: 'refreshToken');
         final refreshDio = Dio()
           ..options = BaseOptions(
@@ -125,7 +126,7 @@ Dio getPartnersDioClient(
                 headers: error.requestOptions.headers,
               ));
           return handler.resolve(retryReq);
-        } else if (response.statusCode == 412) {
+        } else if (response.statusCode == 401) {
           final id = await storage.read(key: 'id');
           final password = await storage.read(key: 'password');
           final loginDio = Dio()
