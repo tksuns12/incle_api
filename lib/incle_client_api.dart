@@ -375,6 +375,64 @@ class IncleClientAPI {
     }
   }
 
+  Future<void> requestCancel(
+      {required String orderUid,
+      required String reason,
+      required String detailReason}) async {
+    final dio = getClientDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+    try {
+      final response = await dio.post(
+        '/orders/$orderUid/cancels',
+        data: {
+          'reason': reason,
+          'remark': detailReason,
+        },
+      );
+      if (response.statusCode == 201) {
+        return;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> requestRefund(
+      {required String orderUid,
+      required String reason,
+      required String detailReason,
+      List<File>? images}) async {
+    final dio = getClientDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+    try {
+      final formData = FormData.fromMap({
+        'reason': reason,
+        'remark': detailReason,
+      });
+      if (images != null) {
+        for (var i = 0; i < images.length; i++) {
+          formData.files.add(MapEntry(
+              'refundFile',
+              await MultipartFile.fromFile(images[i].path,
+                  filename: images[i].path.split('/').last)));
+        }
+      }
+      final response = await dio.post(
+        '/orders/$orderUid/refunds',
+        data: formData,
+      );
+      if (response.statusCode == 201) {
+        return;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   //
   // Payment
   //

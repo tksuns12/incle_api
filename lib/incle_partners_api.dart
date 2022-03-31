@@ -960,6 +960,46 @@ class InclePartnersAPI {
     }
   }
 
+  Future<void> processCancelRequest(
+      {required String orderUid, required bool isApproved}) async {
+    final dio = getPartnersDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+    try {
+      final response = await dio.patch(
+        '/orders/$orderUid/cancels',
+        data: {'isCancel': isApproved ? 1 : 0},
+      );
+      if (response.statusCode == 200) {
+        return;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> processRefundRequest(
+      {required String orderUid,
+      required bool isApproved,
+      String? rejectReason}) async {
+    final dio = getPartnersDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+    try {
+      final response = await dio.patch(
+        '/orders/$orderUid/refunds',
+        data: {'isRefund': isApproved ? 1 : 0, 'rejectReason': rejectReason},
+      );
+      if (response.statusCode == 200) {
+        return;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   //
   // Review
   //
