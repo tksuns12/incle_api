@@ -925,7 +925,8 @@ class InclePartnersAPI {
   Future<List> getOrderSummaryList(
       {int page = 0,
       int perPage = 10,
-      required BackendOrderStatus orderStatusFilter}) async {
+      required OrderStatusEnum orderStatus,
+      bool? isQuick}) async {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
@@ -934,7 +935,14 @@ class InclePartnersAPI {
         queryParameters: {
           'page': page,
           'perPage': perPage,
-          'orderStatus': orderStatusFilter.index,
+          'orderStatus': [orderStatus.index],
+          'isQuick': (() {
+            if (isQuick == null) {
+              return 0;
+            } else {
+              return isQuick ? 1 : 0;
+            }
+          })()
         },
       );
       if (response.statusCode == 200) {
