@@ -111,16 +111,16 @@ Dio getPartnersDioClient(
           )
           ..interceptors.add(InterceptorsWrapper(
             onError: (e, handler) async {
-              final id = await storage.read(key: 'id');
-              final password = await storage.read(key: 'password');
-              final loginDio = Dio()
-                ..options = BaseOptions(
-                    baseUrl: 'http://backend.wim.kro.kr:5000/api/v1');
-              final response = await loginDio.post(
-                '/login-partners',
-                data: {'id': id, 'password': password},
-              );
-              if (response.statusCode == 200) {
+              try {
+                final id = await storage.read(key: 'id');
+                final password = await storage.read(key: 'password');
+                final loginDio = Dio()
+                  ..options = BaseOptions(
+                      baseUrl: 'http://backend.wim.kro.kr:5000/api/v1');
+                final response = await loginDio.post(
+                  '/login-partners',
+                  data: {'id': id, 'password': password},
+                );
                 storage.write(
                     key: 'accessToken', value: response.data['accessToken']);
                 storage.write(
@@ -134,9 +134,9 @@ Dio getPartnersDioClient(
                           headers: error.requestOptions.headers,
                         ));
                 return handler.resolve(retryReq);
-              } else {
+              } on DioError catch (e) {
                 await storage.deleteAll();
-                throw Exception(response.statusMessage);
+                throw Exception(e.message);
               }
             },
           ));
