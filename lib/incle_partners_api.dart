@@ -633,6 +633,7 @@ class InclePartnersAPI {
               '${startTime.hour.toString().padLeft(2, '0')}:${startTime.minute.toString().padLeft(2, '0')}',
           'pauseEndDate':
               '${endTime.hour.toString().padLeft(2, '0')}:${endTime.minute.toString().padLeft(2, '0')}',
+          'pause': 1,
         },
       );
       if (response.statusCode == 201) {

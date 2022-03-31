@@ -1,6 +1,6 @@
 name: incle_api
 description: API Client for Incle
-version: 0.1.8+5
+version: 0.1.9
 homepage:
 
 environment:
