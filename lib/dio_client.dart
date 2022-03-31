@@ -6,7 +6,7 @@ Dio getClientDioClient(
     {bool needAuthorization = false,
     required String baseUrl,
     required FlutterSecureStorage secureStorage}) {
-      final logger = Logger();
+  final logger = Logger();
   final _dio = Dio();
   final storage = secureStorage;
   _dio.options.baseUrl = baseUrl;
@@ -19,7 +19,7 @@ Dio getClientDioClient(
       return handler.next(options);
     }, onError: (error, handler) async {
       logger.e('Error occured, ${error.response}');
-      if (error.response?.statusCode == 412) {
+      if (error.response?.statusCode == 401) {
         final refreshToken = await storage.read(key: 'refreshToken');
         final refreshDio = Dio()
           ..options = BaseOptions(
@@ -35,7 +35,7 @@ Dio getClientDioClient(
           storage.write(
               key: 'refreshToken', value: response.data['refreshToken']);
           error.requestOptions.headers['Authorization'] =
-              response.data['accessToken'];
+              'Bearer ${response.data['accessToken']}';
           final retryReq = await refreshDio.request(error.requestOptions.path,
               options: Options(
                 method: error.requestOptions.method,
@@ -58,7 +58,7 @@ Dio getClientDioClient(
             storage.write(
                 key: 'refreshToken', value: response.data['refreshToken']);
             error.requestOptions.headers['Authorization'] =
-                response.data['accessToken'];
+                'Bearer ${response.data['accessToken']}';
             final retryReq = await loginDio.request(error.requestOptions.path,
                 options: Options(
                   method: error.requestOptions.method,
