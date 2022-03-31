@@ -1000,6 +1000,30 @@ class InclePartnersAPI {
     }
   }
 
+  Future<void> processOrderDeliveryState(
+      {required String orderUid, required DeliveryStatus status}) async {
+    final dio = getPartnersDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+    try {
+      await dio.patch('/orders/$orderUid', data: {
+        'orderStatus': (() {
+          switch (status) {
+            case DeliveryStatus.delivered:
+              return 2;
+            case DeliveryStatus.beingDelivered:
+              return 1;
+            case DeliveryStatus.pickedUp:
+              return 4;
+            default:
+              return 3;
+          }
+        })()
+      });
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   //
   // Review
   //

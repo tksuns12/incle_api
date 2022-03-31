@@ -11,6 +11,7 @@ enum BackendOrderStatus {
   deliveredOrDelivering,
   problem
 }
+enum DeliveryStatus {beingDelivered, delivered, pickedUp}
 
 extension OrderStatusIntParser on BackendOrderStatus {
   int get value {
