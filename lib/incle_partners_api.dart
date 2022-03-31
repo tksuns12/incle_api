@@ -485,7 +485,7 @@ class InclePartnersAPI {
     try {
       final response = await dio.post(
         '/coupons',
-        data: {
+        queryParameters: {
           'name': name,
           'amount': price,
           'condition': condition,
@@ -561,7 +561,8 @@ class InclePartnersAPI {
     }
   }
 
-  Future<void> updateDeliver({required int distance, required int price}) async {
+  Future<void> updateDeliver(
+      {required int distance, required int price}) async {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {

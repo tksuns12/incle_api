@@ -52,7 +52,6 @@ class IncleGeneralAPI {
       final response = await dio.post(
         '/phone/$phoneNumber',
         queryParameters: {
-          'phone': phoneNumber,
           'verifyNumber': code,
         },
       );
