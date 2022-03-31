@@ -925,7 +925,7 @@ class InclePartnersAPI {
   Future<List> getOrderSummaryList(
       {int page = 0,
       int perPage = 10,
-      required OrderStatusEnum orderStatus,
+      required List<OrderStatusEnum> orderStatuses,
       bool? isQuick}) async {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
@@ -935,7 +935,7 @@ class InclePartnersAPI {
         queryParameters: {
           'page': page,
           'perPage': perPage,
-          'orderStatus': [orderStatus.index],
+          'orderStatus': orderStatuses.map((e)=>e.index).toList(),
           'isQuick': (() {
             if (isQuick == null) {
               return 0;
