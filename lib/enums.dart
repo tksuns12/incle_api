@@ -8,7 +8,6 @@ enum OrderStatusEnum {
   onDelivery,
   delivered,
   cancelRequested,
-  cancelRejected,
   canceled,
   returnRequested,
   returnRejected,
