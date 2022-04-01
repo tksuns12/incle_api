@@ -103,7 +103,7 @@ Dio getPartnersDioClient(
       return handler.next(options);
     }, onError: (error, handler) async {
       logger.e('Error occured, ${error.response}');
-      if (error.response?.statusCode == 401) {
+      if (error.response?.statusCode == 401 || error.response?.statusCode == 403) {
         final refreshToken = await storage.read(key: 'refreshToken');
         final refreshDio = Dio()
           ..options = BaseOptions(
@@ -136,7 +136,7 @@ Dio getPartnersDioClient(
                 return handler.resolve(retryReq);
               } on DioError catch (e) {
                 await storage.deleteAll();
-                throw Exception(e.message);
+                throw Exception('저장된 로그인 정보에 문제가 있습니다. 다시 로그인 해주세요. msg: $e');
               }
             },
           ));
