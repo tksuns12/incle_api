@@ -29,7 +29,7 @@ extension OrderStatusIntParser on OrderStatusEnum {
         return 2;
       case OrderStatusEnum.returnRejected:
         return 3;
-      case OrderStatusEnum.cancelRejected:
+      case OrderStatusEnum.pickedUp:
         return 4;
       case OrderStatusEnum.cancelRequested:
         return 5;
@@ -40,9 +40,7 @@ extension OrderStatusIntParser on OrderStatusEnum {
       case OrderStatusEnum.returned:
         return 8;
       case OrderStatusEnum.returning:
-        return 9;
-      case OrderStatusEnum.pickedUp:
-        return 10;
+        return 9; 
       default:
         return -1;
     }
@@ -55,8 +53,6 @@ OrderStatusEnum orderStatusParser(String input) {
       return OrderStatusEnum.cancelRequested;
     case '취소확인':
       return OrderStatusEnum.canceled;
-    case '취소거절':
-      return OrderStatusEnum.returnRejected;
     case '배송완료':
       return OrderStatusEnum.delivered;
     case '배송중':
@@ -85,8 +81,6 @@ extension Parser on OrderStatusEnum {
         return '취소요청';
       case OrderStatusEnum.canceled:
         return '취소확인';
-      case OrderStatusEnum.cancelRejected:
-        return '취소거절';
       case OrderStatusEnum.delivered:
         return '배송완료';
       case OrderStatusEnum.onDelivery:
