@@ -1071,4 +1071,40 @@ class InclePartnersAPI {
       rethrow;
     }
   }
+
+    //
+  // Notification
+  //
+
+  Future<List> getNotificationSummaries(
+      {required int page, required int perPage}) async {
+    final dio = getPartnersDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+    try {
+      final response = await dio
+          .get('/alarms', queryParameters: {'page': page, 'perPage': perPage});
+      if (response.statusCode == 200) {
+        return response.data['rows'];
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  Future<Map> getNotificationDetail(String notificationUid) async {
+    final dio = getPartnersDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+    try {
+      final response = await dio.get('/alarms/$notificationUid');
+      if (response.statusCode == 200) {
+        return response.data;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
 }
