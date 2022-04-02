@@ -68,6 +68,21 @@ class InclePartnersAPI {
     }
   }
 
+  // Future<void> deleteUser() async {
+  //   final dio = getPartnersDioClient(
+  //       baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+  //   try {
+  //     final response = await dio.delete('/partners');
+  //     if (response.statusCode == 200) {
+  //       await storage.deleteAll();
+  //     } else {
+  //       throw Exception(response.statusMessage);
+  //     }
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  // }
+
   //
   // Partners
   //
@@ -725,11 +740,13 @@ class InclePartnersAPI {
         'productCategoryDetailUid': subCategoryUid,
         'codyProductsUid': cody,
         'name': name,
-        'description': description
+        'createProductDescriptionDto': description
             .map((e) => {
                   'description': e.item1,
-                  'originalNames':
-                      e.item2.map((e) => e.path.split('/').last).toList()
+                  'originalNames': e.item2
+                      .map((e) =>
+                          '${e.path.split('/').last}-${DateTime.now().millisecondsSinceEpoch / 1000}')
+                      .toList()
                 })
             .toList(),
         'modelHeight': modelHeight,
@@ -935,7 +952,7 @@ class InclePartnersAPI {
         queryParameters: {
           'page': page,
           'perPage': perPage,
-          'orderStatus': orderStatuses.map((e)=>e.index).toList(),
+          'orderStatus': orderStatuses.map((e) => e.index).toList(),
           'isQuick': (() {
             if (isQuick == null) {
               return 0;

@@ -162,11 +162,7 @@ packages:
       path: ".."
       relative: true
     source: path
-<<<<<<< HEAD
-    version: "0.1.11+10"
-=======
-    version: "0.1.11+9"
->>>>>>> a03adf0cd76004a835f725c1e73061fe5cda2232
+    version: "0.1.11+12"
   js:
     dependency: transitive
     description:
