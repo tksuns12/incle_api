@@ -323,6 +323,42 @@ class IncleClientAPI {
     }
   }
 
+    Future<List> getProductQuestions(
+      {int page = 0,
+      int perPage = 10,
+      String? productUid,
+      String? storeUid,
+      required bool? isReplied}) async {
+    final dio = getClientDioClient(baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+    try {
+      final queryParameter = <String, dynamic>{
+        'page': page,
+        'perPage': perPage
+      };
+      if (productUid != null) {
+        queryParameter['productUid'] = productUid;
+      }
+      if (storeUid != null) {
+        queryParameter['storeUid'] = storeUid;
+      }
+      if (isReplied != null) {
+        queryParameter['isReplied'] = isReplied ? 1 : 0;
+      }
+
+      final response = await dio.get(
+        '/stores/products/questions',
+        queryParameters: queryParameter,
+      );
+      if (response.statusCode == 200) {
+        return response.data['rows'];
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
   //
   // Product Subscription
   //
