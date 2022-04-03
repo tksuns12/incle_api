@@ -1036,9 +1036,13 @@ class InclePartnersAPI {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
+      final data = <String, dynamic>{'isRefund': isApproved ? 1 : 0};
+      if (rejectReason != null) {
+        data['rejectReason'] = rejectReason;
+      }
       final response = await dio.patch(
         '/orders/$orderUid/refunds',
-        data: {'isRefund': isApproved ? 1 : 0, 'rejectReason': rejectReason},
+        data: data,
       );
       if (response.statusCode == 200) {
         return;
