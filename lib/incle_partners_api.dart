@@ -822,56 +822,88 @@ class InclePartnersAPI {
       required String name,
       required String price,
       required bool todayGet,
-      required List images,
-      required String description,
+      required List<File> images,
       required int modelHeight,
       required int modelWeight,
       required String modelNormalSize,
       required String modelSize,
-      required Map<String, List<Map<String, dynamic>>> options,
-      required List<String> cody}) async {
+      required Map<List<String>, int> optionStocks,
+      required List<String> cody,
+      required List<Tuple2<String, List<File>>> description,
+      required String subCategoryUid}) async {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
 
     try {
+     final productOptionStocks = (() {
+        final result = [];
+        for (var optionStock in optionStocks.entries) {
+          // optionStock은 예를 들어 {['컬러/블랙', '사이즈/XL']: 10} 이런 식이다.
+          final parsedOptionStock = {};
+          // parsedOptionStock은 {opt1Name:컬러, opt2:블랙, opt2Name: 사이즈, opt2:XL, stock: 10} 이런 식이다.
+          for (var i = 0; i < 10; i++) {
+            // 무조건 10까지 반복문을 돌린다.
+            if (i < optionStock.key.length) {
+              // 만약 아직 남아 있는 옵션이 있다면 옵션을 추가한다.
+              final optionNames = optionStock.key[i].split('/');
+              parsedOptionStock['opt${i + 1}Name'] = optionNames[0];
+              parsedOptionStock['opt${i + 1}'] = optionNames[1];
+            } else {
+              // 남아 있는 옵션이 없다면 10까지 돌리면서 null을 대입한다.
+              parsedOptionStock['opt${i + 1}Name'] = null;
+              parsedOptionStock['opt${i + 1}'] = null;
+            }
+            parsedOptionStock['stock'] = optionStock.value;
+          }
+          result.add(parsedOptionStock);
+        }
+        return result;
+      })();
+
       final formData = FormData.fromMap({
+        'createProductOptions': productOptionStocks,
+        'productCategoryDetailUid': subCategoryUid,
+        'codyProductsUid': cody,
         'name': name,
-        'price': price,
-        'todayGet': todayGet,
-        'desc': description,
+        'createProductDescriptionDto': description
+            .map((e) => {
+                  'description': e.item1,
+                  'originalNames': e.item2
+                      .map((e) =>
+                          '${e.path.split('/').last}-${DateTime.now().millisecondsSinceEpoch / 1000}')
+                      .toList()
+                })
+            .toList(),
         'modelHeight': modelHeight,
         'modelWeight': modelWeight,
-        'modelSize': modelSize,
         'modelNormalSize': modelNormalSize,
-        'options': jsonEncode(options),
-        'cody': cody,
+        'modelSize': modelSize,
+        'price': price,
+        'todayGet': todayGet ? 1 : 0,
       });
       for (var image in images) {
-        if (image is File) {
+        formData.files.add(
+          MapEntry(
+            'productProfile',
+            await MultipartFile.fromFile(image.path,
+                filename: image.path.split('/').last,
+                contentType: MediaType.parse('image/jpeg')),
+          ),
+        );
+      }
+      for (var descItem in description) {
+        for (var image in descItem.item2) {
           formData.files.add(
             MapEntry(
-              'images',
+              'descriptionFile',
               await MultipartFile.fromFile(image.path,
                   filename: image.path.split('/').last,
                   contentType: MediaType.parse('image/jpeg')),
             ),
           );
-        } else if (image is String) {
-          final d = Dio();
-          final filePath =
-              '${(await getTemporaryDirectory()).path}/temp_product${images.indexOf(image)}.jpg';
-          await d.download(image, filePath);
-          formData.files.add(
-            MapEntry(
-              'images',
-              await MultipartFile.fromFile(filePath,
-                  filename: image.split('/').last,
-                  contentType: MediaType.parse('image/jpeg')),
-            ),
-          );
         }
       }
-      final response = await dio.patch('/stores/products/$uid', data: formData);
+      final response = await dio.patch('/stores/products/$uid/detail', data: formData);
       if (response.statusCode == 200) {
         return;
       } else {
