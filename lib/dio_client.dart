@@ -50,7 +50,7 @@ Dio getClientDioClient(
                 BaseOptions(baseUrl: 'http://backend.wim.kro.kr:5000/api/v1');
           final response = await loginDio.post(
             '/login-user',
-            data: {'id': id, 'password': password},
+            data: {'userName': id, 'password': password},
           );
           if (response.statusCode == 201) {
             storage.write(
@@ -119,7 +119,7 @@ Dio getPartnersDioClient(
                       baseUrl: 'http://backend.wim.kro.kr:5000/api/v1');
                 final response = await loginDio.post(
                   '/login-partners',
-                  data: {'id': id, 'password': password},
+                  data: {'partnersName': id, 'password': password},
                 );
                 storage.write(
                     key: 'accessToken', value: response.data['accessToken']);

@@ -30,20 +30,6 @@ class InclePartnersAPI {
     }
   }
 
-  Future<bool> isApproved() async {
-    final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
-    final id = await storage.read(key: 'id');
-    final password = await storage.read(key: 'password');
-    final response = await dio.post(
-      '/login-partners',
-      data: {
-        'id': id,
-        'password': password,
-      },
-    );
-    return response.statusMessage != '허가되지 않은 파트너스';
-  }
-
   Future<void> login(String id, String password) async {
     final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
     try {
