@@ -1031,12 +1031,23 @@ class InclePartnersAPI {
 
   Future<void> processRefundRequest(
       {required String orderUid,
-      required bool isApproved,
+      required OrderStatusEnum orderStatus,
       String? rejectReason}) async {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
-      final data = <String, dynamic>{'isRefund': isApproved ? 1 : 0};
+      final isRefund = (() {
+        if (orderStatus == OrderStatusEnum.returned) {
+          return 1;
+        } else if (orderStatus == OrderStatusEnum.returning) {
+          return 2;
+        } else if (orderStatus == OrderStatusEnum.returnRejected) {
+          return 0;
+        } else {
+          throw Exception('잘못된 주문 상태입니다.');
+        }
+      })();
+      final data = <String, dynamic>{'isRefund': isRefund};
       if (rejectReason != null) {
         data['rejectReason'] = rejectReason;
       }
