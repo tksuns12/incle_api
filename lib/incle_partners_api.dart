@@ -148,16 +148,19 @@ class InclePartnersAPI {
         formData.files.add(MapEntry(
             'storeProfile',
             await MultipartFile.fromFile(picture.path,
-                filename: picture.path.split('/').last)));
+                filename: picture.path.split('/').last,
+                contentType: MediaType.parse('image/jpeg'))));
       }
       formData.files.add(MapEntry(
           'businessRegistrationFile',
           await MultipartFile.fromFile(registration!.path,
-              filename: registration.path.split('/').last)));
+              filename: registration.path.split('/').last,
+              contentType: MediaType.parse('image/jpeg'))));
       formData.files.add(MapEntry(
           'businessReportFile',
           await MultipartFile.fromFile(registration2!.path,
-              filename: registration2.path.split('/').last)));
+              filename: registration2.path.split('/').last,
+              contentType: MediaType.parse('image/jpeg'))));
       dio.options.contentType = 'multipart/form-data';
       final response = await dio.post(
         '/partners',
@@ -192,7 +195,8 @@ class InclePartnersAPI {
         formData.files.add(MapEntry(
             'profileImage',
             await MultipartFile.fromFile(profileImage.path,
-                filename: profileImage.path.split('/').last)));
+                filename: profileImage.path.split('/').last,
+                contentType: MediaType.parse('image/jpeg'))));
       }
       dio.options.contentType = 'multipart/form-data';
       final response = await dio.patch(
@@ -682,7 +686,8 @@ class InclePartnersAPI {
       String? productUid,
       String? storeUid,
       required bool? isReplied}) async {
-    final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+    final dio = getPartnersDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
       final queryParameter = <String, dynamic>{
         'page': page,
@@ -782,10 +787,9 @@ class InclePartnersAPI {
         formData.files.add(
           MapEntry(
             'productProfile',
-            await MultipartFile.fromFile(
-              image.path,
-              filename: image.path.split('/').last,
-            ),
+            await MultipartFile.fromFile(image.path,
+                filename: image.path.split('/').last,
+                contentType: MediaType.parse('image/jpeg')),
           ),
         );
       }
@@ -794,10 +798,9 @@ class InclePartnersAPI {
           formData.files.add(
             MapEntry(
               'descriptionFile',
-              await MultipartFile.fromFile(
-                image.path,
-                filename: image.path.split('/').last,
-              ),
+              await MultipartFile.fromFile(image.path,
+                  filename: image.path.split('/').last,
+                  contentType: MediaType.parse('image/jpeg')),
             ),
           );
         }
@@ -848,10 +851,9 @@ class InclePartnersAPI {
           formData.files.add(
             MapEntry(
               'images',
-              await MultipartFile.fromFile(
-                image.path,
-                filename: image.path.split('/').last,
-              ),
+              await MultipartFile.fromFile(image.path,
+                  filename: image.path.split('/').last,
+                  contentType: MediaType.parse('image/jpeg')),
             ),
           );
         } else if (image is String) {
@@ -862,10 +864,9 @@ class InclePartnersAPI {
           formData.files.add(
             MapEntry(
               'images',
-              await MultipartFile.fromFile(
-                filePath,
-                filename: image.split('/').last,
-              ),
+              await MultipartFile.fromFile(filePath,
+                  filename: image.split('/').last,
+                  contentType: MediaType.parse('image/jpeg')),
             ),
           );
         }

@@ -11,6 +11,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:tuple/tuple.dart';
 import 'dio_client.dart';
 import 'package:meta/meta.dart';
+import 'package:http_parser/http_parser.dart';
 export 'package:incle_api/enums.dart';
 part 'incle_client_api.dart';
 part 'incle_general_api.dart';

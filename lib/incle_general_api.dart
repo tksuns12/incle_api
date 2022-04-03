@@ -238,12 +238,12 @@ class IncleGeneralAPI {
     final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
     try {
       var _queryParameter = <String, dynamic>{
-        'orderProperty': orderProperty.toString(),
-        'orderValue': orderValue.toString(),
+        'orderProperty': orderProperty.name,
+        'orderValue': orderValue.name,
         'page': page,
         'perPage': perPage,
-        'isDiscountedProduct': discoundFilter.toString(),
-        'isRecommendedProduct': recommendedFilter.toString(),
+        'isDiscountedProduct': discoundFilter.name,
+        'isRecommendedProduct': recommendedFilter.name,
       };
       if (findProperty != null) {
         _queryParameter['findProperty'] = findProperty;
@@ -252,7 +252,7 @@ class IncleGeneralAPI {
         _queryParameter['findValue'] = findValue;
       }
       if (findType != null) {
-        _queryParameter['findType'] = findType.toString();
+        _queryParameter['findType'] = findType.name;
       }
       if (storeUid != null) {
         _queryParameter['storeUid'] = storeUid;

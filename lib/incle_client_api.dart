@@ -55,6 +55,7 @@ class IncleClientAPI {
       required File profileImage}) async {
     try {
       final dio = getClientDioClient(baseUrl: baseUrl, secureStorage: storage);
+      dio.options.contentType = 'multipart/form-data';
       final formData = FormData.fromMap({
         'userName': id,
         'password': password,
@@ -69,7 +70,7 @@ class IncleClientAPI {
       formData.files.add(MapEntry(
           'userProfile',
           await MultipartFile.fromFile(profileImage.path,
-              filename: profileImage.path.split('/').last)));
+              filename: profileImage.path.split('/').last,contentType: MediaType.parse('image/jpeg'))));
       final res = await dio.post('/users', data: formData);
       if (res.statusCode == 201) {
         return;
@@ -100,7 +101,7 @@ class IncleClientAPI {
       formData.files.add(MapEntry(
           'userProfile',
           await MultipartFile.fromFile(profileImage.path,
-              filename: profileImage.path.split('/').last)));
+              filename: profileImage.path.split('/').last, contentType: MediaType.parse('image/jpeg'))));
       final res = await dio.patch('/users', data: formData);
       if (res.statusCode == 200) {
         return;
@@ -478,7 +479,7 @@ class IncleClientAPI {
           formData.files.add(MapEntry(
               'refundFile',
               await MultipartFile.fromFile(images[i].path,
-                  filename: images[i].path.split('/').last)));
+                  filename: images[i].path.split('/').last, contentType: MediaType.parse('image/jpeg'))));
         }
       }
       final response = await dio.post(
@@ -591,7 +592,7 @@ class IncleClientAPI {
           formData.files.add(MapEntry(
               'reviewFile',
               await MultipartFile.fromFile(file.path,
-                  filename: file.path.split('/').last)));
+                  filename: file.path.split('/').last, contentType: MediaType.parse('image/jpeg'))));
         }
       }
       final response = await dio.post(
