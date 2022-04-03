@@ -1049,7 +1049,7 @@ class InclePartnersAPI {
       })();
       final data = <String, dynamic>{'isRefund': isRefund};
       if (rejectReason != null) {
-        data['rejectReason'] = rejectReason;
+        data['refundRejectReason'] = rejectReason;
       }
       final response = await dio.patch(
         '/orders/$orderUid/refunds',
