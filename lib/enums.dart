@@ -1,4 +1,4 @@
-enum OrderProperty { createdDate, price, todayGet }
+enum OrderProperty { createDate, price, todayGet }
 enum OrderValue { ASC, DESC }
 enum FindType { Where, Like }
 enum FilterType { only, all, exclude }

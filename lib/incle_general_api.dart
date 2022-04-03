@@ -223,7 +223,7 @@ class IncleGeneralAPI {
   }
 
   Future<List> getProductList({
-    OrderProperty orderProperty = OrderProperty.createdDate,
+    OrderProperty orderProperty = OrderProperty.createDate,
     OrderValue orderValue = OrderValue.DESC,
     String? findProperty,
     String? findValue,
