@@ -161,11 +161,18 @@ class IncleClientAPI {
       {String? userName, String? phoneNumber, String? email}) async {
     try {
       final dio = getClientDioClient(baseUrl: baseUrl, secureStorage: storage);
-      final res = await dio.get('/users/duplication', queryParameters: {
-        'userName': userName,
-        'phone': phoneNumber,
-        'email': email,
-      });
+      final queryParameter = <String, dynamic>{};
+      if (userName != null) {
+        queryParameter['userName'] = userName;
+      }
+      if (phoneNumber != null) {
+        queryParameter['phone'] = phoneNumber;
+      }
+      if (email != null) {
+        queryParameter['email'] = email;
+      }
+      final res =
+          await dio.get('/users/duplication', queryParameters: queryParameter);
       if (res.statusCode == 200) {
         return res.data;
       } else {
@@ -222,15 +229,29 @@ class IncleClientAPI {
     try {
       final dio = getClientDioClient(
           baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
-      final res = await dio.get('/stores/subscribing', queryParameters: {
+
+      final queryParameter = <String, dynamic>{
         'page': page,
         'perPage': perPage,
-        'storeName': storeName,
-        'storeCategoryUid': storeCategoryUid,
-        'productName': productName,
-        'latitude': latitude,
-        'longitude': longitude,
-      });
+      };
+      if (storeName != null) {
+        queryParameter['storeName'] = storeName;
+      }
+      if (storeCategoryUid != null) {
+        queryParameter['storeCategoryUid'] = storeCategoryUid;
+      }
+      if (productName != null) {
+        queryParameter['productName'] = productName;
+      }
+      if (latitude != null) {
+        queryParameter['latitude'] = latitude;
+      }
+      if (longitude != null) {
+        queryParameter['longitude'] = longitude;
+      }
+
+      final res =
+          await dio.get('/stores/subscribing', queryParameters: queryParameter);
       if (res.statusCode == 200) {
         return res.data;
       } else {
@@ -343,20 +364,17 @@ class IncleClientAPI {
     final dio = getClientDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
+      final queryParameter = <String, dynamic>{
+        'page': page,
+        'perPage': perPage,
+        'orderStatuses': orderStatuses.map((e) => e.index).toList(),
+      };
+      if (isQuick != null) {
+        queryParameter['isQuick'] = isQuick ? 1 : 0;
+      }
       final response = await dio.get(
         '/orders',
-        queryParameters: {
-          'page': page,
-          'perPage': perPage,
-          'orderStatus': orderStatuses.map((e) => e.index).toList(),
-          'isQuick': (() {
-            if (isQuick == null) {
-              return 0;
-            } else {
-              return isQuick ? 1 : 0;
-            }
-          })()
-        },
+        queryParameters: queryParameter,
       );
       if (response.statusCode == 200) {
         return response.data['rows'];

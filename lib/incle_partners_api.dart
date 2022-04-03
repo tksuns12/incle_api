@@ -909,7 +909,7 @@ class InclePartnersAPI {
     try {
       final response = await dio.patch('/product/$uid/discount/',
           queryParameters: {
-            'discountedPrice': isDiscounted ? discountedPrice : 0
+            'discountedPrice': isDiscounted ? discountedPrice : null
           });
       if (response.statusCode == 200) {
         return;
@@ -1058,7 +1058,7 @@ class InclePartnersAPI {
     }
   }
 
-    //
+  //
   // Notification
   //
 
