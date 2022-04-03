@@ -242,7 +242,7 @@ class IncleGeneralAPI {
         'orderValue': orderValue.name,
         'page': page,
         'perPage': perPage,
-        'isDiscountedProduct': discoundFilter.name,
+        'isDiscountedProduct': discoundFilter.number,
         'isRecommendedProduct': recommendedFilter.name,
       };
       if (findProperty != null) {

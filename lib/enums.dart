@@ -104,7 +104,7 @@ extension Parser on OrderStatusEnum {
 }
 
 extension FilterIntParser on FilterType {
-  int get value {
+  int get number {
     switch (this) {
       case FilterType.only:
         return 1;
