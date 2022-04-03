@@ -210,7 +210,7 @@ class IncleGeneralAPI {
     final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
     try {
       final response = await dio.get(
-        '/products/$productID',
+        '/stores/products/$productID',
       );
       if (response.statusCode == 200) {
         return response.data;

@@ -805,7 +805,7 @@ class InclePartnersAPI {
           );
         }
       }
-      final response = await dio.post('/products', data: formData);
+      final response = await dio.post('/stores/products', data: formData);
       if (response.statusCode == 201) {
         return;
       } else {
@@ -871,7 +871,7 @@ class InclePartnersAPI {
           );
         }
       }
-      final response = await dio.patch('/products/$uid', data: formData);
+      final response = await dio.patch('/stores/products/$uid', data: formData);
       if (response.statusCode == 200) {
         return;
       } else {
@@ -886,7 +886,7 @@ class InclePartnersAPI {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
-      final response = await dio.delete('/products/$uid');
+      final response = await dio.delete('/stores/products/$uid');
       if (response.statusCode == 200) {
         return;
       } else {
@@ -903,7 +903,7 @@ class InclePartnersAPI {
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
       final response = await dio.patch(
-        '/products/$uid/soldout',
+        '/stores/products/$uid/soldout',
         data: {
           'isSoldOut': isSoldOut ? 1 : 0,
         },
@@ -924,7 +924,7 @@ class InclePartnersAPI {
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
       final response = await dio.patch(
-        '/products/$uid/recommendation',
+        '/stores/products/$uid/recommendation',
         data: {'ownersRecommended': isRecommended ? 1 : 0},
       );
       if (response.statusCode == 200) {

@@ -370,14 +370,14 @@ class IncleClientAPI {
       final dio = getClientDioClient(
           baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
       if (isFavorite) {
-        final res = await dio.post('/products/$productID/subscription');
+        final res = await dio.post('/stores/products/$productID/subscription');
         if (res.statusCode == 201) {
           return res.data;
         } else {
           throw Exception(res.statusMessage);
         }
       } else {
-        final res = await dio.delete('/products/$productID/subscription');
+        final res = await dio.delete('/stores/products/$productID/subscription');
         if (res.statusCode == 200) {
           return res.data;
         } else {
