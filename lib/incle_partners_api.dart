@@ -121,7 +121,6 @@ class InclePartnersAPI {
         return dto;
       })();
       final formData = FormData.fromMap({
-        'createStoreRestsDto': createStoreRestsDto,
         'partnersName': id,
         'password': password,
         'name': name,
@@ -141,9 +140,18 @@ class InclePartnersAPI {
         'description': storeDescription,
         'freeDelivery': freeDeliveryCondition,
         'targetTagUid': targetTagUid,
-        'startDate': openTime,
-        'endDate': closeTime,
+        'startDate':
+            '${openTime!.hour.toString().padLeft(2, '0')}:${openTime.minute.toString().padLeft(2, '0')}',
+        'endDate':
+            '${closeTime!.hour.toString().padLeft(2, '0')}:${closeTime.minute.toString().padLeft(2, '0')}',
+        'isRestHoliday': isRestHolidy ?? false ? 1 : 0
       });
+
+      for (var restItem in createStoreRestsDto) {
+        formData.fields
+            .add(MapEntry('createStoreRestsDto', jsonEncode(restItem)));
+      }
+
       for (var picture in storePictures!) {
         formData.files.add(MapEntry(
             'storeProfile',
@@ -162,6 +170,7 @@ class InclePartnersAPI {
               filename: registration2.path.split('/').last,
               contentType: MediaType.parse('image/jpeg'))));
       dio.options.contentType = 'multipart/form-data';
+
       final response = await dio.post(
         '/partners',
         data: formData,
@@ -177,23 +186,32 @@ class InclePartnersAPI {
   }
 
   Future<void> updateUserInfo(
-      {required String password,
-      required String name,
-      required String phoneNumber,
-      required String email,
+      {required String? password,
+      required String? name,
+      required String? phoneNumber,
+      required String? email,
       required File? profileImage}) async {
     try {
       final dio = getPartnersDioClient(
           baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
-      final formData = FormData.fromMap({
-        'password': password,
-        'name': name,
-        'phone': phoneNumber,
-        'email': email,
-      });
+      final formDataMap = <String, dynamic>{};
+      if (password != null) {
+        formDataMap['password'] = password;
+      }
+      if (name != null) {
+        formDataMap['name'] = name;
+      }
+      if (phoneNumber != null) {
+        formDataMap['phone'] = phoneNumber;
+      }
+      if (email != null) {
+        formDataMap['email'] = email;
+      }
+      final formData = FormData.fromMap(formDataMap);
+
       if (profileImage != null) {
         formData.files.add(MapEntry(
-            'profileImage',
+            'partnersProfile',
             await MultipartFile.fromFile(profileImage.path,
                 filename: profileImage.path.split('/').last,
                 contentType: MediaType.parse('image/jpeg'))));
@@ -618,9 +636,11 @@ class InclePartnersAPI {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
-      final response = await dio.delete(
-        '/store/pause',
-      );
+      final response = await dio.patch('/stores/pause', data: {
+        'pause': 0,
+        'pauseStartDate': '00:00',
+        'pauseEndDate': '00:00',
+      });
       if (response.statusCode == 200) {
         return;
       } else {
@@ -635,7 +655,7 @@ class InclePartnersAPI {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
-      final response = await dio.post(
+      final response = await dio.patch(
         '/stores/pause',
         data: {
           'pauseStartDate':
@@ -645,7 +665,7 @@ class InclePartnersAPI {
           'pause': 1,
         },
       );
-      if (response.statusCode == 201) {
+      if (response.statusCode == 200) {
         return;
       } else {
         throw Exception(response.statusMessage);
@@ -665,7 +685,7 @@ class InclePartnersAPI {
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
       final response = await dio.post(
-        '/store/products/questions/$questionUid',
+        '/stores/products/questions/$questionUid',
         data: {
           'reply': reply,
         },
@@ -763,19 +783,10 @@ class InclePartnersAPI {
       })();
 
       final formData = FormData.fromMap({
-        'createProductOptions': productOptionStocks,
+        'createProductOptions': jsonEncode(productOptionStocks),
         'productCategoryDetailUid': subCategoryUid,
         'codyProductsUid': cody,
         'name': name,
-        'createProductDescriptionDto': description
-            .map((e) => {
-                  'description': e.item1,
-                  'originalNames': e.item2
-                      .map((e) =>
-                          '${e.path.split('/').last}-${DateTime.now().millisecondsSinceEpoch / 1000}')
-                      .toList()
-                })
-            .toList(),
         'modelHeight': modelHeight,
         'modelWeight': modelWeight,
         'modelNormalSize': modelNormalSize,
@@ -783,10 +794,20 @@ class InclePartnersAPI {
         'price': price,
         'todayGet': todayGet ? 1 : 0,
       });
+
+      for (var descItem in description) {
+        formData.fields.add(MapEntry(
+            'createProductDescriptionDto',
+            jsonEncode({
+              'description': descItem.item1,
+              'origianlNames':
+                  descItem.item2.map((e) => e.path.split('\n').last).toList()
+            })));
+      }
       for (var image in images) {
         formData.files.add(
           MapEntry(
-            'productProfile',
+            'productFile',
             await MultipartFile.fromFile(image.path,
                 filename: image.path.split('/').last,
                 contentType: MediaType.parse('image/jpeg')),
@@ -805,6 +826,7 @@ class InclePartnersAPI {
           );
         }
       }
+      log(jsonEncode(productOptionStocks));
       final response = await dio.post('/stores/products', data: formData);
       if (response.statusCode == 201) {
         return;
@@ -816,7 +838,6 @@ class InclePartnersAPI {
     }
   }
 
-  @experimental
   Future<void> updateProduct(
       {required String uid,
       required String name,
@@ -835,7 +856,7 @@ class InclePartnersAPI {
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
 
     try {
-     final productOptionStocks = (() {
+      final productOptionStocks = jsonEncode((() {
         final result = [];
         for (var optionStock in optionStocks.entries) {
           // optionStock은 예를 들어 {['컬러/블랙', '사이즈/XL']: 10} 이런 식이다.
@@ -858,22 +879,13 @@ class InclePartnersAPI {
           result.add(parsedOptionStock);
         }
         return result;
-      })();
+      })());
 
       final formData = FormData.fromMap({
         'createProductOptions': productOptionStocks,
         'productCategoryDetailUid': subCategoryUid,
-        'codyProductsUid': cody,
+        'codyProductsUid': ['26', '27'],
         'name': name,
-        'createProductDescriptionDto': description
-            .map((e) => {
-                  'description': e.item1,
-                  'originalNames': e.item2
-                      .map((e) =>
-                          '${e.path.split('/').last}-${DateTime.now().millisecondsSinceEpoch / 1000}')
-                      .toList()
-                })
-            .toList(),
         'modelHeight': modelHeight,
         'modelWeight': modelWeight,
         'modelNormalSize': modelNormalSize,
@@ -881,10 +893,19 @@ class InclePartnersAPI {
         'price': price,
         'todayGet': todayGet ? 1 : 0,
       });
+      for (var descItem in description) {
+        formData.fields.add(MapEntry(
+            'createProductDescriptionDto',
+            jsonEncode({
+              'description': descItem.item1,
+              'origianlNames':
+                  descItem.item2.map((e) => e.path.split('\n').last).toList()
+            })));
+      }
       for (var image in images) {
         formData.files.add(
           MapEntry(
-            'productProfile',
+            'productFile',
             await MultipartFile.fromFile(image.path,
                 filename: image.path.split('/').last,
                 contentType: MediaType.parse('image/jpeg')),
@@ -903,7 +924,9 @@ class InclePartnersAPI {
           );
         }
       }
-      final response = await dio.patch('/stores/products/$uid/detail', data: formData);
+      log(productOptionStocks);
+      final response =
+          await dio.patch('/stores/products/$uid/detail', data: formData);
       if (response.statusCode == 200) {
         return;
       } else {
@@ -976,10 +999,8 @@ class InclePartnersAPI {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
-      final response = await dio.patch('/product/$uid/discount/',
-          queryParameters: {
-            'discountedPrice': isDiscounted ? discountedPrice : null
-          });
+      final response = await dio.patch('/stores/products/$uid/discount',
+          data: {'discountedPrice': isDiscounted ? discountedPrice : null});
       if (response.statusCode == 200) {
         return;
       } else {
@@ -1012,7 +1033,7 @@ class InclePartnersAPI {
             if (isQuick == null) {
               return 0;
             } else {
-              return isQuick ? 1 : 0;
+              return isQuick ? 1 : -1;
             }
           })()
         },

@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:incle_api/enums.dart';
 import 'package:path_provider/path_provider.dart';
+import 'dart:developer';
 import 'package:tuple/tuple.dart';
 import 'dio_client.dart';
 import 'package:meta/meta.dart';
@@ -16,7 +17,6 @@ export 'package:incle_api/enums.dart';
 part 'incle_client_api.dart';
 part 'incle_general_api.dart';
 part 'incle_partners_api.dart';
-
 
 class IncleAPI {
   IncleClientAPI? _clientService;
