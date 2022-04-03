@@ -243,7 +243,7 @@ class IncleGeneralAPI {
         'page': page,
         'perPage': perPage,
         'isDiscountedProduct': discoundFilter.number,
-        'isRecommendedProduct': recommendedFilter.name,
+        'isRecommendedProduct': recommendedFilter.number,
       };
       if (findProperty != null) {
         _queryParameter['findProperty'] = findProperty;
