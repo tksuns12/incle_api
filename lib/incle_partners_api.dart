@@ -975,7 +975,7 @@ class InclePartnersAPI {
         queryParameters: {
           'page': page,
           'perPage': perPage,
-          'orderStatus': orderStatuses.map((e) => e.index).toList(),
+          'orderStatus': orderStatuses.map((e) => e.number).toList(),
           'isQuick': (() {
             if (isQuick == null) {
               return 0;

@@ -19,7 +19,7 @@ enum OrderStatusEnum {
 enum DeliveryStatus { beingDelivered, delivered, pickedUp }
 
 extension OrderStatusIntParser on OrderStatusEnum {
-  int get value {
+  int get number {
     switch (this) {
       case OrderStatusEnum.preparing:
         return 0;
@@ -50,6 +50,7 @@ extension OrderStatusIntParser on OrderStatusEnum {
 OrderStatusEnum orderStatusParser(String input) {
   switch (input) {
     case '취소요청':
+    case '취소신청':
       return OrderStatusEnum.cancelRequested;
     case '취소확인':
       return OrderStatusEnum.canceled;

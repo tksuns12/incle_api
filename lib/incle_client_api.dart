@@ -404,7 +404,7 @@ class IncleClientAPI {
       final queryParameter = <String, dynamic>{
         'page': page,
         'perPage': perPage,
-        'orderStatuses': orderStatuses.map((e) => e.index).toList(),
+        'orderStatuses': orderStatuses.map((e) => e.number).toList(),
       };
       if (isQuick != null) {
         queryParameter['isQuick'] = isQuick ? 1 : 0;
