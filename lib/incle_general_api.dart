@@ -264,7 +264,7 @@ class IncleGeneralAPI {
       final response =
           await dio.get('/stores/products', queryParameters: _queryParameter);
       if (response.statusCode == 200) {
-        return response.data;
+        return response.data['rows'];
       } else {
         throw Exception(response.statusMessage);
       }
