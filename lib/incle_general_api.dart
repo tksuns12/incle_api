@@ -46,7 +46,7 @@ class IncleGeneralAPI {
     }
   }
 
-  Future<Map> checkVerifyNum(String phoneNumber, String code) async {
+  Future<String> checkVerifyNum(String phoneNumber, String code) async {
     final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
     try {
       final response = await dio.post(
