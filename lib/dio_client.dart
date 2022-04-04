@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:logger/logger.dart';
-import 'dart:developer';
 
 Dio getClientDioClient(
     {bool needAuthorization = false,
@@ -42,33 +41,9 @@ Dio getClientDioClient(
                 method: error.requestOptions.method,
                 headers: error.requestOptions.headers,
               ));
-        } else if (response.statusCode == 401) {
-          final id = await storage.read(key: 'id');
-          final password = await storage.read(key: 'password');
-          final loginDio = Dio()
-            ..options =
-                BaseOptions(baseUrl: 'http://backend.wim.kro.kr:5000/api/v1');
-          final response = await loginDio.post(
-            '/login-user',
-            data: {'userName': id, 'password': password},
-          );
-          if (response.statusCode == 201) {
-            storage.write(
-                key: 'accessToken', value: response.data['accessToken']);
-            storage.write(
-                key: 'refreshToken', value: response.data['refreshToken']);
-            error.requestOptions.headers['Authorization'] =
-                'Bearer ${response.data['accessToken']}';
-            final retryReq = await loginDio.request(error.requestOptions.path,
-                options: Options(
-                  method: error.requestOptions.method,
-                  headers: error.requestOptions.headers,
-                ));
-          } else {
-            throw Exception(response.statusMessage);
-          }
+          handler.resolve(retryReq);
         } else {
-          throw Exception(response.statusMessage);
+          handler.next(error);
         }
       } else {
         handler.next(error);
@@ -105,19 +80,11 @@ Dio getPartnersDioClient(
       if (error.response?.statusCode == 401 ||
           error.response?.statusCode == 403) {
         final refreshToken = await storage.read(key: 'refreshToken');
-        log(refreshToken ?? '');
         final refreshDio = Dio();
         refreshDio.options = BaseOptions(
           baseUrl: 'http://backend.wim.kro.kr:5000/api/v1',
         );
         refreshDio.options.headers['Authorization'] = 'Bearer $refreshToken';
-        refreshDio.interceptors.add(InterceptorsWrapper(
-          onError: (e, handler) async {
-            await storage.deleteAll();
-            throw Exception('저장된 로그인 정보에 문제가 있습니다. 다시 로그인 해주세요. msg: $e');
-          },
-        ));
-
         final response = await refreshDio.post(
           '/refresh',
         );
@@ -138,6 +105,7 @@ Dio getPartnersDioClient(
           return handler.resolve(retryReq);
         }
       } else {
+        storage.deleteAll();
         return handler.next(error);
       }
     }));
