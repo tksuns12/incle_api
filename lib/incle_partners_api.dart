@@ -516,7 +516,7 @@ class InclePartnersAPI {
           'condition': condition,
           'limitDate': limitDate == null
               ? null
-              : limitDate.millisecondsSinceEpoch / 1000,
+              : limitDate.millisecondsSinceEpoch,
         },
       );
       if (response.statusCode == 201) {
