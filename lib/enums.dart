@@ -18,6 +18,8 @@ enum OrderStatusEnum {
 }
 enum DeliveryStatus { beingDelivered, delivered, pickedUp }
 
+enum NoticeTarget {CLIENT, PARTNERS}
+
 extension OrderStatusIntParser on OrderStatusEnum {
   int get number {
     switch (this) {

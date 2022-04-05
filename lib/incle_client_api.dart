@@ -305,6 +305,25 @@ class IncleClientAPI {
     }
   }
 
+  Future<Map> getMyCoupons({required int page, required int perPage}) async {
+    try {
+      final dio = getClientDioClient(
+          baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+      final queryParameter = <String, dynamic>{
+        'page': page,
+        'perPage': perPage,
+      };
+      final res = await dio.get('/coupons/downloads', queryParameters: queryParameter);
+      if (res.statusCode == 200) {
+        return res.data;
+      } else {
+        throw Exception(res.statusMessage);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   //
   // Product Questions
   //

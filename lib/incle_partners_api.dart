@@ -514,9 +514,7 @@ class InclePartnersAPI {
           'name': name,
           'amount': price,
           'condition': condition,
-          'limitDate': limitDate == null
-              ? null
-              : limitDate.millisecondsSinceEpoch,
+          'limitDate': limitDate?.millisecondsSinceEpoch,
         },
       );
       if (response.statusCode == 201) {
@@ -1164,6 +1162,41 @@ class InclePartnersAPI {
   }
 
   //
+  // Payment
+  //
+
+  Future<List> getHistories(
+      {required int page,
+      required int perPage,
+      String? merchanUid,
+      List<OrderStatusEnum>? orderStatus}) async {
+    final dio = getPartnersDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+    try {
+      final queryParameters = {
+        'page': page,
+        'perPage': perPage,
+        'merchanUid': merchanUid,
+      };
+      if (orderStatus != null) {
+        queryParameters['orderStatus'] =
+            orderStatus.map((e) => e.number).toList();
+      }
+      final response = await dio.get(
+        '/payments',
+        queryParameters: queryParameters,
+      );
+      if (response.statusCode == 200) {
+        return response.data['rows'];
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  //
   // Notification
   //
 
@@ -1196,6 +1229,48 @@ class InclePartnersAPI {
       }
     } catch (e) {
       throw Exception(e.toString());
+    }
+  }
+
+  //
+  // Notice
+  //
+
+  Future<List> fetchNotices(
+      {required int page,
+      required int perPage,
+      required NoticeTarget noticeTarget}) async {
+    final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
+    try {
+      final response = await dio.get(
+        '/notices',
+        queryParameters: {
+          'page': page,
+          'perPage': perPage,
+          'noticeTarget': noticeTarget.name,
+        },
+      );
+      if (response.statusCode == 200) {
+        return response.data['rows'];
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Map> fetchNoticeDetail(String noticeID) async {
+    final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
+    try {
+      final response = await dio.get('/notices/$noticeID');
+      if (response.statusCode == 200) {
+        return response.data;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      rethrow;
     }
   }
 }
