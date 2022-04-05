@@ -85,24 +85,29 @@ Dio getPartnersDioClient(
           baseUrl: 'http://backend.wim.kro.kr:5000/api/v1',
         );
         refreshDio.options.headers['Authorization'] = 'Bearer $refreshToken';
-        final response = await refreshDio.post(
-          '/refresh',
-        );
-        if (response.statusCode == 201) {
-          storage.write(
-              key: 'accessToken', value: response.data['accessToken']);
-          storage.write(
-              key: 'refreshToken', value: response.data['refreshToken']);
-          error.requestOptions.headers['Authorization'] =
-              'Bearer ${response.data['accessToken']}';
-          final retryReq = await _dio.request(error.requestOptions.path,
-              data: error.requestOptions.data,
-              queryParameters: error.requestOptions.queryParameters,
-              options: Options(
-                method: error.requestOptions.method,
-                headers: error.requestOptions.headers,
-              ));
-          return handler.resolve(retryReq);
+        try {
+          final response = await refreshDio.post(
+            '/refresh',
+          );
+          if (response.statusCode == 201) {
+            storage.write(
+                key: 'accessToken', value: response.data['accessToken']);
+            storage.write(
+                key: 'refreshToken', value: response.data['refreshToken']);
+            error.requestOptions.headers['Authorization'] =
+                'Bearer ${response.data['accessToken']}';
+            final retryReq = await _dio.request(error.requestOptions.path,
+                data: error.requestOptions.data,
+                queryParameters: error.requestOptions.queryParameters,
+                options: Options(
+                  method: error.requestOptions.method,
+                  headers: error.requestOptions.headers,
+                ));
+            return handler.resolve(retryReq);
+          }
+        } on DioError catch (e) {
+          storage.deleteAll();
+          handler.next(e);
         }
       } else {
         storage.deleteAll();
