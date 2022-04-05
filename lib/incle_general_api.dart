@@ -368,4 +368,46 @@ class IncleGeneralAPI {
       throw Exception(e.toString());
     }
   }
+
+  //
+  // Notice
+  //
+
+  Future<List> fetchNotices(
+      {required int page,
+      required int perPage,
+      required NoticeTarget noticeTarget}) async {
+    final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
+    try {
+      final response = await dio.get(
+        '/notices',
+        queryParameters: {
+          'page': page,
+          'perPage': perPage,
+          'noticeTarget': noticeTarget.name,
+        },
+      );
+      if (response.statusCode == 200) {
+        return response.data['rows'];
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Map> fetchNoticeDetail(String noticeID) async {
+    final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
+    try {
+      final response = await dio.get('/notices/$noticeID');
+      if (response.statusCode == 200) {
+        return response.data;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
