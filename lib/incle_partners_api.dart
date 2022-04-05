@@ -1165,7 +1165,7 @@ class InclePartnersAPI {
   // Payment
   //
 
-  Future<List> getHistories(
+  Future<List> getOrderHistories(
       {required int page,
       required int perPage,
       String? merchanUid,
@@ -1188,6 +1188,21 @@ class InclePartnersAPI {
       );
       if (response.statusCode == 200) {
         return response.data['rows'];
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Map> getOrderHistoryDetail(String paymentID) async {
+    final dio = getPartnersDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+    try {
+      final response = await dio.get('/payments/$paymentID');
+      if (response.statusCode == 200) {
+        return response.data;
       } else {
         throw Exception(response.statusMessage);
       }
