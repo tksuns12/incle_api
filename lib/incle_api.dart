@@ -22,8 +22,8 @@ class IncleAPI {
   IncleGeneralAPI? _generalService;
 
   final _secureStorage = const FlutterSecureStorage(
-      aOptions: AndroidOptions(encryptedSharedPreferences: true),
-      iOptions: IOSOptions(accessibility: IOSAccessibility.first_unlock));
+      aOptions: AndroidOptions(encryptedSharedPreferences: true,),
+      iOptions: IOSOptions(accessibility: IOSAccessibility.first_unlock,),);
 
   IncleClientAPI get clientService {
     _clientService ??= IncleClientAPI(_secureStorage);

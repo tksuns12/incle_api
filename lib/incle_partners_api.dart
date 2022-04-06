@@ -41,11 +41,14 @@ class InclePartnersAPI {
         },
       );
       if (response.statusCode == 201) {
-        storage.write(key: 'id', value: id);
-        storage.write(key: 'password', value: password);
-        storage.write(key: 'accessToken', value: response.data['accessToken']);
-        storage.write(
-            key: 'refreshToken', value: response.data['refreshToken']);
+        await Future.wait([
+          storage.write(key: 'id', value: id),
+          storage.write(key: 'password', value: password),
+          storage.write(
+              key: 'accessToken', value: response.data['accessToken']),
+          storage.write(
+              key: 'refreshToken', value: response.data['refreshToken']),
+        ]);
       } else {
         throw Exception(response.statusMessage);
       }
