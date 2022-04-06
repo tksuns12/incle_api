@@ -70,7 +70,8 @@ class IncleClientAPI {
       formData.files.add(MapEntry(
           'userProfile',
           await MultipartFile.fromFile(profileImage.path,
-              filename: profileImage.path.split('/').last,contentType: MediaType.parse('image/jpeg'))));
+              filename: profileImage.path.split('/').last,
+              contentType: MediaType.parse('image/jpeg'))));
       final res = await dio.post('/users', data: formData);
       if (res.statusCode == 201) {
         return;
@@ -101,7 +102,8 @@ class IncleClientAPI {
       formData.files.add(MapEntry(
           'userProfile',
           await MultipartFile.fromFile(profileImage.path,
-              filename: profileImage.path.split('/').last, contentType: MediaType.parse('image/jpeg'))));
+              filename: profileImage.path.split('/').last,
+              contentType: MediaType.parse('image/jpeg'))));
       final res = await dio.patch('/users', data: formData);
       if (res.statusCode == 200) {
         return;
@@ -313,7 +315,8 @@ class IncleClientAPI {
         'page': page,
         'perPage': perPage,
       };
-      final res = await dio.get('/coupons/downloads', queryParameters: queryParameter);
+      final res =
+          await dio.get('/coupons/downloads', queryParameters: queryParameter);
       if (res.statusCode == 200) {
         return res.data;
       } else {
@@ -343,13 +346,14 @@ class IncleClientAPI {
     }
   }
 
-    Future<List> getProductQuestions(
+  Future<List> getProductQuestions(
       {int page = 0,
       int perPage = 10,
       String? productUid,
       String? storeUid,
       required bool? isReplied}) async {
-    final dio = getClientDioClient(baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+    final dio = getClientDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
       final queryParameter = <String, dynamic>{
         'page': page,
@@ -396,7 +400,8 @@ class IncleClientAPI {
           throw Exception(res.statusMessage);
         }
       } else {
-        final res = await dio.delete('/stores/products/$productID/subscription');
+        final res =
+            await dio.delete('/stores/products/$productID/subscription');
         if (res.statusCode == 200) {
           return res.data;
         } else {
@@ -498,7 +503,8 @@ class IncleClientAPI {
           formData.files.add(MapEntry(
               'refundFile',
               await MultipartFile.fromFile(images[i].path,
-                  filename: images[i].path.split('/').last, contentType: MediaType.parse('image/jpeg'))));
+                  filename: images[i].path.split('/').last,
+                  contentType: MediaType.parse('image/jpeg'))));
         }
       }
       final response = await dio.post(
@@ -520,7 +526,7 @@ class IncleClientAPI {
   //
 
   Future<Map> generatePayment({
-    required String merchanUid,
+    required String merchantUid,
     required List orders,
     required int point,
     required bool isQuick,
@@ -538,7 +544,7 @@ class IncleClientAPI {
       final response = await dio.post(
         '/payments',
         data: {
-          'merchantUid': merchanUid,
+          'merchantUid': merchantUid,
           'orders': orders,
           'point': point,
           'isQuick': isQuick,
@@ -611,7 +617,8 @@ class IncleClientAPI {
           formData.files.add(MapEntry(
               'reviewFile',
               await MultipartFile.fromFile(file.path,
-                  filename: file.path.split('/').last, contentType: MediaType.parse('image/jpeg'))));
+                  filename: file.path.split('/').last,
+                  contentType: MediaType.parse('image/jpeg'))));
         }
       }
       final response = await dio.post(

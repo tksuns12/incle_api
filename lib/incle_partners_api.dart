@@ -1168,7 +1168,7 @@ class InclePartnersAPI {
   Future<List> getOrderHistories(
       {required int page,
       required int perPage,
-      String? merchanUid,
+      String? merchantUid,
       List<OrderStatusEnum>? orderStatus}) async {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
@@ -1176,7 +1176,7 @@ class InclePartnersAPI {
       final queryParameters = {
         'page': page,
         'perPage': perPage,
-        'merchanUid': merchanUid,
+        'merchantUid': merchantUid,
       };
       if (orderStatus != null) {
         queryParameters['orderStatus'] =
