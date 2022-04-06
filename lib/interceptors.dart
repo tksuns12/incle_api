@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:logger/logger.dart';
 
-class PartnersTokenInterceptor implements Interceptor {
+class PartnersTokenInterceptor extends Interceptor {
   final FlutterSecureStorage storage;
   final Dio dio;
   final logger = Logger(level: Level.debug);
@@ -54,7 +54,7 @@ class PartnersTokenInterceptor implements Interceptor {
             }
           } catch (e) {
             logger.e('Inner Intercedptor Error occured, $e');
-           return handler.next(err);
+            return handler.next(err);
           }
         }
       }));
@@ -89,14 +89,11 @@ class PartnersTokenInterceptor implements Interceptor {
     final _userToken = await storage.read(key: 'accessToken');
     options.headers['Authorization'] = 'Bearer $_userToken';
     logger.d('Intercepted, ${options.method} ${options.path}');
-    return handler.next(options);
+    handler.next(options);
   }
-
-  @override
-  void onResponse(Response response, ResponseInterceptorHandler handler) {}
 }
 
-class ClientTokenInterceptor implements Interceptor {
+class ClientTokenInterceptor extends Interceptor {
   final FlutterSecureStorage storage;
   final Dio dio;
   ClientTokenInterceptor({
@@ -182,11 +179,6 @@ class ClientTokenInterceptor implements Interceptor {
     final _userToken = await storage.read(key: 'accessToken');
     options.headers['Authorization'] = 'Bearer $_userToken';
     logger.d('Intercepted, ${options.method} ${options.path}');
-    return handler.next(options);
-  }
-
-  @override
-  void onResponse(Response response, ResponseInterceptorHandler handler) {
-    // TODO: implement onResponse
+    handler.next(options);
   }
 }
