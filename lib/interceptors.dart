@@ -50,11 +50,11 @@ class PartnersTokenInterceptor implements Interceptor {
                     method: err.requestOptions.method,
                     headers: err.requestOptions.headers,
                   ));
-              handler.resolve(innerRetryReq);
+              return handler.resolve(innerRetryReq);
             }
           } catch (e) {
             logger.e('Inner Intercedptor Error occured, $e');
-            handler.next(err);
+           return handler.next(err);
           }
         }
       }));
@@ -89,7 +89,7 @@ class PartnersTokenInterceptor implements Interceptor {
     final _userToken = await storage.read(key: 'accessToken');
     options.headers['Authorization'] = 'Bearer $_userToken';
     logger.d('Intercepted, ${options.method} ${options.path}');
-    handler.next(options);
+    return handler.next(options);
   }
 
   @override
@@ -143,11 +143,11 @@ class ClientTokenInterceptor implements Interceptor {
                     method: err.requestOptions.method,
                     headers: err.requestOptions.headers,
                   ));
-              handler.resolve(innerRetryReq);
+              return handler.resolve(innerRetryReq);
             }
           } catch (e) {
             logger.e('Inner Intercedptor Error occured, $e');
-            handler.next(err);
+            return handler.next(err);
           }
         }
       }));
@@ -182,7 +182,7 @@ class ClientTokenInterceptor implements Interceptor {
     final _userToken = await storage.read(key: 'accessToken');
     options.headers['Authorization'] = 'Bearer $_userToken';
     logger.d('Intercepted, ${options.method} ${options.path}');
-    handler.next(options);
+    return handler.next(options);
   }
 
   @override
