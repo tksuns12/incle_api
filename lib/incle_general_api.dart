@@ -384,7 +384,7 @@ class IncleGeneralAPI {
         queryParameters: {
           'page': page,
           'perPage': perPage,
-          'noticeTarget': noticeTarget.name,
+          'target': noticeTarget.name,
         },
       );
       if (response.statusCode == 200) {
