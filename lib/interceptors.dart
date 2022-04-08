@@ -22,49 +22,18 @@ class PartnersTokenInterceptor extends Interceptor {
       );
       refreshDio.options.headers['Authorization'] = 'Bearer $refreshToken';
       refreshDio.interceptors
-          .add(InterceptorsWrapper(onError: (innerErr, handler) async {
-        if (innerErr.response!.statusCode == 401 ||
-            innerErr.response!.statusCode == 403) {
-          final id = await storage.read(key: 'id');
-          final password = await storage.read(key: 'password');
-
-          final signinDio = Dio();
-          signinDio.options = BaseOptions(
-            baseUrl: 'http://backend.wim.kro.kr:5000/api/v1',
-          );
-          try {
-            final loginResponse = await signinDio.post('/login-partners',
-                data: {'partnersName': id, 'password': password});
-            if (loginResponse.statusCode == 201) {
-              await storage.write(
-                  key: 'accessToken', value: loginResponse.data['accessToken']);
-              await storage.write(
-                  key: 'refreshToken',
-                  value: loginResponse.data['refreshToken']);
-
-              err.requestOptions.headers['Authorization'] =
-                  'Bearer ${loginResponse.data['accessToken']}';
-
-              final innerRetryReq = await dio.request(err.requestOptions.path,
-                  options: Options(
-                    method: err.requestOptions.method,
-                    headers: err.requestOptions.headers,
-                  ));
-              return handler.resolve(innerRetryReq);
-            }
-          } catch (e) {
-            logger.e('Inner Intercedptor Error occured, $e');
-            return handler.next(err);
-          }
-        }
+          .add(InterceptorsWrapper(onError: (innerErr, innerHandler) async {
+        await storage.deleteAll();
+        innerHandler.next(innerErr);
       }));
 
       final response = await refreshDio.post(
         '/refresh',
       );
       if (response.statusCode == 201) {
-        storage.write(key: 'accessToken', value: response.data['accessToken']);
-        storage.write(
+        await storage.write(
+            key: 'accessToken', value: response.data['accessToken']);
+        await storage.write(
             key: 'refreshToken', value: response.data['refreshToken']);
         err.requestOptions.headers['Authorization'] =
             'Bearer ${response.data['accessToken']}';
@@ -78,7 +47,7 @@ class PartnersTokenInterceptor extends Interceptor {
         return handler.resolve(retryReq);
       }
     } else {
-      storage.deleteAll();
+      await storage.deleteAll();
       return handler.next(err);
     }
   }
