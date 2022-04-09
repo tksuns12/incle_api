@@ -405,70 +405,52 @@ class InclePartnersAPI {
   //   }
   // }
 
-  // Future<Map> findPasswordAllow(
-  //     {required String email,
-  //     required String phone,
-  //     required String name}) async {
-  //   final dio = getDioClient(baseUrl: baseUrl, secureStorage: storage);
-  //   try {
-  //     final response = await dio.post(
-  //       '/find/password/allow',
-  //       data: {
-  //         'email': email,
-  //         'phone': phone,
-  //         'name': name,
-  //       },
-  //     );
-  //     if (response.statusCode == 201) {
-  //       return response.data;
-  //     } else {
-  //       throw Exception(response.statusMessage);
-  //     }
-  //   } catch (e) {
-  //     rethrow;
-  //   }
-  // }
+  Future<void> resetPassword(
+      {required String phone,
+      required String phoneVerificationCode,
+      required String id,
+      required String password}) async {
+    final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
+    try {
+      final response = await dio.post(
+        '/partners/password',
+        data: {
+          'phone': phone,
+          'verifyNumber': phoneVerificationCode,
+          'partnersName': id,
+          'password': password,
+        },
+      );
+      if (response.statusCode == 201) {
+        return;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
 
-  // Future<Map> findPassword(String code, String password) async {
-  //   final dio = getDioClient(baseUrl: baseUrl, secureStorage: storage);
-  //   try {
-  //     final response = await dio.post(
-  //       '/find/password',
-  //       data: {
-  //         'code': code,
-  //         'password': password,
-  //       },
-  //     );
-  //     if (response.statusCode == 200) {
-  //       return response.data;
-  //     } else {
-  //       throw Exception(response.statusMessage);
-  //     }
-  //   } catch (e) {
-  //     rethrow;
-  //   }
-  // }
-
-  // Future<Map> findId(String email, String name, String phone) async {
-  //   final dio = getDioClient(baseUrl: baseUrl, secureStorage: storage);
-  //   try {
-  //     final response = await dio.post(
-  //       '/find/id',
-  //       data: {
-  //         'email': email,
-  //         'name': name,
-  //         'phone': phone,
-  //       },
-  //     );
-  //     if (response.statusCode == 201) {
-  //       return response.data;
-  //     } else {
-  //       throw Exception(response.statusMessage);
-  //     }
-  //   } catch (e) {
-  //     rethrow;
-  //   }
-  // }
+  Future<void> findId(
+      {required String phone, required String verificationCode}) async {
+    final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
+    try {
+      final response = await dio.post(
+        '/partners/partnersname',
+        data: {
+          'phone': phone,
+          'verifyNumber': verificationCode,
+        },
+      );
+      if (response.statusCode == 201) {
+        return;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
 
   /// name 패러미터에는 email, id, phone, partnersNames 넷 중 하나만 입력해야 합니다.
   Future<List> duplicateCheck(

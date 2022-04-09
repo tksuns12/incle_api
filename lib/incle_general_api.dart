@@ -163,7 +163,8 @@ class IncleGeneralAPI {
     }
   }
 
-  Future<Map> getStoreDetail({required String storeUid, double? latitude, double? longitude}) async {
+  Future<Map> getStoreDetail(
+      {required String storeUid, double? latitude, double? longitude}) async {
     final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
     try {
       final queryParameter = <String, dynamic>{
@@ -313,6 +314,27 @@ class IncleGeneralAPI {
     }
   }
 
+  Future<List> getProductsByRanking(
+      {required int page, required int perPage}) async {
+    final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
+    try {
+      final response = await dio.get(
+        '/stores/products/ranks',
+        queryParameters: {
+          'page': page,
+          'perPage': perPage,
+        },
+      );
+      if (response.statusCode == 200) {
+        return response.data['rows'];
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
   //
   // Review
   //
@@ -373,7 +395,7 @@ class IncleGeneralAPI {
   // Notice
   //
 
-  Future<List> fetchNotices(
+  Future<List> getNotices(
       {required int page,
       required int perPage,
       required NoticeTarget noticeTarget}) async {
@@ -397,10 +419,102 @@ class IncleGeneralAPI {
     }
   }
 
-  Future<Map> fetchNoticeDetail(String noticeID) async {
+  Future<Map> getNoticeDetail(String noticeID) async {
     final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
     try {
       final response = await dio.get('/notices/$noticeID');
+      if (response.statusCode == 200) {
+        return response.data;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  //
+  // FAQ
+  //
+
+  Future<List> getFAQSummaries(
+      {required int page, required int perPage}) async {
+    final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
+    try {
+      final response = await dio.get(
+        '/faqs',
+        queryParameters: {
+          'page': page,
+          'perPage': perPage,
+        },
+      );
+      if (response.statusCode == 200) {
+        return response.data['rows'];
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List> getFAQSummariesByCategories() async {
+    final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
+    try {
+      final response = await dio.get('/faqs/categories');
+      if (response.statusCode == 200) {
+        return response.data;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Map> getFAQDetail(String faqID) async {
+    final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
+    try {
+      final response = await dio.get('/faqs/$faqID');
+      if (response.statusCode == 200) {
+        return response.data;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  //
+  // Event
+  //
+
+  Future<List> getEventSummaries(
+      {required int page, required int perPage}) async {
+    final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
+    try {
+      final response = await dio.get(
+        '/events',
+        queryParameters: {
+          'page': page,
+          'perPage': perPage,
+        },
+      );
+      if (response.statusCode == 200) {
+        return response.data['rows'];
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Map> getEventDetail(String eventID) async {
+    final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
+    try {
+      final response = await dio.get('/events/$eventID');
       if (response.statusCode == 200) {
         return response.data;
       } else {

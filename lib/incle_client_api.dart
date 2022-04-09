@@ -288,6 +288,27 @@ class IncleClientAPI {
     }
   }
 
+  Future<List> getStoresByRanking(
+      {required int page, required int perPage}) async {
+    try {
+      final dio = getClientDioClient(
+          baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+      final res = await dio.get('/stores/ranks', queryParameters: {
+        'page': page,
+        'perPage': perPage,
+      });
+      if (res.statusCode == 200) {
+        return res.data['rows'];
+      } else {
+        throw Exception(res.statusMessage);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+
+
   //
   // Coupon
   //
@@ -534,7 +555,7 @@ class IncleClientAPI {
     required String phone,
     required String address,
     required String addressDetail,
-    required String deliveryRemart,
+    required String deliveryRemark,
     required double longitude,
     required double latitude,
   }) async {
@@ -552,7 +573,7 @@ class IncleClientAPI {
           'phone': phone,
           'address': address,
           'addressDetail': addressDetail,
-          'deliveryRemark': deliveryRemart,
+          'deliveryRemark': deliveryRemark,
           'longitude': longitude,
           'latitude': latitude,
         },
