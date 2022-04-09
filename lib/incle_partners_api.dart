@@ -57,6 +57,25 @@ class InclePartnersAPI {
     }
   }
 
+    Future<void> sendFCMToken(String token) async {
+    final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage,needAuthorization: true);
+    try {
+      final response = await dio.patch(
+        '',
+        data: {
+          'fcmToken': token,
+        },
+      );
+      if (response.statusCode == 200) {
+        return;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
   // Future<void> deleteUser() async {
   //   final dio = getPartnersDioClient(
   //       baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);

@@ -186,6 +186,26 @@ class IncleClientAPI {
     }
   }
 
+  Future<void> sendFCMToken(String token) async {
+    final dio = getClientDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+    try {
+      final response = await dio.patch(
+        '',
+        data: {
+          'fcmToken': token,
+        },
+      );
+      if (response.statusCode == 200) {
+        return;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
   //
   // Store Subscription
   //
@@ -306,8 +326,6 @@ class IncleClientAPI {
       rethrow;
     }
   }
-
-
 
   //
   // Coupon
