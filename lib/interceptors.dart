@@ -24,7 +24,7 @@ class PartnersTokenInterceptor extends Interceptor {
       refreshDio.interceptors
           .add(InterceptorsWrapper(onError: (innerErr, innerHandler) async {
         await storage.deleteAll();
-        innerHandler.next(innerErr);
+        handler.next(innerErr);
       }));
 
       final response = await refreshDio.post(
