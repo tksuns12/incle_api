@@ -14,7 +14,7 @@ class PartnersTokenInterceptor extends Interceptor {
   @override
   Future<void> onError(DioError err, ErrorInterceptorHandler handler) async {
     logger.e('Error occured, ${err.response}');
-    if (err.response?.statusCode == 401 || err.response?.statusCode == 403) {
+    if (err.response?.statusCode == 401) {
       final refreshToken = await storage.read(key: 'refreshToken');
       final refreshDio = Dio();
       refreshDio.options = BaseOptions(
@@ -73,7 +73,7 @@ class ClientTokenInterceptor extends Interceptor {
   @override
   Future<void> onError(DioError err, ErrorInterceptorHandler handler) async {
     logger.e('Error occured, ${err.response}');
-    if (err.response?.statusCode == 401 || err.response?.statusCode == 403) {
+    if (err.response?.statusCode == 401) {
       final refreshToken = await storage.read(key: 'refreshToken');
       final refreshDio = Dio();
       refreshDio.options = BaseOptions(
@@ -82,8 +82,7 @@ class ClientTokenInterceptor extends Interceptor {
       refreshDio.options.headers['Authorization'] = 'Bearer $refreshToken';
       refreshDio.interceptors
           .add(InterceptorsWrapper(onError: (innerErr, handler) async {
-        if (innerErr.response!.statusCode == 401 ||
-            innerErr.response!.statusCode == 403) {
+        if (innerErr.response!.statusCode == 401) {
           final id = await storage.read(key: 'id');
           final password = await storage.read(key: 'password');
 

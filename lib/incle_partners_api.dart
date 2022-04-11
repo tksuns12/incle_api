@@ -76,20 +76,20 @@ class InclePartnersAPI {
     }
   }
 
-  // Future<void> deleteUser() async {
-  //   final dio = getPartnersDioClient(
-  //       baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
-  //   try {
-  //     final response = await dio.delete('/partners');
-  //     if (response.statusCode == 200) {
-  //       await storage.deleteAll();
-  //     } else {
-  //       throw Exception(response.statusMessage);
-  //     }
-  //   } catch (e) {
-  //     rethrow;
-  //   }
-  // }
+  Future<void> deleteUser() async {
+    final dio = getPartnersDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+    try {
+      final response = await dio.delete('/partners');
+      if (response.statusCode == 200) {
+        await storage.deleteAll();
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
 
   //
   // Partners
