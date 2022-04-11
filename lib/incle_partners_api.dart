@@ -740,7 +740,7 @@ class InclePartnersAPI {
         queryParameter['storeUid'] = storeUid;
       }
       if (isReplied != null) {
-        queryParameter['isReplied'] = isReplied ? 1 : 0;
+        queryParameter['isReplied'] = isReplied ? 1 : -1;
       }
 
       final response = await dio.get(
