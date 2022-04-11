@@ -630,6 +630,24 @@ class InclePartnersAPI {
     }
   }
 
+  Future<void> updateFreeDeliveryCondition(int condition) async {
+    final dio = getPartnersDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+    try {
+      final response = await dio.patch(
+        '/stores/free-deliveries',
+        data: {'freeDelivery': condition},
+      );
+      if (response.statusCode == 200) {
+        return;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   //
   // Store
   //
@@ -686,13 +704,13 @@ class InclePartnersAPI {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
-      final response = await dio.post(
+      final response = await dio.patch(
         '/stores/products/questions/$questionUid',
         data: {
           'reply': reply,
         },
       );
-      if (response.statusCode == 201) {
+      if (response.statusCode == 200) {
         return;
       } else {
         throw Exception(response.statusMessage);
