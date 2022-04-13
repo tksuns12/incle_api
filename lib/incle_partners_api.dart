@@ -450,7 +450,7 @@ class InclePartnersAPI {
     }
   }
 
-  Future<void> findId(
+  Future<Map> findId(
       {required String phone, required String verificationCode}) async {
     final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
     try {
@@ -462,7 +462,7 @@ class InclePartnersAPI {
         },
       );
       if (response.statusCode == 201) {
-        return;
+        return response.data;
       } else {
         throw Exception(response.statusMessage);
       }
