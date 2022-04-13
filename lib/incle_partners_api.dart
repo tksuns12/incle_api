@@ -473,12 +473,15 @@ class InclePartnersAPI {
 
   /// name 패러미터에는 email, id, phone, partnersNames 넷 중 하나만 입력해야 합니다.
   Future<List> duplicateCheck(
-      {String? userName, String? phoneNumber, String? email}) async {
+      {String? userName, String? phoneNumber, String? email, String? name}) async {
     final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
     try {
       final queryParameters = <String, String>{};
       if (userName != null) {
-        queryParameters['name'] = userName;
+        queryParameters['partnersName'] = userName;
+      }
+      if (name != null) {
+        queryParameters['name'] = name;
       }
       if (phoneNumber != null) {
         queryParameters['phone'] = phoneNumber;
