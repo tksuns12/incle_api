@@ -660,14 +660,17 @@ class InclePartnersAPI {
   // Store
   //
 
-  Future<void> unpausePartners() async {
+  Future<void> unpausePartners(
+      {required TimeOfDay startTime, required TimeOfDay endTime}) async {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
       final response = await dio.patch('/stores/pause', data: {
         'pause': 0,
-        'pauseStartDate': '00:00',
-        'pauseEndDate': '00:00',
+        'pauseStartDate':
+            '${startTime.hour.toString().padLeft(2, '0')}:${startTime.minute.toString().padLeft(2, '0')}',
+        'pauseEndDate':
+            '${endTime.hour.toString().padLeft(2, '0')}:${endTime.minute.toString().padLeft(2, '0')}',
       });
       if (response.statusCode == 200) {
         return;
