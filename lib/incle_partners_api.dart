@@ -832,7 +832,7 @@ class InclePartnersAPI {
             'createProductDescriptionDto',
             jsonEncode({
               'description': descItem.item1,
-              'originalNames[]':
+              'originalNames':
                   descItem.item2.map((e) => e.path.split('/').last).toList()
             })));
       }
