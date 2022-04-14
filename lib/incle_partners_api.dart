@@ -827,11 +827,12 @@ class InclePartnersAPI {
       }
 
       for (var descItem in description) {
+
         formData.fields.add(MapEntry(
             'createProductDescriptionDto',
             jsonEncode({
               'description': descItem.item1,
-              'origianlNames[]':
+              'originalNames[]':
                   descItem.item2.map((e) => e.path.split('/').last).toList()
             })));
       }
@@ -928,7 +929,7 @@ class InclePartnersAPI {
             'createProductDescriptionDto',
             jsonEncode({
               'description': descItem.item1,
-              'origianlNames':
+              'originalNames':
                   descItem.item2.map((e) => e.path.split('/').last).toList()
             })));
       }
