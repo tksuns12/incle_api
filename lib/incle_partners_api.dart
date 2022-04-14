@@ -797,7 +797,7 @@ class InclePartnersAPI {
 
       if (cody.length == 1) {
         formData.fields
-            .add(MapEntry('codyProductsUid', jsonEncode([cody.first])));
+            .add(MapEntry('codyProductsUid[]', jsonEncode(cody.first)));
       } else {
         for (var codyID in cody) {
           formData.fields.add(MapEntry('codyProductsUid', codyID));
