@@ -890,6 +890,26 @@ class InclePartnersAPI {
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
 
     try {
+      final formData = FormData.fromMap({
+        'productCategoryDetailUid': subCategoryUid,
+        'name': name,
+        'modelHeight': modelHeight,
+        'modelWeight': modelWeight,
+        'modelNormalSize': modelNormalSize,
+        'modelSize': modelSize,
+        'price': price,
+        'todayGet': todayGet ? 1 : 0,
+      });
+
+      if (cody.length == 1) {
+        formData.fields.add(
+            MapEntry('codyProductsUid[]', jsonEncode(int.parse(cody.first))));
+      } else {
+        for (var codyID in cody) {
+          formData.fields.add(MapEntry('codyProductsUid', codyID));
+        }
+      }
+
       final productOptionStocks = (() {
         final result = <Map<String, dynamic>>[];
         for (var optionStock in optionStocks.entries) {
@@ -914,18 +934,6 @@ class InclePartnersAPI {
         }
         return result;
       }());
-
-      final formData = FormData.fromMap({
-        'productCategoryDetailUid': subCategoryUid,
-        'codyProductsUid': ['26', '27'],
-        'name': name,
-        'modelHeight': modelHeight,
-        'modelWeight': modelWeight,
-        'modelNormalSize': modelNormalSize,
-        'modelSize': modelSize,
-        'price': price,
-        'todayGet': todayGet ? 1 : 0,
-      });
 
       for (var optionStock in productOptionStocks) {
         formData.fields
