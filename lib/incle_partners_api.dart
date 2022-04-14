@@ -57,8 +57,9 @@ class InclePartnersAPI {
     }
   }
 
-    Future<void> sendFCMToken(String token) async {
-    final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage,needAuthorization: true);
+  Future<void> sendFCMToken(String token) async {
+    final dio = getPartnersDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
       final response = await dio.patch(
         '',
@@ -473,7 +474,10 @@ class InclePartnersAPI {
 
   /// name 패러미터에는 email, id, phone, partnersNames 넷 중 하나만 입력해야 합니다.
   Future<List> duplicateCheck(
-      {String? userName, String? phoneNumber, String? email, String? name}) async {
+      {String? userName,
+      String? phoneNumber,
+      String? email,
+      String? name}) async {
     final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
     try {
       final queryParameters = <String, String>{};
@@ -780,33 +784,7 @@ class InclePartnersAPI {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
-      final productOptionStocks = (() {
-        final result = [];
-        for (var optionStock in optionStocks.entries) {
-          // optionStock은 예를 들어 {['컬러/블랙', '사이즈/XL']: 10} 이런 식이다.
-          final parsedOptionStock = {};
-          // parsedOptionStock은 {opt1Name:컬러, opt2:블랙, opt2Name: 사이즈, opt2:XL, stock: 10} 이런 식이다.
-          for (var i = 0; i < 10; i++) {
-            // 무조건 10까지 반복문을 돌린다.
-            if (i < optionStock.key.length) {
-              // 만약 아직 남아 있는 옵션이 있다면 옵션을 추가한다.
-              final optionNames = optionStock.key[i].split('/');
-              parsedOptionStock['opt${i + 1}Name'] = optionNames[0];
-              parsedOptionStock['opt${i + 1}'] = optionNames[1];
-            } else {
-              // 남아 있는 옵션이 없다면 10까지 돌리면서 null을 대입한다.
-              parsedOptionStock['opt${i + 1}Name'] = null;
-              parsedOptionStock['opt${i + 1}'] = null;
-            }
-            parsedOptionStock['stock'] = optionStock.value;
-          }
-          result.add(parsedOptionStock);
-        }
-        return result;
-      })();
-
       final formData = FormData.fromMap({
-        'createProductOptions': jsonEncode(productOptionStocks),
         'productCategoryDetailUid': subCategoryUid,
         'codyProductsUid': cody,
         'name': name,
@@ -817,6 +795,27 @@ class InclePartnersAPI {
         'price': price,
         'todayGet': todayGet ? 1 : 0,
       });
+      for (var optionStock in optionStocks.entries) {
+        // optionStock은 예를 들어 {['컬러/블랙', '사이즈/XL']: 10} 이런 식이다.
+        final parsedOptionStock = {};
+        // parsedOptionStock은 {opt1Name:컬러, opt2:블랙, opt2Name: 사이즈, opt2:XL, stock: 10} 이런 식이다.
+        for (var i = 0; i < 10; i++) {
+          // 무조건 10까지 반복문을 돌린다.
+          if (i < optionStock.key.length) {
+            // 만약 아직 남아 있는 옵션이 있다면 옵션을 추가한다.
+            final optionNames = optionStock.key[i].split('/');
+            parsedOptionStock['opt${i + 1}Name'] = optionNames[0];
+            parsedOptionStock['opt${i + 1}'] = optionNames[1];
+          } else {
+            // 남아 있는 옵션이 없다면 10까지 돌리면서 null을 대입한다.
+            parsedOptionStock['opt${i + 1}Name'] = null;
+            parsedOptionStock['opt${i + 1}'] = null;
+          }
+          parsedOptionStock['stock'] = optionStock.value;
+        }
+        formData.fields.add(
+            MapEntry('createProductOptions', jsonEncode(parsedOptionStock)));
+      }
 
       for (var descItem in description) {
         formData.fields.add(MapEntry(
@@ -849,7 +848,6 @@ class InclePartnersAPI {
           );
         }
       }
-      log(jsonEncode(productOptionStocks));
       final response = await dio.post('/stores/products', data: formData);
       if (response.statusCode == 201) {
         return;
