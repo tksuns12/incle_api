@@ -890,7 +890,7 @@ class InclePartnersAPI {
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
 
     try {
-      final productOptionStocks = jsonEncode((() {
+      final productOptionStocks = (() {
         final result = [];
         for (var optionStock in optionStocks.entries) {
           // optionStock은 예를 들어 {['컬러/블랙', '사이즈/XL']: 10} 이런 식이다.
@@ -913,7 +913,7 @@ class InclePartnersAPI {
           result.add(parsedOptionStock);
         }
         return result;
-      })());
+      }());
 
       final formData = FormData.fromMap({
         'createProductOptions': productOptionStocks,
@@ -958,7 +958,6 @@ class InclePartnersAPI {
           );
         }
       }
-      log(productOptionStocks);
       final response =
           await dio.patch('/stores/products/$uid/detail', data: formData);
       if (response.statusCode == 200) {
