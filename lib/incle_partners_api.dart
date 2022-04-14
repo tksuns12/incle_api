@@ -891,10 +891,10 @@ class InclePartnersAPI {
 
     try {
       final productOptionStocks = (() {
-        final result = [];
+        final result = <Map<String, dynamic>>[];
         for (var optionStock in optionStocks.entries) {
           // optionStock은 예를 들어 {['컬러/블랙', '사이즈/XL']: 10} 이런 식이다.
-          final parsedOptionStock = {};
+          final parsedOptionStock = <String, dynamic>{};
           // parsedOptionStock은 {opt1Name:컬러, opt2:블랙, opt2Name: 사이즈, opt2:XL, stock: 10} 이런 식이다.
           for (var i = 0; i < 10; i++) {
             // 무조건 10까지 반복문을 돌린다.
@@ -916,7 +916,6 @@ class InclePartnersAPI {
       }());
 
       final formData = FormData.fromMap({
-        'createProductOptions': productOptionStocks,
         'productCategoryDetailUid': subCategoryUid,
         'codyProductsUid': ['26', '27'],
         'name': name,
@@ -927,6 +926,11 @@ class InclePartnersAPI {
         'price': price,
         'todayGet': todayGet ? 1 : 0,
       });
+
+      for (var optionStock in productOptionStocks) {
+        formData.fields
+            .add(MapEntry('createProductOptions', jsonEncode(optionStock)));
+      }
       for (var descItem in description) {
         formData.fields.add(MapEntry(
             'createProductDescriptionDto',
