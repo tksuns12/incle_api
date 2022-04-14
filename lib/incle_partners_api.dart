@@ -832,7 +832,7 @@ class InclePartnersAPI {
             jsonEncode({
               'description': descItem.item1,
               'origianlNames[]':
-                  descItem.item2.map((e) => e.path.split('\n').last).toList()
+                  descItem.item2.map((e) => e.path.split('/').last).toList()
             })));
       }
       for (var image in images) {
@@ -929,7 +929,7 @@ class InclePartnersAPI {
             jsonEncode({
               'description': descItem.item1,
               'origianlNames':
-                  descItem.item2.map((e) => e.path.split('\n').last).toList()
+                  descItem.item2.map((e) => e.path.split('/').last).toList()
             })));
       }
       for (var image in images) {
