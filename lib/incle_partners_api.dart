@@ -795,8 +795,13 @@ class InclePartnersAPI {
         'todayGet': todayGet ? 1 : 0,
       });
 
-      for (var codyID in cody) {
-        formData.fields.add(MapEntry('codyProductsUid', codyID));
+      if (cody.length == 1) {
+        formData.fields
+            .add(MapEntry('codyProductsUid', jsonEncode([cody.first])));
+      } else {
+        for (var codyID in cody) {
+          formData.fields.add(MapEntry('codyProductsUid', codyID));
+        }
       }
 
       for (var optionStock in optionStocks.entries) {
