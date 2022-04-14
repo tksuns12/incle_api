@@ -520,11 +520,11 @@ class InclePartnersAPI {
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
       final queryParameters = {
-          'name': name,
-          'amount': price,
-          'condition': condition,
-          'limitDate': limitDate?.millisecondsSinceEpoch,
-        };
+        'name': name,
+        'amount': price,
+        'condition': condition,
+        'limitDate': limitDate?.millisecondsSinceEpoch,
+      };
       final response = await dio.post(
         '/coupons',
         queryParameters: queryParameters,
@@ -783,7 +783,7 @@ class InclePartnersAPI {
       required List<Tuple2<String, List<File>>> description,
       required String subCategoryUid}) async {
     final dio = getPartnersDioClient(
-        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+        baseUrl: 'http://222.104.199.114:5006', secureStorage: storage, needAuthorization: true);
     try {
       final formData = FormData.fromMap({
         'productCategoryDetailUid': subCategoryUid,
@@ -828,7 +828,6 @@ class InclePartnersAPI {
       }
 
       for (var descItem in description) {
-
         formData.fields.add(MapEntry(
             'createProductDescriptionDto',
             jsonEncode({
