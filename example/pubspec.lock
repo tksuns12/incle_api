@@ -162,7 +162,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.3.12+4"
+    version: "0.3.12+5"
   js:
     dependency: transitive
     description:
