@@ -1,7 +1,7 @@
 part of 'incle_api.dart';
 
 class InclePartnersAPI {
-  final baseUrl = "http://backend.wim.kro.kr:5000/api/v1";
+  final baseUrl = "http://222.104.199.114:5006/api/v1";
   final FlutterSecureStorage storage;
 
   InclePartnersAPI(this.storage);
@@ -783,7 +783,7 @@ class InclePartnersAPI {
       required List<Tuple2<String, List<File>>> description,
       required String subCategoryUid}) async {
     final dio = getPartnersDioClient(
-        baseUrl: 'http://222.104.199.114:5006/api/v1', secureStorage: storage, needAuthorization: true);
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
       final formData = FormData.fromMap({
         'productCategoryDetailUid': subCategoryUid,
