@@ -786,7 +786,6 @@ class InclePartnersAPI {
     try {
       final formData = FormData.fromMap({
         'productCategoryDetailUid': subCategoryUid,
-        'codyProductsUid': cody,
         'name': name,
         'modelHeight': modelHeight,
         'modelWeight': modelWeight,
@@ -795,6 +794,11 @@ class InclePartnersAPI {
         'price': price,
         'todayGet': todayGet ? 1 : 0,
       });
+
+      for (var codyID in cody) {
+        formData.fields.add(MapEntry('codyProductsUid', codyID));
+      }
+
       for (var optionStock in optionStocks.entries) {
         // optionStock은 예를 들어 {['컬러/블랙', '사이즈/XL']: 10} 이런 식이다.
         final parsedOptionStock = {};
