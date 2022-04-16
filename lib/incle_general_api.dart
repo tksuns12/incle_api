@@ -127,12 +127,13 @@ class IncleGeneralAPI {
     }
   }
 
-  Future<List> getCouponList() async {
+  Future<List> getCouponList(String storeUid) async {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
       final response = await dio.get(
         '/coupons',
+        queryParameters: {'storeUid': storeUid, 'page': 0, 'perPage': 1000},
       );
       if (response.statusCode == 200) {
         return response.data['rows'];

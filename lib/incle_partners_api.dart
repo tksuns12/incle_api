@@ -517,12 +517,15 @@ class InclePartnersAPI {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
+      
       final queryParameters = {
         'name': name,
         'amount': price,
         'condition': condition,
-        'limitDate': limitDate?.millisecondsSinceEpoch,
       };
+      if (limitDate != null) {
+        queryParameters['limitDate'] = limitDate.millisecondsSinceEpoch;
+      }
       final response = await dio.post(
         '/coupons',
         queryParameters: queryParameters,
