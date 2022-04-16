@@ -41,14 +41,11 @@ class InclePartnersAPI {
         },
       );
       if (response.statusCode == 201) {
-        await Future.wait([
-          storage.write(key: 'id', value: id),
-          storage.write(key: 'password', value: password),
-          storage.write(
-              key: 'accessToken', value: response.data['accessToken']),
-          storage.write(
-              key: 'refreshToken', value: response.data['refreshToken']),
-        ]);
+        await storage.write(key: 'id', value: id);
+        await storage.write(key: 'password', value: password);
+        await storage.write(key: 'accessToken', value: response.data['accessToken']);
+        await storage.write(
+            key: 'refreshToken', value: response.data['refreshToken']);
       } else {
         throw Exception(response.statusMessage);
       }
@@ -906,7 +903,7 @@ class InclePartnersAPI {
             MapEntry('codyProductsUid[]', jsonEncode(int.parse(cody.first))));
       } else {
         for (var codyID in cody) {
-          formData.fields.add(MapEntry('codyProductsUid', codyID));
+          formData.fields.add(MapEntry('codyProductsUid[]', codyID));
         }
       }
 
