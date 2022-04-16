@@ -426,7 +426,7 @@ class InclePartnersAPI {
       {required String phone,
       required String phoneVerificationCode,
       required String id,
-      required String password}) async {
+      required String password, required String name}) async {
     final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
     try {
       final response = await dio.post(
@@ -436,6 +436,7 @@ class InclePartnersAPI {
           'verifyNumber': phoneVerificationCode,
           'partnersName': id,
           'password': password,
+          'name': name
         },
       );
       if (response.statusCode == 201) {
