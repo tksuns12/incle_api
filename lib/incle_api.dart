@@ -23,7 +23,7 @@ class IncleAPI {
 
   final _secureStorage = const FlutterSecureStorage(
     aOptions:
-        AndroidOptions(encryptedSharedPreferences: true, resetOnError: true),
+        AndroidOptions(encryptedSharedPreferences: true),
     iOptions: IOSOptions(
       accessibility: IOSAccessibility.first_unlock,
     ),
