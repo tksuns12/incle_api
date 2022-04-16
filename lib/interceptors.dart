@@ -26,6 +26,13 @@ class PartnersTokenInterceptor extends Interceptor {
         await storage.deleteAll();
         handler.next(innerErr);
       }));
+      refreshDio.interceptors.add(LogInterceptor(
+          error: true,
+          request: true,
+          requestBody: true,
+          responseBody: true,
+          responseHeader: true,
+          requestHeader: true));
 
       final response = await refreshDio.post(
         '/refresh',
