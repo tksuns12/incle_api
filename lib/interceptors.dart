@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart' as flutter_secure_storage;
 import 'package:logger/logger.dart';
 
 class PartnersTokenInterceptor extends Interceptor {
-  final FlutterSecureStorage storage;
+  final flutter_secure_storage.FlutterSecureStorage storage;
   final Dio dio;
   final logger = Logger(level: Level.debug);
 
@@ -15,33 +15,38 @@ class PartnersTokenInterceptor extends Interceptor {
   Future<void> onError(DioError err, ErrorInterceptorHandler handler) async {
     logger.e('Error occured, ${err.response}');
     if (err.response?.statusCode == 401) {
-      final refreshToken = await storage.read(key: 'refreshToken');
+      final refreshToken = await storage
+          .read(key: 'refreshToken')
+          .timeout(const Duration(seconds: 10));
       final refreshDio = Dio();
       refreshDio.options = BaseOptions(
         baseUrl: 'http://backend.wim.kro.kr:5000/api/v1',
       );
       refreshDio.options.headers['Authorization'] = 'Bearer $refreshToken';
-      refreshDio.interceptors
-          .add(InterceptorsWrapper(onError: (innerErr, innerHandler) async {
-        await storage.deleteAll();
-        handler.next(innerErr);
-      }));
-      refreshDio.interceptors.add(LogInterceptor(
-          error: true,
-          request: true,
-          requestBody: true,
-          responseBody: true,
-          responseHeader: true,
-          requestHeader: true));
+      refreshDio.interceptors.addAll([
+        InterceptorsWrapper(onError: (innerErr, innerHandler) async {
+          await storage.deleteAll();
+          handler.next(innerErr);
+        }),
+        LogInterceptor(
+            error: true,
+            request: true,
+            requestBody: true,
+            responseBody: true,
+            responseHeader: true,
+            requestHeader: true)
+      ]);
 
       final response = await refreshDio.post(
         '/refresh',
       );
       if (response.statusCode == 201) {
-        await storage.write(
-            key: 'accessToken', value: response.data['accessToken']);
-        await storage.write(
-            key: 'refreshToken', value: response.data['refreshToken']);
+        await storage
+            .write(key: 'accessToken', value: response.data['accessToken'])
+            .timeout(const Duration(seconds: 10));
+        await storage
+            .write(key: 'refreshToken', value: response.data['refreshToken'])
+            .timeout(const Duration(seconds: 10));
         err.requestOptions.headers['Authorization'] =
             'Bearer ${response.data['accessToken']}';
         final retryReq = await dio.request(err.requestOptions.path,
@@ -62,7 +67,9 @@ class PartnersTokenInterceptor extends Interceptor {
   @override
   Future<void> onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
-    final _userToken = await storage.read(key: 'accessToken');
+    final _userToken = await storage
+        .read(key: 'accessToken')
+        .timeout(const Duration(seconds: 10));
     options.headers['Authorization'] = 'Bearer $_userToken';
     logger.d('Intercepted, ${options.method} ${options.path}');
     handler.next(options);
@@ -70,7 +77,7 @@ class PartnersTokenInterceptor extends Interceptor {
 }
 
 class ClientTokenInterceptor extends Interceptor {
-  final FlutterSecureStorage storage;
+  final flutter_secure_storage.FlutterSecureStorage storage;
   final Dio dio;
   ClientTokenInterceptor({
     required this.storage,

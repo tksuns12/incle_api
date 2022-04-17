@@ -5,9 +5,9 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart'
+    as flutter_secure_storage;
 import 'package:incle_api/enums.dart';
-import 'dart:developer';
 import 'package:tuple/tuple.dart';
 import 'dio_client.dart';
 import 'package:http_parser/http_parser.dart';
@@ -21,13 +21,7 @@ class IncleAPI {
   InclePartnersAPI? _partnersService;
   IncleGeneralAPI? _generalService;
 
-  final _secureStorage = const FlutterSecureStorage(
-    aOptions:
-        AndroidOptions(encryptedSharedPreferences: true),
-    iOptions: IOSOptions(
-      accessibility: IOSAccessibility.first_unlock,
-    ),
-  );
+  final _secureStorage = const flutter_secure_storage.FlutterSecureStorage();
 
   IncleClientAPI get clientService {
     _clientService ??= IncleClientAPI(_secureStorage);

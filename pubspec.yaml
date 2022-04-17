@@ -1,7 +1,7 @@
 name: incle_api
 description: API Client for Incle
 
-version: 0.3.21
+version: 0.4.0
 homepage:
 
 environment:
@@ -12,7 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
   dio: ^4.0.4
-  flutter_secure_storage: ^5.0.2
+  flutter_secure_storage: ^4.2.1
   path_provider:
   http: ^0.13.4
   tuple: ^2.0.0
