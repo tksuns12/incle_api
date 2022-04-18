@@ -59,7 +59,6 @@ class PartnersTokenInterceptor extends Interceptor {
         return handler.resolve(retryReq);
       }
     } else {
-      await storage.deleteAll();
       return handler.next(err);
     }
   }
