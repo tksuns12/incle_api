@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart' as flutter_secure_storage;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart'
+    as flutter_secure_storage;
 import 'package:logger/logger.dart';
 
 class PartnersTokenInterceptor extends Interceptor {
@@ -25,7 +26,10 @@ class PartnersTokenInterceptor extends Interceptor {
       refreshDio.options.headers['Authorization'] = 'Bearer $refreshToken';
       refreshDio.interceptors.addAll([
         InterceptorsWrapper(onError: (innerErr, innerHandler) async {
-          await storage.deleteAll();
+          if (innerErr.response?.statusCode == 401 ||
+              innerErr.response?.statusCode == 403) {
+            await storage.deleteAll();
+          }
           handler.next(innerErr);
         }),
         LogInterceptor(
