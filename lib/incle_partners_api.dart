@@ -43,7 +43,8 @@ class InclePartnersAPI {
       if (response.statusCode == 201) {
         await storage.write(key: 'id', value: id);
         await storage.write(key: 'password', value: password);
-        await storage.write(key: 'accessToken', value: response.data['accessToken']);
+        await storage.write(
+            key: 'accessToken', value: response.data['accessToken']);
         await storage.write(
             key: 'refreshToken', value: response.data['refreshToken']);
       } else {
@@ -426,7 +427,8 @@ class InclePartnersAPI {
       {required String phone,
       required String phoneVerificationCode,
       required String id,
-      required String password, required String name}) async {
+      required String password,
+      required String name}) async {
     final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
     try {
       final response = await dio.post(
@@ -517,7 +519,6 @@ class InclePartnersAPI {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
-      
       final queryParameters = {
         'name': name,
         'amount': price,
@@ -799,13 +800,14 @@ class InclePartnersAPI {
         'price': price,
         'todayGet': todayGet ? 1 : 0,
       });
-
-      if (cody.length == 1) {
-        formData.fields.add(
-            MapEntry('codyProductsUid[]', jsonEncode(int.parse(cody.first))));
-      } else {
-        for (var codyID in cody) {
-          formData.fields.add(MapEntry('codyProductsUid[]', codyID));
+      if (cody.isNotEmpty) {
+        if (cody.length == 1) {
+          formData.fields.add(
+              MapEntry('codyProductsUid[]', jsonEncode(int.parse(cody.first))));
+        } else {
+          for (var codyID in cody) {
+            formData.fields.add(MapEntry('codyProductsUid[]', codyID));
+          }
         }
       }
 
@@ -902,12 +904,14 @@ class InclePartnersAPI {
         'todayGet': todayGet ? 1 : 0,
       });
 
-      if (cody.length == 1) {
-        formData.fields.add(
-            MapEntry('codyProductsUid[]', jsonEncode(int.parse(cody.first))));
-      } else {
-        for (var codyID in cody) {
-          formData.fields.add(MapEntry('codyProductsUid[]', codyID));
+      if (cody.isNotEmpty) {
+        if (cody.length == 1) {
+          formData.fields.add(
+              MapEntry('codyProductsUid[]', jsonEncode(int.parse(cody.first))));
+        } else {
+          for (var codyID in cody) {
+            formData.fields.add(MapEntry('codyProductsUid[]', codyID));
+          }
         }
       }
 
