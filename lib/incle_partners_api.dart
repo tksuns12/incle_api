@@ -810,8 +810,6 @@ class InclePartnersAPI {
             formData.fields.add(MapEntry('codyProductsUid[]', codyID));
           }
         }
-      } else {
-        formData.fields.add(const MapEntry('codyProductsUid[]', '0'));
       }
 
       for (var optionStock in optionStocks.entries) {
