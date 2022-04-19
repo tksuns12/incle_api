@@ -810,8 +810,6 @@ class InclePartnersAPI {
             formData.fields.add(MapEntry('codyProductsUid[]', codyID));
           }
         }
-      } else {
-        formData.fields.add(const MapEntry('codyProductsUid[]', 'null'));
       }
 
       for (var optionStock in optionStocks.entries) {
@@ -916,8 +914,6 @@ class InclePartnersAPI {
             formData.fields.add(MapEntry('codyProductsUid[]', codyID));
           }
         }
-      } else {
-        formData.fields.add(const MapEntry('codyProductsUid[]', 'null'));
       }
 
       final productOptionStocks = (() {
