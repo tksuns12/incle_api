@@ -800,6 +800,7 @@ class InclePartnersAPI {
         'price': price,
         'todayGet': todayGet ? 1 : 0,
       });
+
       if (cody.isNotEmpty) {
         if (cody.length == 1) {
           formData.fields.add(
@@ -809,6 +810,8 @@ class InclePartnersAPI {
             formData.fields.add(MapEntry('codyProductsUid[]', codyID));
           }
         }
+      } else {
+        formData.fields.add(const MapEntry('codyProductsUid[]', 'null'));
       }
 
       for (var optionStock in optionStocks.entries) {
@@ -913,6 +916,8 @@ class InclePartnersAPI {
             formData.fields.add(MapEntry('codyProductsUid[]', codyID));
           }
         }
+      } else {
+        formData.fields.add(const MapEntry('codyProductsUid[]', 'null'));
       }
 
       final productOptionStocks = (() {
