@@ -11,8 +11,14 @@ class InclePartnersAPI {
   //
 
   Future<bool> isSignedIn() async {
-    return (await storage.read(key: 'id')) != null &&
-        (await storage.read(key: 'password')) != null;
+    try {
+      return (await storage.read(key: 'id')) != null &&
+          (await storage.read(key: 'password')) != null;
+    } on PlatformException catch (e) {
+      throw Exception(e.message);
+    } catch (e) {
+      throw Exception(e.toString());
+    }
   }
 
   Future<void> signout() async {
@@ -25,6 +31,8 @@ class InclePartnersAPI {
       } else {
         throw Exception(res.statusMessage);
       }
+    } on DioError catch (e) {
+      throw Exception(e.response?.data['message'] ?? e.message);
     } catch (e) {
       rethrow;
     }
@@ -50,8 +58,12 @@ class InclePartnersAPI {
       } else {
         throw Exception(response.statusMessage);
       }
+    } on DioError catch (e) {
+      throw Exception(e.response?.data['message'] ?? e.message);
+    } on PlatformException catch (e) {
+      throw Exception(e.message);
     } catch (e) {
-      rethrow;
+      throw Exception(e.toString());
     }
   }
 
@@ -70,8 +82,10 @@ class InclePartnersAPI {
       } else {
         throw Exception(response.statusMessage);
       }
+    } on DioError catch (e) {
+      throw Exception(e.response?.data['message'] ?? e.message);
     } catch (e) {
-      throw Exception(e.toString());
+      rethrow;
     }
   }
 
@@ -85,6 +99,8 @@ class InclePartnersAPI {
       } else {
         throw Exception(response.statusMessage);
       }
+    } on DioError catch (e) {
+      throw Exception(e.response?.data['message'] ?? e.message);
     } catch (e) {
       rethrow;
     }
@@ -201,6 +217,8 @@ class InclePartnersAPI {
       } else {
         throw Exception(response.statusMessage);
       }
+    } on DioError catch (e) {
+      throw Exception(e.response?.data['message'] ?? e.message);
     } catch (e) {
       rethrow;
     }
@@ -247,6 +265,8 @@ class InclePartnersAPI {
       } else {
         throw Exception(response.statusMessage);
       }
+    } on DioError catch (e) {
+      throw Exception(e.response?.data['message'] ?? e.message);
     } catch (e) {
       rethrow;
     }
@@ -273,118 +293,12 @@ class InclePartnersAPI {
       } else {
         throw Exception(response.statusMessage);
       }
+    } on DioError catch (e) {
+      throw Exception(e.response?.data['message'] ?? e.message);
     } catch (e) {
       rethrow;
     }
   }
-
-  // updateProfile({
-  //   String? id,
-  //   String? password,
-  //   String? name,
-  //   String? phoneNumber,
-  //   String? email,
-  //   String? ownerName,
-  //   String? businessNumber,
-  //   dynamic registration,
-  //   dynamic registration2,
-  //   String? bank,
-  //   String? accountNumber,
-  //   String? accountOwner,
-  //   String? storeCategories,
-  //   String? storeAddress1,
-  //   String? storeAddress2,
-  //   String? storePhone,
-  //   String? openTime,
-  //   String? closeTime,
-  //   List<List<bool>>? dayoffs,
-  //   String? storeDescription,
-  //   List? storePictures,
-  //   String? storeName,
-  //   bool? isRestHolidy,
-  //   double? latitude,
-  //   double? longitude,
-  //   String? postCode,
-  //   dynamic profilePicture,
-  // }) async {
-  //   try {
-  //     final dio = getDioClient(
-  //         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
-
-  //     final formData = FormData.fromMap({
-  //       'isRestHoliday': isRestHolidy,
-  //       'id': id,
-  //       'password': password,
-  //       'ownerPhone': phoneNumber,
-  //       'email': email,
-  //       'ownerName': ownerName,
-  //       'businessNumber': businessNumber,
-  //       'accountBank': bank,
-  //       'accountNumber': accountNumber,
-  //       'accountName': accountOwner,
-  //       'targetGender': storeCategories,
-  //       'location': storeAddress1,
-  //       'locationDetail': storeAddress2,
-  //       'postNumber': postCode,
-  //       'phone': storePhone,
-  //       'startDate': openTime,
-  //       'endDate': closeTime,
-  //       'closedDays': '"closedDays":${jsonEncode(dayoffs)}',
-  //       'name': storeName,
-  //       'latitude': latitude,
-  //       'longitude': longitude,
-  //     });
-
-  //     if (registration is File) {
-  //       formData.files.add(MapEntry(
-  //           'businessReport',
-  //           await MultipartFile.fromFile(registration.path,
-  //               filename: registration.path.split('/').last)));
-  //     }
-  //     if (registration2 is File) {
-  //       formData.files.add(MapEntry(
-  //           'businessRegistration',
-  //           await MultipartFile.fromFile(registration2.path,
-  //               filename: registration2.path.split('/').last)));
-  //     }
-
-  //     if (profilePicture is File) {
-  //       formData.files.add(MapEntry(
-  //           'profile',
-  //           await MultipartFile.fromFile(profilePicture.path,
-  //               filename: profilePicture.path.split('/').last)));
-  //     }
-
-  //     for (final picture in storePictures!) {
-  //       if (picture is File) {
-  //         formData.files.add(MapEntry(
-  //             'storeImages',
-  //             MultipartFile.fromFileSync(picture.path,
-  //                 filename: picture.path.split('/').last)));
-  //       } else {
-  //         final res = await http.Client().get(picture);
-  //         final direc = await getTemporaryDirectory();
-  //         final path =
-  //             direc.path + '/storeImage${storePictures.indexOf(picture)}.jpg';
-  //         await File(path).writeAsBytes(res.bodyBytes);
-
-  //         return MapEntry('storeImages',
-  //             MultipartFile.fromFileSync(path, filename: path.split('/').last));
-  //       }
-  //     }
-  //     final response = await dio.put(
-  //       '',
-  //       data: formData,
-  //     );
-  //     if (response.statusCode == 201) {
-  //       return response.data;
-  //     } else {
-  //       throw Exception(response.statusMessage);
-  //     }
-  //   } catch (e) {
-  //     rethrow;
-  //   }
-  // }
 
   Future<Map> getPartnersProfile() async {
     final dio = getPartnersDioClient(
@@ -398,30 +312,12 @@ class InclePartnersAPI {
       } else {
         throw Exception(response.statusMessage);
       }
+    } on DioError catch (e) {
+      throw Exception(e.response?.data['message'] ?? e.message);
     } catch (e) {
       rethrow;
     }
   }
-
-  // Future<Map> deleteAccount() async {
-  //   final dio = getDioClient(
-  //       baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
-  //   try {
-  //     final response = await dio.delete(
-  //       '',
-  //     );
-  //     if (response.statusCode == 200) {
-  //       storage.delete(key: 'token');
-  //       storage.delete(key: 'id');
-  //       storage.delete(key: 'password');
-  //       return response.data;
-  //     } else {
-  //       throw Exception(response.statusMessage);
-  //     }
-  //   } catch (e) {
-  //     rethrow;
-  //   }
-  // }
 
   Future<void> resetPassword(
       {required String phone,
@@ -446,6 +342,8 @@ class InclePartnersAPI {
       } else {
         throw Exception(response.statusMessage);
       }
+    } on DioError catch (e) {
+      throw Exception(e.response?.data['message'] ?? e.message);
     } catch (e) {
       rethrow;
     }
@@ -467,6 +365,8 @@ class InclePartnersAPI {
       } else {
         throw Exception(response.statusMessage);
       }
+    } on DioError catch (e) {
+      throw Exception(e.response?.data['message'] ?? e.message);
     } catch (e) {
       rethrow;
     }
@@ -502,8 +402,10 @@ class InclePartnersAPI {
       } else {
         throw Exception(response.statusMessage);
       }
+    } on DioError catch (e) {
+      throw Exception(e.response?.data['message'] ?? e.message);
     } catch (e) {
-      throw Exception(e.toString());
+      rethrow;
     }
   }
 
@@ -536,8 +438,10 @@ class InclePartnersAPI {
       } else {
         throw Exception(response.statusMessage);
       }
+    } on DioError catch (e) {
+      throw Exception(e.response?.data['message'] ?? e.message);
     } catch (e) {
-      throw Exception(e.toString());
+      rethrow;
     }
   }
 
@@ -553,8 +457,10 @@ class InclePartnersAPI {
       } else {
         throw Exception(response.statusMessage);
       }
+    } on DioError catch (e) {
+      throw Exception(e.response?.data['message'] ?? e.message);
     } catch (e) {
-      throw Exception(e.toString());
+      rethrow;
     }
   }
 
@@ -574,6 +480,8 @@ class InclePartnersAPI {
       } else {
         throw Exception(response);
       }
+    } on DioError catch (e) {
+      throw Exception(e.response?.data['message'] ?? e.message);
     } catch (e) {
       rethrow;
     }
@@ -595,6 +503,8 @@ class InclePartnersAPI {
       } else {
         throw Exception(response);
       }
+    } on DioError catch (e) {
+      throw Exception(e.response?.data['message'] ?? e.message);
     } catch (e) {
       rethrow;
     }
@@ -617,6 +527,8 @@ class InclePartnersAPI {
       } else {
         throw Exception(response.statusMessage);
       }
+    } on DioError catch (e) {
+      throw Exception(e.response?.data['message'] ?? e.message);
     } catch (e) {
       rethrow;
     }
@@ -635,6 +547,8 @@ class InclePartnersAPI {
       } else {
         throw Exception(response.statusMessage);
       }
+    } on DioError catch (e) {
+      throw Exception(e.response?.data['message'] ?? e.message);
     } catch (e) {
       rethrow;
     }
@@ -653,6 +567,8 @@ class InclePartnersAPI {
       } else {
         throw Exception(response.statusMessage);
       }
+    } on DioError catch (e) {
+      throw Exception(e.response?.data['message'] ?? e.message);
     } catch (e) {
       rethrow;
     }
@@ -679,6 +595,8 @@ class InclePartnersAPI {
       } else {
         throw Exception(response.statusMessage);
       }
+    } on DioError catch (e) {
+      throw Exception(e.response?.data['message'] ?? e.message);
     } catch (e) {
       rethrow;
     }
@@ -703,6 +621,8 @@ class InclePartnersAPI {
       } else {
         throw Exception(response.statusMessage);
       }
+    } on DioError catch (e) {
+      throw Exception(e.response?.data['message'] ?? e.message);
     } catch (e) {
       rethrow;
     }
@@ -728,6 +648,8 @@ class InclePartnersAPI {
       } else {
         throw Exception(response.statusMessage);
       }
+    } on DioError catch (e) {
+      throw Exception(e.response?.data['message'] ?? e.message);
     } catch (e) {
       rethrow;
     }
@@ -765,8 +687,10 @@ class InclePartnersAPI {
       } else {
         throw Exception(response.statusMessage);
       }
+    } on DioError catch (e) {
+      throw Exception(e.response?.data['message'] ?? e.message);
     } catch (e) {
-      throw Exception(e.toString());
+      rethrow;
     }
   }
 
@@ -871,6 +795,8 @@ class InclePartnersAPI {
       } else {
         throw Exception(response.statusMessage);
       }
+    } on DioError catch (e) {
+      throw Exception(e.response?.data['message'] ?? e.message);
     } catch (e) {
       rethrow;
     }
@@ -985,6 +911,8 @@ class InclePartnersAPI {
       } else {
         throw Exception(response.statusMessage);
       }
+    } on DioError catch (e) {
+      throw Exception(e.response?.data['message'] ?? e.message);
     } catch (e) {
       rethrow;
     }
@@ -1000,6 +928,8 @@ class InclePartnersAPI {
       } else {
         throw Exception(response.statusMessage);
       }
+    } on DioError catch (e) {
+      throw Exception(e.response?.data['message'] ?? e.message);
     } catch (e) {
       rethrow;
     }
@@ -1021,6 +951,8 @@ class InclePartnersAPI {
       } else {
         throw Exception(response.statusMessage);
       }
+    } on DioError catch (e) {
+      throw Exception(e.response?.data['message'] ?? e.message);
     } catch (e) {
       rethrow;
     }
@@ -1040,6 +972,8 @@ class InclePartnersAPI {
       } else {
         throw Exception(response.statusMessage);
       }
+    } on DioError catch (e) {
+      throw Exception(e.response?.data['message'] ?? e.message);
     } catch (e) {
       rethrow;
     }
@@ -1059,6 +993,8 @@ class InclePartnersAPI {
       } else {
         throw Exception(response.statusMessage);
       }
+    } on DioError catch (e) {
+      throw Exception(e.response?.data['message'] ?? e.message);
     } catch (e) {
       rethrow;
     }
@@ -1096,8 +1032,10 @@ class InclePartnersAPI {
       } else {
         throw Exception(response.statusMessage);
       }
+    } on DioError catch (e) {
+      throw Exception(e.response?.data['message'] ?? e.message);
     } catch (e) {
-      throw Exception(e.toString());
+      rethrow;
     }
   }
 
@@ -1111,6 +1049,8 @@ class InclePartnersAPI {
       } else {
         throw Exception(response.statusMessage);
       }
+    } on DioError catch (e) {
+      throw Exception(e.response?.data['message'] ?? e.message);
     } catch (e) {
       rethrow;
     }
@@ -1130,6 +1070,8 @@ class InclePartnersAPI {
       } else {
         throw Exception(response.statusMessage);
       }
+    } on DioError catch (e) {
+      throw Exception(e.response?.data['message'] ?? e.message);
     } catch (e) {
       rethrow;
     }
@@ -1166,6 +1108,8 @@ class InclePartnersAPI {
       } else {
         throw Exception(response.statusMessage);
       }
+    } on DioError catch (e) {
+      throw Exception(e.response?.data['message'] ?? e.message);
     } catch (e) {
       rethrow;
     }
@@ -1190,6 +1134,8 @@ class InclePartnersAPI {
           }
         })()
       });
+    } on DioError catch (e) {
+      throw Exception(e.response?.data['message'] ?? e.message);
     } catch (e) {
       rethrow;
     }
@@ -1211,6 +1157,8 @@ class InclePartnersAPI {
       } else {
         throw Exception(response.statusMessage);
       }
+    } on DioError catch (e) {
+      throw Exception(e.response?.data['message'] ?? e.message);
     } catch (e) {
       rethrow;
     }
@@ -1246,6 +1194,8 @@ class InclePartnersAPI {
       } else {
         throw Exception(response.statusMessage);
       }
+    } on DioError catch (e) {
+      throw Exception(e.response?.data['message'] ?? e.message);
     } catch (e) {
       rethrow;
     }
@@ -1261,6 +1211,8 @@ class InclePartnersAPI {
       } else {
         throw Exception(response.statusMessage);
       }
+    } on DioError catch (e) {
+      throw Exception(e.response?.data['message'] ?? e.message);
     } catch (e) {
       rethrow;
     }
@@ -1282,8 +1234,10 @@ class InclePartnersAPI {
       } else {
         throw Exception(response.statusMessage);
       }
+    } on DioError catch (e) {
+      throw Exception(e.response?.data['message'] ?? e.message);
     } catch (e) {
-      throw Exception(e.toString());
+      rethrow;
     }
   }
 
@@ -1297,8 +1251,10 @@ class InclePartnersAPI {
       } else {
         throw Exception(response.statusMessage);
       }
+    } on DioError catch (e) {
+      throw Exception(e.response?.data['message'] ?? e.message);
     } catch (e) {
-      throw Exception(e.toString());
+      rethrow;
     }
   }
 }
