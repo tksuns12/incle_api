@@ -167,7 +167,7 @@ class IncleGeneralAPI {
     }
   }
 
-  Future<List<Map>> getStoreByRanking(
+  Future<List> getStoreByRanking(
       {required int page,
       required int pageSize,
       String? storeCategoryUid}) async {
