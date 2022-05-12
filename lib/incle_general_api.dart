@@ -183,7 +183,7 @@ class IncleGeneralAPI {
       final res =
           await dio.get('/stores/ranks', queryParameters: queryParameter);
       if (res.statusCode == 200) {
-        return res.data['row'];
+        return res.data['rows'];
       } else {
         throw Exception(res.statusMessage);
       }
