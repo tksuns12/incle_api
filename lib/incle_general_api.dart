@@ -167,7 +167,7 @@ class IncleGeneralAPI {
     }
   }
 
-  Future<Map> getStoreByRanking(
+  Future<List<Map>> getStoreByRanking(
       {required int page,
       required int pageSize,
       String? storeCategoryUid}) async {
@@ -183,7 +183,7 @@ class IncleGeneralAPI {
       final res =
           await dio.get('/stores/ranks', queryParameters: queryParameter);
       if (res.statusCode == 200) {
-        return res.data;
+        return res.data['row'];
       } else {
         throw Exception(res.statusMessage);
       }
