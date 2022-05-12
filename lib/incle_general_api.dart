@@ -167,6 +167,31 @@ class IncleGeneralAPI {
     }
   }
 
+  Future<Map> getStoreByRanking(
+      {required int page,
+      required int pageSize,
+      String? storeCategoryUid}) async {
+    final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
+    try {
+      final queryParameter = <String, dynamic>{
+        'page': page,
+        'perPage': pageSize,
+      };
+      if (storeCategoryUid != null) {
+        queryParameter['storeCategoryUid'] = storeCategoryUid;
+      }
+      final res =
+          await dio.get('/stores/ranks', queryParameters: queryParameter);
+      if (res.statusCode == 200) {
+        return res.data;
+      } else {
+        throw Exception(res.statusMessage);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   //
   // Category
   //
