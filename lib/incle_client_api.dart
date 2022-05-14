@@ -10,6 +10,17 @@ class IncleClientAPI {
   // Auth
   //
 
+  Future<bool> isSignedIn() async {
+    try {
+      return (await storage.read(key: 'id')) != null &&
+          (await storage.read(key: 'password')) != null;
+    } on PlatformException catch (e) {
+      throw Exception(e.message);
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
   Future<void> signin({required String id, required String password}) async {
     try {
       final dio = getClientDioClient(baseUrl: baseUrl, secureStorage: storage);
