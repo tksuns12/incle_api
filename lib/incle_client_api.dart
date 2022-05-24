@@ -304,7 +304,7 @@ class IncleClientAPI {
       final dio = getClientDioClient(
           baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
       final res =
-          await dio.get('/stores/$storeID/delivery-price', queryParameters: {
+          await dio.get('/stores/$storeID/delivery-fee  ', queryParameters: {
         'storeUid': storeID,
         'longitude': longitude,
         'latitude': latitude,
