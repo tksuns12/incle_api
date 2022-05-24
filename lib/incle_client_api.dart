@@ -720,4 +720,25 @@ class IncleClientAPI {
       throw Exception(e.toString());
     }
   }
+
+  //
+  // Point
+  //
+
+  Future<Map> getPointRatio() async {
+    final dio = getClientDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+    try {
+      final response = await dio.get('/points/accumulation-rate');
+      if (response.statusCode == 200) {
+        return response.data;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } on DioError catch (e) {
+      throw Exception(e.response?.data['message'] ?? e.message);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

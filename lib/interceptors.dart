@@ -142,4 +142,15 @@ class ClientTokenInterceptor extends Interceptor {
       return handler.next(err);
     }
   }
+
+  @override
+  Future<void> onRequest(
+      RequestOptions options, RequestInterceptorHandler handler) async {
+    final _userToken = await storage
+        .read(key: 'accessToken')
+        .timeout(const Duration(seconds: 10));
+    options.headers['Authorization'] = 'Bearer $_userToken';
+    logger.d('Intercepted, ${options.method} ${options.path}');
+    handler.next(options);
+  }
 }
