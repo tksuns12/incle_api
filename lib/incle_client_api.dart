@@ -141,12 +141,23 @@ class IncleClientAPI {
     }
   }
 
-  Future<Map> findPassword({required String id, required String email}) async {
+  Future<Map> changePassword({
+    required String id,
+    required String newPassword,
+    required String name,
+    required String phoneNumber,
+    required String verificationCode,
+  }) async {
     try {
       final dio = getClientDioClient(baseUrl: baseUrl, secureStorage: storage);
-      final res = await dio
-          .post('/users/password', data: {'userName': id, 'email': email});
-      if (res.statusCode == 201) {
+      final res = await dio.post('/users/password', data: {
+        'userName': id,
+        'password': newPassword,
+        'name': name,
+        'phone': phoneNumber,
+        'verifyNumber': verificationCode
+      });
+      if (res.statusCode == 202) {
         return res.data;
       } else {
         throw Exception(res.statusMessage);
