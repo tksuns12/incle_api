@@ -322,15 +322,26 @@ class IncleGeneralAPI {
   }
 
   Future<List> getProductsByRanking(
-      {required int page, required int perPage}) async {
+      {required int page,
+      required int perPage,
+      String? productCategoryID,
+      String? storeCateogryID}) async {
     final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
     try {
+      final queryParameters = <String, dynamic>{
+        'page': page,
+        'perPage': perPage,
+      };
+      if (productCategoryID != null) {
+        queryParameters['productCategoryID'] = productCategoryID;
+      }
+      if (storeCateogryID != null) {
+        queryParameters['storeCategoryID'] = storeCateogryID;
+      }
+
       final response = await dio.get(
         '/stores/products/ranks',
-        queryParameters: {
-          'page': page,
-          'perPage': perPage,
-        },
+        queryParameters: queryParameters,
       );
       if (response.statusCode == 200) {
         return response.data['rows'];

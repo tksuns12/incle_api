@@ -95,26 +95,28 @@ class IncleClientAPI {
   }
 
   Future<void> editUserInfo({
-    required String password,
-    required String name,
-    required String displayName,
-    required String phoneNumber,
-    required File profileImage,
+    required String? password,
+    required String? name,
+    required String? displayName,
+    required String? phoneNumber,
+    required File? profileImage,
   }) async {
     try {
       final dio = getClientDioClient(
           baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
       final formData = FormData.fromMap({
-        'password': password,
-        'name': name,
-        'displayName': displayName,
-        'phone': phoneNumber,
+        'password': password ?? '',
+        'name': name ?? '',
+        'displayName': displayName ?? '',
+        'phone': phoneNumber ?? '',
       });
-      formData.files.add(MapEntry(
-          'userProfile',
-          await MultipartFile.fromFile(profileImage.path,
-              filename: profileImage.path.split('/').last,
-              contentType: MediaType.parse('image/jpeg'))));
+      if (profileImage != null) {
+        formData.files.add(MapEntry(
+            'userProfile',
+            await MultipartFile.fromFile(profileImage.path,
+                filename: profileImage.path.split('/').last,
+                contentType: MediaType.parse('image/jpeg'))));
+      }
       final res = await dio.patch('/users', data: formData);
       if (res.statusCode == 200) {
         return;
@@ -573,6 +575,22 @@ class IncleClientAPI {
         data: formData,
       );
       if (response.statusCode == 201) {
+        return;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> makeOrderDone({required String orderUid}) async {
+    final dio = getClientDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+    try {
+      final response =
+          await dio.post('/orders/$orderUid', data: {'orderStatus': 2 });
+      if (response.statusCode == 202) {
         return;
       } else {
         throw Exception(response.statusMessage);
