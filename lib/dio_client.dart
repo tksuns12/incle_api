@@ -6,45 +6,45 @@ Dio getClientDioClient(
     {bool needAuthorization = false,
     required String baseUrl,
     required FlutterSecureStorage secureStorage}) {
-  final _dio = Dio();
+  final dio = Dio();
   final storage = secureStorage;
-  _dio.options.baseUrl = baseUrl;
-  _dio.options.connectTimeout = 10000;
-  _dio.options.sendTimeout = 10000;
-  _dio.options.receiveTimeout = 10000;
+  dio.options.baseUrl = baseUrl;
+  dio.options.connectTimeout = 10000;
+  dio.options.sendTimeout = 10000;
+  dio.options.receiveTimeout = 10000;
   if (needAuthorization) {
-    _dio.interceptors.add(ClientTokenInterceptor(storage: storage, dio: _dio));
+    dio.interceptors.add(ClientTokenInterceptor(storage: storage, dio: dio));
   }
-  _dio.interceptors.add(LogInterceptor(
+  dio.interceptors.add(LogInterceptor(
       requestBody: true,
       responseBody: true,
       requestHeader: true,
       responseHeader: true,
       request: true,
       error: true));
-  return _dio;
+  return dio;
 }
 
 Dio getPartnersDioClient(
     {bool needAuthorization = false,
     required String baseUrl,
     required FlutterSecureStorage secureStorage}) {
-  final _dio = Dio();
+  final dio = Dio();
   final storage = secureStorage;
-  _dio.options.baseUrl = baseUrl;
-  _dio.options.connectTimeout = 10000;
-  _dio.options.sendTimeout = 10000;
-  _dio.options.receiveTimeout = 10000;
+  dio.options.baseUrl = baseUrl;
+  dio.options.connectTimeout = 10000;
+  dio.options.sendTimeout = 10000;
+  dio.options.receiveTimeout = 10000;
   if (needAuthorization) {
-    _dio.interceptors
-        .add(PartnersTokenInterceptor(storage: storage, dio: _dio));
+    dio.interceptors
+        .add(PartnersTokenInterceptor(storage: storage, dio: dio));
   }
-  _dio.interceptors.add(LogInterceptor(
+  dio.interceptors.add(LogInterceptor(
       requestBody: true,
       responseBody: true,
       requestHeader: true,
       responseHeader: true,
       request: true,
       error: true));
-  return _dio;
+  return dio;
 }

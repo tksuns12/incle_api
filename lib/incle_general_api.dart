@@ -247,7 +247,7 @@ class IncleGeneralAPI {
   }) async {
     final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
     try {
-      var _queryParameter = <String, dynamic>{
+      var queryParameter = <String, dynamic>{
         'orderProperty': orderProperty.name,
         'orderValue': orderValue.name,
         'page': page,
@@ -256,23 +256,23 @@ class IncleGeneralAPI {
         'isRecommendedProduct': recommendedFilter.number,
       };
       if (findProperty != null) {
-        _queryParameter['findProperty'] = findProperty;
+        queryParameter['findProperty'] = findProperty;
       }
       if (findValue != null) {
-        _queryParameter['findValue'] = findValue;
+        queryParameter['findValue'] = findValue;
       }
       if (findType != null) {
-        _queryParameter['findType'] = findType.name;
+        queryParameter['findType'] = findType.name;
       }
       if (storeUid != null) {
-        _queryParameter['storeUid'] = storeUid;
+        queryParameter['storeUid'] = storeUid;
       }
       if (productParentCategoryUid != null) {
-        _queryParameter['productParentCategoryUid'] = productParentCategoryUid;
+        queryParameter['productParentCategoryUid'] = productParentCategoryUid;
       }
 
       final response =
-          await dio.get('/stores/products', queryParameters: _queryParameter);
+          await dio.get('/stores/products', queryParameters: queryParameter);
       if (response.statusCode == 200) {
         return response.data['rows'];
       } else {
@@ -327,7 +327,7 @@ class IncleGeneralAPI {
       bool? isReplied}) async {
     final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
     try {
-      var _queryParameter = <String, dynamic>{
+      var queryParameter = <String, dynamic>{
         'page': page,
         'perPage': perPage,
         'isReplied': isReplied == null
@@ -337,14 +337,14 @@ class IncleGeneralAPI {
                 : -1
       };
       if (productUid != null) {
-        _queryParameter['productUid'] = productUid;
+        queryParameter['productUid'] = productUid;
       }
       if (storeUid != null) {
-        _queryParameter['storeUid'] = storeUid;
+        queryParameter['storeUid'] = storeUid;
       }
 
       final response =
-          await dio.get('/reviews', queryParameters: _queryParameter);
+          await dio.get('/reviews', queryParameters: queryParameter);
       if (response.statusCode == 200) {
         return response.data['rows'];
       } else {

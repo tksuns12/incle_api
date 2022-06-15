@@ -70,10 +70,10 @@ class PartnersTokenInterceptor extends Interceptor {
   @override
   Future<void> onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
-    final _userToken = await storage
+    final userToken = await storage
         .read(key: 'accessToken')
         .timeout(const Duration(seconds: 10));
-    options.headers['Authorization'] = 'Bearer $_userToken';
+    options.headers['Authorization'] = 'Bearer $userToken';
     logger.d('Intercepted, ${options.method} ${options.path}');
     handler.next(options);
   }
@@ -146,10 +146,10 @@ class ClientTokenInterceptor extends Interceptor {
   @override
   Future<void> onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
-    final _userToken = await storage
+    final userToken = await storage
         .read(key: 'accessToken')
         .timeout(const Duration(seconds: 10));
-    options.headers['Authorization'] = 'Bearer $_userToken';
+    options.headers['Authorization'] = 'Bearer $userToken';
     logger.d('Intercepted, ${options.method} ${options.path}');
     handler.next(options);
   }
