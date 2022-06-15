@@ -627,7 +627,7 @@ class InclePartnersAPI {
 
     Future<Map> getStoreDetail(
       {required String storeUid, double? latitude, double? longitude}) async {
-    final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
+    final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage,needAuthorization: true);
     try {
       final queryParameter = <String, dynamic>{
         'latitude': latitude,
@@ -1020,7 +1020,7 @@ class InclePartnersAPI {
   }
 
     Future<Map> getProductDetail({required String productID}) async {
-    final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
+    final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
       final response = await dio.get(
         '/stores/products/$productID',

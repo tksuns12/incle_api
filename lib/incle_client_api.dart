@@ -351,9 +351,10 @@ class IncleClientAPI {
     }
   }
 
-    Future<Map> getStoreDetail(
+  Future<Map> getStoreDetail(
       {required String storeUid, double? latitude, double? longitude}) async {
-    final dio = getClientDioClient(baseUrl: baseUrl, secureStorage: storage);
+    final dio = getClientDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
       final queryParameter = <String, dynamic>{
         'latitude': latitude,
@@ -502,8 +503,9 @@ class IncleClientAPI {
   // Product
   //
 
-    Future<Map> getProductDetail({required String productID}) async {
-    final dio = getClientDioClient(baseUrl: baseUrl, secureStorage: storage);
+  Future<Map> getProductDetail({required String productID}) async {
+    final dio = getClientDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
       final response = await dio.get(
         '/stores/products/$productID',
@@ -631,7 +633,7 @@ class IncleClientAPI {
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
       final response =
-          await dio.post('/orders/$orderUid', data: {'orderStatus': 2 });
+          await dio.post('/orders/$orderUid', data: {'orderStatus': 2});
       if (response.statusCode == 202) {
         return;
       } else {
