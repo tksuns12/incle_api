@@ -351,6 +351,28 @@ class IncleClientAPI {
     }
   }
 
+    Future<Map> getStoreDetail(
+      {required String storeUid, double? latitude, double? longitude}) async {
+    final dio = getClientDioClient(baseUrl: baseUrl, secureStorage: storage);
+    try {
+      final queryParameter = <String, dynamic>{
+        'latitude': latitude,
+        'longitude': longitude
+      };
+      final response = await dio.get(
+        '/stores/$storeUid/detail',
+        queryParameters: queryParameter,
+      );
+      if (response.statusCode == 200) {
+        return response.data;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
   //
   // Coupon
   //
@@ -473,6 +495,26 @@ class IncleClientAPI {
       }
     } catch (e) {
       rethrow;
+    }
+  }
+
+  //
+  // Product
+  //
+
+    Future<Map> getProductDetail({required String productID}) async {
+    final dio = getClientDioClient(baseUrl: baseUrl, secureStorage: storage);
+    try {
+      final response = await dio.get(
+        '/stores/products/$productID',
+      );
+      if (response.statusCode == 200) {
+        return response.data;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      throw Exception(e.toString());
     }
   }
 
