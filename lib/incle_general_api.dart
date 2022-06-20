@@ -76,7 +76,8 @@ class IncleGeneralAPI {
       String? storeCategoryUid,
       String? productName,
       double? latitude,
-      double? longitude}) async {
+      double? longitude,
+      String? searchKeyword}) async {
     final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
     try {
       final queryParameter = <String, dynamic>{
@@ -87,7 +88,7 @@ class IncleGeneralAPI {
         queryParameter['storeName'] = storeName;
       }
       if (storeCategoryUid != null) {
-        queryParameter['storeCategoryUid'] = storeCategoryUid;
+        queryParameter['targetTagUid'] = storeCategoryUid;
       }
       if (productName != null) {
         queryParameter['productName'] = productName;
@@ -97,6 +98,9 @@ class IncleGeneralAPI {
       }
       if (longitude != null) {
         queryParameter['longitude'] = longitude;
+      }
+      if (searchKeyword != null) {
+        queryParameter['q'] = searchKeyword;
       }
 
       final response = await dio.get(
@@ -162,6 +166,20 @@ class IncleGeneralAPI {
           await dio.get('/stores/ranks', queryParameters: queryParameter);
       if (res.statusCode == 200) {
         return res.data['rows'];
+      } else {
+        throw Exception(res.statusMessage);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Map> getDiscountQuantityLimit() async {
+    final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
+    try {
+      final res = await dio.get('/stores/discounts');
+      if (res.statusCode == 200) {
+        return res.data;
       } else {
         throw Exception(res.statusMessage);
       }
@@ -240,6 +258,7 @@ class IncleGeneralAPI {
     FindType? findType,
     int page = 0,
     int perPage = 10,
+    String? searchKeyword,
     String? storeUid,
     String? productParentCategoryUid,
     FilterType discoundFilter = FilterType.all,
@@ -270,6 +289,9 @@ class IncleGeneralAPI {
       if (productParentCategoryUid != null) {
         queryParameter['productParentCategoryUid'] = productParentCategoryUid;
       }
+      if (searchKeyword != null) {
+        queryParameter['q'] = searchKeyword;
+      }
 
       final response =
           await dio.get('/stores/products', queryParameters: queryParameter);
@@ -295,15 +317,32 @@ class IncleGeneralAPI {
         'perPage': perPage,
       };
       if (productCategoryID != null) {
-        queryParameters['productCategoryID'] = productCategoryID;
+        queryParameters['productCategoryUid'] = productCategoryID;
       }
       if (storeCateogryID != null) {
-        queryParameters['storeCategoryID'] = storeCateogryID;
+        queryParameters['targetTagUid'] = storeCateogryID;
       }
 
       final response = await dio.get(
         '/stores/products/ranks',
         queryParameters: queryParameters,
+      );
+      if (response.statusCode == 200) {
+        return response.data['rows'];
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  Future<List> getRelatedProducts(String productUid) async {
+    final dio = getPartnersDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+    try {
+      final response = await dio.get(
+        '/products/$productUid/relates',
       );
       if (response.statusCode == 200) {
         return response.data['rows'];

@@ -185,18 +185,24 @@ class IncleClientAPI {
   }
 
   Future<List> checkDuplicate(
-      {String? userName, String? phoneNumber, String? email}) async {
+      {String? id,
+      String? phoneNumber,
+      String? email,
+      String? nickname}) async {
     try {
       final dio = getClientDioClient(baseUrl: baseUrl, secureStorage: storage);
       final queryParameter = <String, dynamic>{};
-      if (userName != null) {
-        queryParameter['userName'] = userName;
+      if (id != null) {
+        queryParameter['userName'] = id;
       }
       if (phoneNumber != null) {
         queryParameter['phone'] = phoneNumber;
       }
       if (email != null) {
         queryParameter['email'] = email;
+      }
+      if (nickname != null) {
+        queryParameter['displayName'] = nickname;
       }
       final res =
           await dio.get('/users/duplication', queryParameters: queryParameter);
@@ -268,9 +274,8 @@ class IncleClientAPI {
   Future<Map> getFavoriteStores(
       {int page = 0,
       int perPage = 10,
-      String? storeName,
       String? storeCategoryUid,
-      String? productName,
+      String? searchKeyword,
       double? latitude,
       double? longitude}) async {
     try {
@@ -281,20 +286,17 @@ class IncleClientAPI {
         'page': page,
         'perPage': perPage,
       };
-      if (storeName != null) {
-        queryParameter['storeName'] = storeName;
-      }
       if (storeCategoryUid != null) {
-        queryParameter['storeCategoryUid'] = storeCategoryUid;
-      }
-      if (productName != null) {
-        queryParameter['productName'] = productName;
+        queryParameter['targetTagUid'] = storeCategoryUid;
       }
       if (latitude != null) {
         queryParameter['latitude'] = latitude;
       }
       if (longitude != null) {
         queryParameter['longitude'] = longitude;
+      }
+      if (searchKeyword != null) {
+        queryParameter['q'] = searchKeyword;
       }
 
       final res =
@@ -333,14 +335,21 @@ class IncleClientAPI {
   }
 
   Future<List> getStoresByRanking(
-      {required int page, required int perPage}) async {
+      {required int page,
+      required int perPage,
+      String? storeCategoryUid}) async {
     try {
       final dio = getClientDioClient(
           baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
-      final res = await dio.get('/stores/ranks', queryParameters: {
+      final queryParameter = <String, dynamic>{
         'page': page,
         'perPage': perPage,
-      });
+      };
+      if (storeCategoryUid != null) {
+        queryParameter['targetTagUid'] = storeCategoryUid;
+      }
+      final res =
+          await dio.get('/stores/ranks', queryParameters: queryParameter);
       if (res.statusCode == 200) {
         return res.data['rows'];
       } else {
@@ -466,6 +475,21 @@ class IncleClientAPI {
       }
     } catch (e) {
       throw Exception(e.toString());
+    }
+  }
+
+  Future<List> getMyQuestions() async {
+    try {
+      final dio = getClientDioClient(
+          baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+      final res = await dio.get('/stores/products/questions/me');
+      if (res.statusCode == 200) {
+        return res.data['rows'];
+      } else {
+        throw Exception(res.statusMessage);
+      }
+    } catch (e) {
+      rethrow;
     }
   }
 
