@@ -128,12 +128,20 @@ class IncleClientAPI {
     }
   }
 
-  Future<Map> findID({required String phoneNumber}) async {
+  Future<Map> findID(
+      {required String phoneNumber,
+      required String verificationCode,
+      required String email,
+      required String name}) async {
     try {
       final dio = getClientDioClient(baseUrl: baseUrl, secureStorage: storage);
-      final res =
-          await dio.post('/users/username', data: {'phone': phoneNumber});
-      if (res.statusCode == 201) {
+      final res = await dio.post('/users/username', data: {
+        'phone': phoneNumber,
+        'email': email,
+        'name': name,
+        'verifyNumber': verificationCode
+      });
+      if (res.statusCode == 200) {
         return res.data;
       } else {
         throw Exception(res.statusMessage);
