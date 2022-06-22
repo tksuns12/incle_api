@@ -552,13 +552,13 @@ class IncleClientAPI {
     }
   }
 
-  Future<Map> getRelatedProducts({required String productID}) async {
+  Future<List> getRelatedProducts({required String productID}) async {
     final dio = getClientDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
       final response = await dio.get('/products/$productID/relates');
       if (response.statusCode == 200) {
-        return response.data;
+        return response.data['rows'];
       } else {
         throw Exception(response.statusMessage);
       }
