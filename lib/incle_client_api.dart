@@ -279,7 +279,7 @@ class IncleClientAPI {
   // Store
   //
 
-  Future<Map> getFavoriteStores(
+  Future<List> getFavoriteStores(
       {int page = 0,
       int perPage = 10,
       String? storeCategoryUid,
@@ -310,7 +310,7 @@ class IncleClientAPI {
       final res =
           await dio.get('/stores/subscribing', queryParameters: queryParameter);
       if (res.statusCode == 200) {
-        return res.data;
+        return res.data['rows'];
       } else {
         throw Exception(res.statusMessage);
       }
