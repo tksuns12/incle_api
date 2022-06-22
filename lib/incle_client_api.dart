@@ -17,7 +17,7 @@ class IncleClientAPI {
     } on PlatformException catch (e) {
       throw Exception(e.message);
     } catch (e) {
-      throw Exception(e.toString());
+      rethrow;
     }
   }
 
@@ -240,7 +240,7 @@ class IncleClientAPI {
         throw Exception(response.statusMessage);
       }
     } catch (e) {
-      throw Exception(e.toString());
+      rethrow;
     }
   }
 
@@ -387,7 +387,7 @@ class IncleClientAPI {
         throw Exception(response.statusMessage);
       }
     } catch (e) {
-      throw Exception(e.toString());
+      rethrow;
     }
   }
 
@@ -482,7 +482,7 @@ class IncleClientAPI {
         throw Exception(response.statusMessage);
       }
     } catch (e) {
-      throw Exception(e.toString());
+      rethrow;
     }
   }
 
@@ -548,7 +548,22 @@ class IncleClientAPI {
         throw Exception(response.statusMessage);
       }
     } catch (e) {
-      throw Exception(e.toString());
+      rethrow;
+    }
+  }
+
+  Future<Map> getRelatedProducts({required String productID}) async {
+    final dio = getClientDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+    try {
+      final response = await dio.get('/products/$productID/relates');
+      if (response.statusCode == 200) {
+        return response.data;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } catch (e) {
+      rethrow;
     }
   }
 
@@ -582,7 +597,7 @@ class IncleClientAPI {
         throw Exception(response.statusMessage);
       }
     } catch (e) {
-      throw Exception(e.toString());
+      rethrow;
     }
   }
 
@@ -718,7 +733,7 @@ class IncleClientAPI {
         throw Exception(response.statusMessage);
       }
     } catch (e) {
-      throw Exception(e.toString());
+      rethrow;
     }
   }
 
@@ -739,7 +754,7 @@ class IncleClientAPI {
         throw Exception(response.statusMessage);
       }
     } catch (e) {
-      throw Exception(e.toString());
+      rethrow;
     }
   }
 
@@ -807,7 +822,7 @@ class IncleClientAPI {
         throw Exception(response.statusMessage);
       }
     } catch (e) {
-      throw Exception(e.toString());
+      rethrow;
     }
   }
 
@@ -822,7 +837,7 @@ class IncleClientAPI {
         throw Exception(response.statusMessage);
       }
     } catch (e) {
-      throw Exception(e.toString());
+      rethrow;
     }
   }
 

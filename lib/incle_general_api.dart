@@ -42,7 +42,7 @@ class IncleGeneralAPI {
         throw Exception(response.statusMessage);
       }
     } catch (e) {
-      throw Exception(e.toString());
+      rethrow;
     }
   }
 
@@ -61,7 +61,7 @@ class IncleGeneralAPI {
         throw Exception(response.statusMessage);
       }
     } catch (e) {
-      throw Exception(e.toString());
+      rethrow;
     }
   }
 
@@ -113,7 +113,7 @@ class IncleGeneralAPI {
         throw Exception(response.statusMessage);
       }
     } catch (e) {
-      throw Exception(e.toString());
+      rethrow;
     }
   }
 
@@ -127,7 +127,7 @@ class IncleGeneralAPI {
         throw Exception(response.statusMessage);
       }
     } catch (e) {
-      throw Exception(e.toString());
+      rethrow;
     }
   }
 
@@ -145,7 +145,7 @@ class IncleGeneralAPI {
         throw Exception(response.statusMessage);
       }
     } catch (e) {
-      throw Exception(e.toString());
+      rethrow;
     }
   }
 
@@ -205,7 +205,7 @@ class IncleGeneralAPI {
         throw Exception(response.statusMessage);
       }
     } catch (e) {
-      throw Exception(e.toString());
+      rethrow;
     }
   }
 
@@ -222,7 +222,7 @@ class IncleGeneralAPI {
         throw Exception(response.statusMessage);
       }
     } catch (e) {
-      throw Exception(e.toString());
+      rethrow;
     }
   }
 
@@ -242,7 +242,7 @@ class IncleGeneralAPI {
         throw Exception(response.statusMessage);
       }
     } catch (e) {
-      throw Exception(e.toString());
+      rethrow;
     }
   }
 
@@ -333,7 +333,7 @@ class IncleGeneralAPI {
         throw Exception(response.statusMessage);
       }
     } catch (e) {
-      throw Exception(e.toString());
+      rethrow;
     }
   }
 
@@ -350,7 +350,7 @@ class IncleGeneralAPI {
         throw Exception(response.statusMessage);
       }
     } catch (e) {
-      throw Exception(e.toString());
+      rethrow;
     }
   }
 
@@ -390,7 +390,7 @@ class IncleGeneralAPI {
         throw Exception(response.statusMessage);
       }
     } catch (e) {
-      throw Exception(e.toString());
+      rethrow;
     }
   }
 
@@ -406,7 +406,7 @@ class IncleGeneralAPI {
         throw Exception(response.statusMessage);
       }
     } catch (e) {
-      throw Exception(e.toString());
+      rethrow;
     }
   }
 

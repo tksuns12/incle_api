@@ -17,7 +17,7 @@ class InclePartnersAPI {
     } on PlatformException catch (e) {
       throw Exception(e.message);
     } catch (e) {
-      throw Exception(e.toString());
+      rethrow;
     }
   }
 
@@ -63,7 +63,7 @@ class InclePartnersAPI {
     } on PlatformException catch (e) {
       throw Exception(e.message);
     } catch (e) {
-      throw Exception(e.toString());
+      rethrow;
     }
   }
 
@@ -625,9 +625,10 @@ class InclePartnersAPI {
     }
   }
 
-    Future<Map> getStoreDetail(
+  Future<Map> getStoreDetail(
       {required String storeUid, double? latitude, double? longitude}) async {
-    final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage,needAuthorization: true);
+    final dio = getPartnersDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
       final queryParameter = <String, dynamic>{
         'latitude': latitude,
@@ -643,7 +644,7 @@ class InclePartnersAPI {
         throw Exception(response.statusMessage);
       }
     } catch (e) {
-      throw Exception(e.toString());
+      rethrow;
     }
   }
 
@@ -1019,8 +1020,9 @@ class InclePartnersAPI {
     }
   }
 
-    Future<Map> getProductDetail({required String productID}) async {
-    final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+  Future<Map> getProductDetail({required String productID}) async {
+    final dio = getPartnersDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
       final response = await dio.get(
         '/stores/products/$productID',
@@ -1031,7 +1033,7 @@ class InclePartnersAPI {
         throw Exception(response.statusMessage);
       }
     } catch (e) {
-      throw Exception(e.toString());
+      rethrow;
     }
   }
 
