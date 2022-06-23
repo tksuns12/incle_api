@@ -584,9 +584,13 @@ class IncleClientAPI {
         'perPage': perPage,
         'orderStatuses': orderStatuses.map((e) => e.number).toList(),
       };
-      if (isQuick != null) {
-        queryParameter['isQuick'] = isQuick ? 1 : 0;
-      }
+      queryParameter['isQuick'] = (() {
+        if (isQuick == null) {
+          return 0;
+        } else {
+          return isQuick ? 1 : -1;
+        }
+      })();
       final response = await dio.get(
         '/orders',
         queryParameters: queryParameter,
