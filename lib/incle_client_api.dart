@@ -27,8 +27,8 @@ class IncleClientAPI {
       final res = await dio
           .post('/login-user', data: {'userName': id, 'password': password});
       if (res.statusCode == 200) {
-        storage.write(key: 'accessToken', value: res.data['accessToken']);
-        storage.write(key: 'refreshToken', value: res.data['refreshToken']);
+        await storage.write(key: 'accessToken', value: res.data['accessToken']);
+        await storage.write(key: 'refreshToken', value: res.data['refreshToken']);
       } else {
         throw Exception(res.statusMessage);
       }
