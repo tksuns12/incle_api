@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:incle_api/enums.dart';
+import 'package:logger/logger.dart';
 import 'package:tuple/tuple.dart';
 import 'dio_client.dart';
 import 'package:http_parser/http_parser.dart';
