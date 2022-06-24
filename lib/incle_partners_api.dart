@@ -12,8 +12,8 @@ class InclePartnersAPI {
 
   Future<bool> isSignedIn() async {
     try {
-      return (await storage.read(key: 'id')) != null &&
-          (await storage.read(key: 'password')) != null;
+      return (await storage.read(key: 'accessToken')) != null &&
+          (await storage.read(key: 'refreshToken')) != null;
     } on PlatformException catch (e) {
       throw Exception(e.message);
     } catch (e) {
@@ -49,8 +49,6 @@ class InclePartnersAPI {
         },
       );
       if (response.statusCode == 201) {
-        await storage.write(key: 'id', value: id);
-        await storage.write(key: 'password', value: password);
         await storage.write(
             key: 'accessToken', value: response.data['accessToken']);
         await storage.write(

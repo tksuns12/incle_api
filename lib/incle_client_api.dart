@@ -12,8 +12,8 @@ class IncleClientAPI {
 
   Future<bool> isSignedIn() async {
     try {
-      return (await storage.read(key: 'id')) != null &&
-          (await storage.read(key: 'password')) != null;
+      return (await storage.read(key: 'accessToken')) != null &&
+          (await storage.read(key: 'refreshToken')) != null;
     } on PlatformException catch (e) {
       throw Exception(e.message);
     } catch (e) {
@@ -27,8 +27,6 @@ class IncleClientAPI {
       final res = await dio
           .post('/login-user', data: {'userName': id, 'password': password});
       if (res.statusCode == 200) {
-        storage.write(key: 'id', value: id);
-        storage.write(key: 'password', value: password);
         storage.write(key: 'accessToken', value: res.data['accessToken']);
         storage.write(key: 'refreshToken', value: res.data['refreshToken']);
       } else {
