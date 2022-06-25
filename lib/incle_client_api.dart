@@ -28,9 +28,12 @@ class IncleClientAPI {
           .post('/login-user', data: {'userName': id, 'password': password});
       if (res.statusCode == 200) {
         await storage.write(key: 'accessToken', value: res.data['accessToken']);
-        Logger().d('Access Token Succesfully Written: ${await storage.read(key: 'accessToken')}');
-        await storage.write(key: 'refreshToken', value: res.data['refreshToken']);
-                Logger().d('Refresh Token Succesfully Written: ${await storage.read(key: 'refreshToken')}');
+        Logger().d(
+            'Access Token Succesfully Written: ${await storage.read(key: 'accessToken')}');
+        await storage.write(
+            key: 'refreshToken', value: res.data['refreshToken']);
+        Logger().d(
+            'Refresh Token Succesfully Written: ${await storage.read(key: 'refreshToken')}');
       } else {
         throw Exception(res.statusMessage);
       }
@@ -128,7 +131,7 @@ class IncleClientAPI {
     }
   }
 
-  Future<Map> findID(
+  Future<void> findID(
       {required String phoneNumber,
       required String verificationCode,
       required String email,
@@ -142,7 +145,7 @@ class IncleClientAPI {
         'verifyNumber': verificationCode
       });
       if (res.statusCode == 200) {
-        return res.data;
+        return;
       } else {
         throw Exception(res.statusMessage);
       }
@@ -151,7 +154,7 @@ class IncleClientAPI {
     }
   }
 
-  Future<Map> changePassword({
+  Future<void> changePassword({
     required String id,
     required String newPassword,
     required String name,
@@ -168,7 +171,7 @@ class IncleClientAPI {
         'verifyNumber': verificationCode
       });
       if (res.statusCode == 202) {
-        return res.data;
+        return;
       } else {
         throw Exception(res.statusMessage);
       }
@@ -248,7 +251,7 @@ class IncleClientAPI {
   // Store Subscription
   //
 
-  Future<Map> favoriteStore(
+  Future<void> favoriteStore(
       {required String storeID, required bool isFavorite}) async {
     try {
       final dio = getClientDioClient(
@@ -265,7 +268,7 @@ class IncleClientAPI {
         final res = await dio.delete('/stores/$storeID/subscription',
             data: {'storeUid': storeID});
         if (res.statusCode == 202) {
-          return res.data;
+          return;
         } else {
           throw Exception(res.statusMessage);
         }
@@ -395,13 +398,13 @@ class IncleClientAPI {
   // Coupon
   //
 
-  Future<Map> downloadCoupon({required String couponUid}) async {
+  Future<void> downloadCoupon({required String couponUid}) async {
     try {
       final dio = getClientDioClient(
           baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
       final res = await dio.get('/coupons/$couponUid');
       if (res.statusCode == 201) {
-        return res.data;
+        return;
       } else {
         throw Exception(res.statusMessage);
       }
@@ -505,7 +508,7 @@ class IncleClientAPI {
   // Product Subscription
   //
 
-  Future<Map> favoriteProduct(
+  Future<void> favoriteProduct(
       {required String productID, required bool isFavorite}) async {
     try {
       final dio = getClientDioClient(
@@ -513,7 +516,7 @@ class IncleClientAPI {
       if (isFavorite) {
         final res = await dio.post('/stores/products/$productID/subscription');
         if (res.statusCode == 200) {
-          return res.data;
+          return;
         } else {
           throw Exception(res.statusMessage);
         }
@@ -521,7 +524,7 @@ class IncleClientAPI {
         final res =
             await dio.delete('/stores/products/$productID/subscription');
         if (res.statusCode == 202) {
-          return res.data;
+          return;
         } else {
           throw Exception(res.statusMessage);
         }
@@ -766,7 +769,7 @@ class IncleClientAPI {
   // Review
   //
 
-  Future<Map> postReview(
+  Future<void> postReview(
       {required String orderUid,
       required int rating,
       required int height,
@@ -800,7 +803,7 @@ class IncleClientAPI {
         data: formData,
       );
       if (response.statusCode == 201) {
-        return response.data;
+        return;
       } else {
         throw Exception(response.statusMessage);
       }
