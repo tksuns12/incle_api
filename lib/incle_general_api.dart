@@ -72,7 +72,6 @@ class IncleGeneralAPI {
   Future<List> getStoreList(
       {int page = 0,
       int perPage = 10,
-      String? storeName,
       String? storeCategoryUid,
       String? productName,
       double? latitude,
@@ -84,9 +83,6 @@ class IncleGeneralAPI {
         'page': page,
         'perPage': perPage
       };
-      if (storeName != null) {
-        queryParameter['storeName'] = storeName;
-      }
       if (storeCategoryUid != null) {
         queryParameter['targetTagUid'] = storeCategoryUid;
       }

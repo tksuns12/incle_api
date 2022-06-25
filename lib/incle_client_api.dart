@@ -30,7 +30,7 @@ class IncleClientAPI {
         await storage.write(key: 'accessToken', value: res.data['accessToken']);
         Logger().d('Access Token Succesfully Written: ${await storage.read(key: 'accessToken')}');
         await storage.write(key: 'refreshToken', value: res.data['refreshToken']);
-                Logger().d('Access Token Succesfully Written: ${await storage.read(key: 'refreshToken')}');
+                Logger().d('Refresh Token Succesfully Written: ${await storage.read(key: 'refreshToken')}');
       } else {
         throw Exception(res.statusMessage);
       }
