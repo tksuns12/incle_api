@@ -264,7 +264,7 @@ class IncleClientAPI {
       } else {
         final res = await dio.delete('/stores/$storeID/subscription',
             data: {'storeUid': storeID});
-        if (res.statusCode == 200) {
+        if (res.statusCode == 202) {
           return res.data;
         } else {
           throw Exception(res.statusMessage);
@@ -512,7 +512,7 @@ class IncleClientAPI {
           baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
       if (isFavorite) {
         final res = await dio.post('/stores/products/$productID/subscription');
-        if (res.statusCode == 201) {
+        if (res.statusCode == 200) {
           return res.data;
         } else {
           throw Exception(res.statusMessage);
@@ -520,7 +520,7 @@ class IncleClientAPI {
       } else {
         final res =
             await dio.delete('/stores/products/$productID/subscription');
-        if (res.statusCode == 200) {
+        if (res.statusCode == 202) {
           return res.data;
         } else {
           throw Exception(res.statusMessage);
