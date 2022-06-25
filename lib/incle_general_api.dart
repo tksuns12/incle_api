@@ -283,7 +283,7 @@ class IncleGeneralAPI {
         queryParameter['storeUid'] = storeUid;
       }
       if (productParentCategoryUid != null) {
-        queryParameter['productParentCategoryUid'] = productParentCategoryUid;
+        queryParameter['productCategoryUid'] = productParentCategoryUid;
       }
       if (searchKeyword != null) {
         queryParameter['q'] = searchKeyword;
