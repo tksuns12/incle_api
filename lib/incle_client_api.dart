@@ -47,7 +47,7 @@ class IncleClientAPI {
       final dio = getClientDioClient(
           baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
       final res = await dio.post('/logout');
-      if (res.statusCode == 201) {
+      if (res.statusCode == 200) {
         await storage.deleteAll();
       } else {
         throw Exception(res.statusMessage);
@@ -237,7 +237,7 @@ class IncleClientAPI {
           'fcmToken': token,
         },
       );
-      if (response.statusCode == 200) {
+      if (response.statusCode == 202) {
         return;
       } else {
         throw Exception(response.statusMessage);
