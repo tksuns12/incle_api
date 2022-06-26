@@ -77,8 +77,7 @@ class IncleClientAPI {
         'displayName': nickname,
         'phone': phoneNumber,
         'gender': gender,
-        'birth':
-            '${birth.year.toString().substring(0, 2)}${birth.month.toString().padLeft(2, '0')}${birth.day.toString().padLeft(2, '0')}',
+        'birth': DateFormat('yyyyMMdd').format(birth),
         'email': email,
       });
       formData.files.add(MapEntry(
