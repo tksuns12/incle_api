@@ -15,7 +15,7 @@ class InclePartnersAPI {
       return (await storage.read(key: 'accessToken')) != null &&
           (await storage.read(key: 'refreshToken')) != null;
     } on PlatformException catch (e) {
-      throw Exception(e.message);
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
     } catch (e) {
       rethrow;
     }
@@ -25,14 +25,13 @@ class InclePartnersAPI {
     try {
       final dio = getPartnersDioClient(
           baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
-      final res = await dio.post('/logout');
-      if (res.statusCode == 201) {
-        await storage.deleteAll();
-      } else {
-        throw Exception(res.statusMessage);
-      }
+      await dio.post('/logout');
+      await storage.deleteAll();
     } on DioError catch (e) {
-      throw Exception(e.response?.data['message'] ?? e.message);
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
     } catch (e) {
       rethrow;
     }
@@ -48,18 +47,15 @@ class InclePartnersAPI {
           'password': password,
         },
       );
-      if (response.statusCode == 201) {
-        await storage.write(
-            key: 'accessToken', value: response.data['accessToken']);
-        await storage.write(
-            key: 'refreshToken', value: response.data['refreshToken']);
-      } else {
-        throw Exception(response.statusMessage);
-      }
+      await storage.write(
+          key: 'accessToken', value: response.data['accessToken']);
+      await storage.write(
+          key: 'refreshToken', value: response.data['refreshToken']);
     } on DioError catch (e) {
-      throw Exception(e.response?.data['message'] ?? e.message);
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
     } on PlatformException catch (e) {
-      throw Exception(e.message);
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
     } catch (e) {
       rethrow;
     }
@@ -69,19 +65,18 @@ class InclePartnersAPI {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
-      final response = await dio.patch(
+      await dio.patch(
         '',
         data: {
           'fcmToken': token,
         },
       );
-      if (response.statusCode == 200) {
-        return;
-      } else {
-        throw Exception(response.statusMessage);
-      }
+      return;
     } on DioError catch (e) {
-      throw Exception(e.response?.data['message'] ?? e.message);
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
     } catch (e) {
       rethrow;
     }
@@ -91,14 +86,13 @@ class InclePartnersAPI {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
-      final response = await dio.delete('/partners');
-      if (response.statusCode == 200) {
-        await storage.deleteAll();
-      } else {
-        throw Exception(response.statusMessage);
-      }
+      await dio.delete('/partners');
+      await storage.deleteAll();
     } on DioError catch (e) {
-      throw Exception(e.response?.data['message'] ?? e.message);
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
     } catch (e) {
       rethrow;
     }
@@ -206,17 +200,15 @@ class InclePartnersAPI {
               contentType: MediaType.parse('image/jpeg'))));
       dio.options.contentType = 'multipart/form-data';
 
-      final response = await dio.post(
+      await dio.post(
         '/partners',
         data: formData,
       );
-      if (response.statusCode == 201) {
-        return;
-      } else {
-        throw Exception(response.statusMessage);
-      }
     } on DioError catch (e) {
-      throw Exception(e.response?.data['message'] ?? e.message);
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
     } catch (e) {
       rethrow;
     }
@@ -254,17 +246,15 @@ class InclePartnersAPI {
                 contentType: MediaType.parse('image/jpeg'))));
       }
       dio.options.contentType = 'multipart/form-data';
-      final response = await dio.patch(
+      await dio.patch(
         '/partners/profile',
         data: formData,
       );
-      if (response.statusCode == 200) {
-        return;
-      } else {
-        throw Exception(response.statusMessage);
-      }
     } on DioError catch (e) {
-      throw Exception(e.response?.data['message'] ?? e.message);
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
     } catch (e) {
       rethrow;
     }
@@ -278,7 +268,7 @@ class InclePartnersAPI {
       final dio = getPartnersDioClient(
           baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
 
-      final response = await dio.patch(
+      await dio.patch(
         '/partners/account',
         data: {
           'accountBank': bankName,
@@ -286,13 +276,11 @@ class InclePartnersAPI {
           'accountName': accountOwnerName,
         },
       );
-      if (response.statusCode == 200) {
-        return;
-      } else {
-        throw Exception(response.statusMessage);
-      }
     } on DioError catch (e) {
-      throw Exception(e.response?.data['message'] ?? e.message);
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
     } catch (e) {
       rethrow;
     }
@@ -305,13 +293,12 @@ class InclePartnersAPI {
       final response = await dio.get(
         '/partners/profile',
       );
-      if (response.statusCode == 200) {
-        return response.data;
-      } else {
-        throw Exception(response.statusMessage);
-      }
+      return response.data;
     } on DioError catch (e) {
-      throw Exception(e.response?.data['message'] ?? e.message);
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
     } catch (e) {
       rethrow;
     }
@@ -325,7 +312,7 @@ class InclePartnersAPI {
       required String name}) async {
     final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
     try {
-      final response = await dio.post(
+      await dio.post(
         '/partners/password',
         data: {
           'phone': phone,
@@ -335,13 +322,11 @@ class InclePartnersAPI {
           'name': name
         },
       );
-      if (response.statusCode == 201) {
-        return;
-      } else {
-        throw Exception(response.statusMessage);
-      }
     } on DioError catch (e) {
-      throw Exception(e.response?.data['message'] ?? e.message);
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
     } catch (e) {
       rethrow;
     }
@@ -351,20 +336,18 @@ class InclePartnersAPI {
       {required String phone, required String verificationCode}) async {
     final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
     try {
-      final response = await dio.post(
+      await dio.post(
         '/partners/partnersname',
         data: {
           'phone': phone,
           'verifyNumber': verificationCode,
         },
       );
-      if (response.statusCode == 200) {
-        return;
-      } else {
-        throw Exception(response.statusMessage);
-      }
     } on DioError catch (e) {
-      throw Exception(e.response?.data['message'] ?? e.message);
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
     } catch (e) {
       rethrow;
     }
@@ -395,13 +378,12 @@ class InclePartnersAPI {
         '/partners/duplication',
         queryParameters: queryParameters,
       );
-      if (response.statusCode == 200) {
-        return response.data;
-      } else {
-        throw Exception(response.statusMessage);
-      }
+      return response.data;
     } on DioError catch (e) {
-      throw Exception(e.response?.data['message'] ?? e.message);
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
     } catch (e) {
       rethrow;
     }
@@ -427,14 +409,12 @@ class InclePartnersAPI {
       if (limitDate != null) {
         data['limitDate'] = limitDate.millisecondsSinceEpoch;
       }
-      final response = await dio.post('/coupons', data: data);
-      if (response.statusCode == 201) {
-        return;
-      } else {
-        throw Exception(response.statusMessage);
-      }
+      await dio.post('/coupons', data: data);
     } on DioError catch (e) {
-      throw Exception(e.response?.data['message'] ?? e.message);
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
     } catch (e) {
       rethrow;
     }
@@ -444,16 +424,14 @@ class InclePartnersAPI {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
-      final response = await dio.delete(
+      await dio.delete(
         '/coupons/$couponID',
       );
-      if (response.statusCode == 200) {
-        return;
-      } else {
-        throw Exception(response.statusMessage);
-      }
     } on DioError catch (e) {
-      throw Exception(e.response?.data['message'] ?? e.message);
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
     } catch (e) {
       rethrow;
     }
@@ -470,13 +448,12 @@ class InclePartnersAPI {
       final response = await dio.get(
         '/stores/$storeUid/deliveries',
       );
-      if (response.statusCode == 200) {
-        return response.data['rows'];
-      } else {
-        throw Exception(response);
-      }
+      return response.data['rows'];
     } on DioError catch (e) {
-      throw Exception(e.response?.data['message'] ?? e.message);
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
     } catch (e) {
       rethrow;
     }
@@ -486,20 +463,18 @@ class InclePartnersAPI {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
-      final response = await dio.post(
+      await dio.post(
         '/stores/deliveries',
         data: {
           'km': distance,
           'price': price,
         },
       );
-      if (response.statusCode == 201) {
-        return;
-      } else {
-        throw Exception(response);
-      }
     } on DioError catch (e) {
-      throw Exception(e.response?.data['message'] ?? e.message);
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
     } catch (e) {
       rethrow;
     }
@@ -510,20 +485,18 @@ class InclePartnersAPI {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
-      final response = await dio.patch(
+      await dio.patch(
         '/stores/deliveries',
         data: {
           'km': distance,
           'price': price,
         },
       );
-      if (response.statusCode == 200) {
-        return;
-      } else {
-        throw Exception(response.statusMessage);
-      }
     } on DioError catch (e) {
-      throw Exception(e.response?.data['message'] ?? e.message);
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
     } catch (e) {
       rethrow;
     }
@@ -533,17 +506,15 @@ class InclePartnersAPI {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
-      final response = await dio.delete(
+      await dio.delete(
         '/stores/deliveries/',
         data: {'km': distance},
       );
-      if (response.statusCode == 200) {
-        return;
-      } else {
-        throw Exception(response.statusMessage);
-      }
     } on DioError catch (e) {
-      throw Exception(e.response?.data['message'] ?? e.message);
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
     } catch (e) {
       rethrow;
     }
@@ -553,17 +524,15 @@ class InclePartnersAPI {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
-      final response = await dio.patch(
+      await dio.patch(
         '/stores/free-deliveries',
         data: {'freeDelivery': condition},
       );
-      if (response.statusCode == 200) {
-        return;
-      } else {
-        throw Exception(response.statusMessage);
-      }
     } on DioError catch (e) {
-      throw Exception(e.response?.data['message'] ?? e.message);
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
     } catch (e) {
       rethrow;
     }
@@ -578,20 +547,18 @@ class InclePartnersAPI {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
-      final response = await dio.patch('/stores/pause', data: {
+      await dio.patch('/stores/pause', data: {
         'pause': 0,
         'pauseStartDate':
             '${startTime.hour.toString().padLeft(2, '0')}:${startTime.minute.toString().padLeft(2, '0')}',
         'pauseEndDate':
             '${endTime.hour.toString().padLeft(2, '0')}:${endTime.minute.toString().padLeft(2, '0')}',
       });
-      if (response.statusCode == 200) {
-        return;
-      } else {
-        throw Exception(response.statusMessage);
-      }
     } on DioError catch (e) {
-      throw Exception(e.response?.data['message'] ?? e.message);
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
     } catch (e) {
       rethrow;
     }
@@ -601,7 +568,7 @@ class InclePartnersAPI {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
-      final response = await dio.patch(
+      await dio.patch(
         '/stores/pause',
         data: {
           'pauseStartDate':
@@ -611,13 +578,11 @@ class InclePartnersAPI {
           'pause': 1,
         },
       );
-      if (response.statusCode == 200) {
-        return;
-      } else {
-        throw Exception(response.statusMessage);
-      }
     } on DioError catch (e) {
-      throw Exception(e.response?.data['message'] ?? e.message);
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
     } catch (e) {
       rethrow;
     }
@@ -636,11 +601,12 @@ class InclePartnersAPI {
         '/stores/$storeUid/detail',
         queryParameters: queryParameter,
       );
-      if (response.statusCode == 200) {
-        return response.data;
-      } else {
-        throw Exception(response.statusMessage);
-      }
+      return response.data;
+    } on DioError catch (e) {
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
     } catch (e) {
       rethrow;
     }
@@ -655,19 +621,17 @@ class InclePartnersAPI {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
-      final response = await dio.patch(
+      await dio.patch(
         '/stores/products/questions/$questionUid',
         data: {
           'reply': reply,
         },
       );
-      if (response.statusCode == 200) {
-        return;
-      } else {
-        throw Exception(response.statusMessage);
-      }
     } on DioError catch (e) {
-      throw Exception(e.response?.data['message'] ?? e.message);
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
     } catch (e) {
       rethrow;
     }
@@ -700,13 +664,12 @@ class InclePartnersAPI {
         '/stores/products/questions',
         queryParameters: queryParameter,
       );
-      if (response.statusCode == 200) {
-        return response.data['rows'];
-      } else {
-        throw Exception(response.statusMessage);
-      }
+      return response.data['rows'];
     } on DioError catch (e) {
-      throw Exception(e.response?.data['message'] ?? e.message);
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
     } catch (e) {
       rethrow;
     }
@@ -807,14 +770,12 @@ class InclePartnersAPI {
           );
         }
       }
-      final response = await dio.post('/stores/products', data: formData);
-      if (response.statusCode == 201) {
-        return;
-      } else {
-        throw Exception(response.statusMessage);
-      }
+      await dio.post('/stores/products', data: formData);
     } on DioError catch (e) {
-      throw Exception(e.response?.data['message'] ?? e.message);
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
     } catch (e) {
       rethrow;
     }
@@ -922,15 +883,13 @@ class InclePartnersAPI {
           );
         }
       }
-      final response =
-          await dio.patch('/stores/products/$uid/detail', data: formData);
-      if (response.statusCode == 200) {
-        return;
-      } else {
-        throw Exception(response.statusMessage);
-      }
+
+      await dio.patch('/stores/products/$uid/detail', data: formData);
     } on DioError catch (e) {
-      throw Exception(e.response?.data['message'] ?? e.message);
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
     } catch (e) {
       rethrow;
     }
@@ -940,14 +899,12 @@ class InclePartnersAPI {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
-      final response = await dio.delete('/stores/products/$uid');
-      if (response.statusCode == 200) {
-        return;
-      } else {
-        throw Exception(response.statusMessage);
-      }
+      await dio.delete('/stores/products/$uid');
     } on DioError catch (e) {
-      throw Exception(e.response?.data['message'] ?? e.message);
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
     } catch (e) {
       rethrow;
     }
@@ -958,19 +915,17 @@ class InclePartnersAPI {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
-      final response = await dio.patch(
+      await dio.patch(
         '/stores/products/$uid/soldout',
         data: {
           'isSoldOut': isSoldOut ? 1 : 0,
         },
       );
-      if (response.statusCode == 200) {
-        return;
-      } else {
-        throw Exception(response.statusMessage);
-      }
     } on DioError catch (e) {
-      throw Exception(e.response?.data['message'] ?? e.message);
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
     } catch (e) {
       rethrow;
     }
@@ -981,17 +936,15 @@ class InclePartnersAPI {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
-      final response = await dio.patch(
+      await dio.patch(
         '/stores/products/$uid/recommendation',
         data: {'ownersRecommended': isRecommended ? 1 : 0},
       );
-      if (response.statusCode == 200) {
-        return;
-      } else {
-        throw Exception(response.statusMessage);
-      }
     } on DioError catch (e) {
-      throw Exception(e.response?.data['message'] ?? e.message);
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
     } catch (e) {
       rethrow;
     }
@@ -1004,15 +957,13 @@ class InclePartnersAPI {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
-      final response = await dio.patch('/stores/products/$uid/discount',
+      await dio.patch('/stores/products/$uid/discount',
           data: {'discountedPrice': isDiscounted ? discountedPrice : null});
-      if (response.statusCode == 200) {
-        return;
-      } else {
-        throw Exception(response.statusMessage);
-      }
     } on DioError catch (e) {
-      throw Exception(e.response?.data['message'] ?? e.message);
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
     } catch (e) {
       rethrow;
     }
@@ -1025,11 +976,13 @@ class InclePartnersAPI {
       final response = await dio.get(
         '/stores/products/$productID',
       );
-      if (response.statusCode == 200) {
-        return response.data;
-      } else {
-        throw Exception(response.statusMessage);
-      }
+
+      return response.data;
+    } on DioError catch (e) {
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
     } catch (e) {
       rethrow;
     }
@@ -1062,13 +1015,12 @@ class InclePartnersAPI {
           })()
         },
       );
-      if (response.statusCode == 200) {
-        return response.data['rows'];
-      } else {
-        throw Exception(response.statusMessage);
-      }
+      return response.data['rows'];
     } on DioError catch (e) {
-      throw Exception(e.response?.data['message'] ?? e.message);
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
     } catch (e) {
       rethrow;
     }
@@ -1079,13 +1031,12 @@ class InclePartnersAPI {
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
       final response = await dio.get('/orders/$uid');
-      if (response.statusCode == 200) {
-        return response.data;
-      } else {
-        throw Exception(response.statusMessage);
-      }
+      return response.data;
     } on DioError catch (e) {
-      throw Exception(e.response?.data['message'] ?? e.message);
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
     } catch (e) {
       rethrow;
     }
@@ -1096,17 +1047,15 @@ class InclePartnersAPI {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
-      final response = await dio.patch(
+      await dio.patch(
         '/orders/$orderUid/cancels',
         data: {'isCancel': isApproved ? 1 : 0},
       );
-      if (response.statusCode == 200) {
-        return;
-      } else {
-        throw Exception(response.statusMessage);
-      }
     } on DioError catch (e) {
-      throw Exception(e.response?.data['message'] ?? e.message);
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
     } catch (e) {
       rethrow;
     }
@@ -1134,17 +1083,15 @@ class InclePartnersAPI {
       if (rejectReason != null) {
         data['refundRejectReason'] = rejectReason;
       }
-      final response = await dio.patch(
+      await dio.patch(
         '/orders/$orderUid/refunds',
         data: data,
       );
-      if (response.statusCode == 200) {
-        return;
-      } else {
-        throw Exception(response.statusMessage);
-      }
     } on DioError catch (e) {
-      throw Exception(e.response?.data['message'] ?? e.message);
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
     } catch (e) {
       rethrow;
     }
@@ -1170,7 +1117,10 @@ class InclePartnersAPI {
         })()
       });
     } on DioError catch (e) {
-      throw Exception(e.response?.data['message'] ?? e.message);
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
     } catch (e) {
       rethrow;
     }
@@ -1185,15 +1135,12 @@ class InclePartnersAPI {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
-      final response =
-          await dio.post('/reviews/$reviewUid', data: {'reply': reply});
-      if (response.statusCode == 201) {
-        return;
-      } else {
-        throw Exception(response.statusMessage);
-      }
+      await dio.post('/reviews/$reviewUid', data: {'reply': reply});
     } on DioError catch (e) {
-      throw Exception(e.response?.data['message'] ?? e.message);
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
     } catch (e) {
       rethrow;
     }
@@ -1224,13 +1171,12 @@ class InclePartnersAPI {
         '/payments',
         queryParameters: queryParameters,
       );
-      if (response.statusCode == 200) {
-        return response.data['rows'];
-      } else {
-        throw Exception(response.statusMessage);
-      }
+      return response.data['rows'];
     } on DioError catch (e) {
-      throw Exception(e.response?.data['message'] ?? e.message);
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
     } catch (e) {
       rethrow;
     }
@@ -1241,13 +1187,12 @@ class InclePartnersAPI {
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
       final response = await dio.get('/payments/$paymentID');
-      if (response.statusCode == 200) {
-        return response.data;
-      } else {
-        throw Exception(response.statusMessage);
-      }
+      return response.data;
     } on DioError catch (e) {
-      throw Exception(e.response?.data['message'] ?? e.message);
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
     } catch (e) {
       rethrow;
     }
@@ -1264,13 +1209,12 @@ class InclePartnersAPI {
     try {
       final response = await dio
           .get('/alarms', queryParameters: {'page': page, 'perPage': perPage});
-      if (response.statusCode == 200) {
-        return response.data['rows'];
-      } else {
-        throw Exception(response.statusMessage);
-      }
+      return response.data['rows'];
     } on DioError catch (e) {
-      throw Exception(e.response?.data['message'] ?? e.message);
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
     } catch (e) {
       rethrow;
     }
@@ -1281,13 +1225,12 @@ class InclePartnersAPI {
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
       final response = await dio.get('/alarms/$notificationUid');
-      if (response.statusCode == 200) {
-        return response.data;
-      } else {
-        throw Exception(response.statusMessage);
-      }
+      return response.data;
     } on DioError catch (e) {
-      throw Exception(e.response?.data['message'] ?? e.message);
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
     } catch (e) {
       rethrow;
     }
@@ -1302,13 +1245,12 @@ class InclePartnersAPI {
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
       final response = await dio.get('/points/accumulation-rate');
-      if (response.statusCode == 200) {
-        return response.data;
-      } else {
-        throw Exception(response.statusMessage);
-      }
+      return response.data;
     } on DioError catch (e) {
-      throw Exception(e.response?.data['message'] ?? e.message);
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
     } catch (e) {
       rethrow;
     }
