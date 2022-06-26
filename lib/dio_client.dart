@@ -9,9 +9,9 @@ Dio getClientDioClient(
   final dio = Dio();
   final storage = secureStorage;
   dio.options.baseUrl = baseUrl;
-  dio.options.connectTimeout = 10000;
-  dio.options.sendTimeout = 10000;
-  dio.options.receiveTimeout = 10000;
+  dio.options.connectTimeout = 30000;
+  dio.options.sendTimeout = 30000;
+  dio.options.receiveTimeout = 30000;
   if (needAuthorization) {
     dio.interceptors.add(ClientTokenInterceptor(storage: storage, dio: dio));
   }
@@ -32,9 +32,9 @@ Dio getPartnersDioClient(
   final dio = Dio();
   final storage = secureStorage;
   dio.options.baseUrl = baseUrl;
-  dio.options.connectTimeout = 10000;
-  dio.options.sendTimeout = 10000;
-  dio.options.receiveTimeout = 10000;
+  dio.options.connectTimeout = 30000;
+  dio.options.sendTimeout = 30000;
+  dio.options.receiveTimeout = 30000;
   if (needAuthorization) {
     dio.interceptors
         .add(PartnersTokenInterceptor(storage: storage, dio: dio));
