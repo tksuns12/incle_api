@@ -18,7 +18,7 @@ class PartnersTokenInterceptor extends Interceptor {
     if (err.response?.statusCode == 401) {
       final refreshToken = await storage
           .read(key: 'refreshToken')
-          .timeout(const Duration(seconds: 10));
+          .timeout(const Duration(seconds: 30));
       final refreshDio = Dio();
       refreshDio.options = BaseOptions(
         baseUrl: 'http://backend.wim.kro.kr:5000/api/v1',
@@ -44,13 +44,13 @@ class PartnersTokenInterceptor extends Interceptor {
       final response = await refreshDio.post(
         '/refresh',
       );
-      if (response.statusCode == 201) {
+      if (response.statusCode == 200) {
         await storage
             .write(key: 'accessToken', value: response.data['accessToken'])
-            .timeout(const Duration(seconds: 10));
+            .timeout(const Duration(seconds: 30));
         await storage
             .write(key: 'refreshToken', value: response.data['refreshToken'])
-            .timeout(const Duration(seconds: 10));
+            .timeout(const Duration(seconds: 30));
         err.requestOptions.headers['Authorization'] =
             'Bearer ${response.data['accessToken']}';
         final retryReq = await dio.request(err.requestOptions.path,
@@ -72,7 +72,7 @@ class PartnersTokenInterceptor extends Interceptor {
       RequestOptions options, RequestInterceptorHandler handler) async {
     final userToken = await storage
         .read(key: 'accessToken')
-        .timeout(const Duration(seconds: 10));
+        .timeout(const Duration(seconds: 30));
     options.headers['Authorization'] = 'Bearer $userToken';
     logger.d('Intercepted, ${options.method} ${options.path}');
     handler.next(options);
@@ -94,7 +94,7 @@ class ClientTokenInterceptor extends Interceptor {
     if (err.response?.statusCode == 401) {
       final refreshToken = await storage
           .read(key: 'refreshToken')
-          .timeout(const Duration(seconds: 10));
+          .timeout(const Duration(seconds: 30));
       final refreshDio = Dio();
       refreshDio.options = BaseOptions(
         baseUrl: 'http://backend.wim.kro.kr:5000/api/v1',
@@ -120,13 +120,13 @@ class ClientTokenInterceptor extends Interceptor {
       final response = await refreshDio.post(
         '/refresh',
       );
-      if (response.statusCode == 201) {
+      if (response.statusCode == 200) {
         await storage
             .write(key: 'accessToken', value: response.data['accessToken'])
-            .timeout(const Duration(seconds: 10));
+            .timeout(const Duration(seconds: 30));
         await storage
             .write(key: 'refreshToken', value: response.data['refreshToken'])
-            .timeout(const Duration(seconds: 10));
+            .timeout(const Duration(seconds: 30));
         err.requestOptions.headers['Authorization'] =
             'Bearer ${response.data['accessToken']}';
         final retryReq = await dio.request(err.requestOptions.path,
@@ -148,7 +148,7 @@ class ClientTokenInterceptor extends Interceptor {
       RequestOptions options, RequestInterceptorHandler handler) async {
     final userToken = await storage
         .read(key: 'accessToken')
-        .timeout(const Duration(seconds: 10));
+        .timeout(const Duration(seconds: 30));
     options.headers['Authorization'] = 'Bearer $userToken';
     logger.d('Intercepted, ${options.method} ${options.path}');
     handler.next(options);
