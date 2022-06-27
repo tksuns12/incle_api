@@ -509,6 +509,40 @@ class IncleClientAPI {
     }
   }
 
+  Future<void> deleteQuestion(String questionId) async {
+    try {
+      final dio = getClientDioClient(
+          baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+      await dio.delete('/stores/products/questions/$questionId');
+    } on DioError catch (e) {
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> updateQuestion(
+      {required String questionID,
+      required bool isSecret,
+      required String newContent}) async {
+    try {
+      final dio = getClientDioClient(
+          baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+      await dio.patch('/stores/products/questions/$questionID',
+          data: {'comment': newContent, 'isPublic': isSecret ? 1 : 0});
+    } on DioError catch (e) {
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   //
   // Product Subscription
   //
@@ -613,8 +647,7 @@ class IncleClientAPI {
   Future<List> getOrderSummaryList(
       {int page = 0,
       int perPage = 10,
-      required List<OrderStatusEnum> orderStatuses,
-      bool? isQuick}) async {
+      required List<OrderStatusEnum> orderStatuses}) async {
     final dio = getClientDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
@@ -623,15 +656,8 @@ class IncleClientAPI {
         'perPage': perPage,
         'orderStatuses': orderStatuses.map((e) => e.number).toList(),
       };
-      queryParameter['isQuick'] = (() {
-        if (isQuick == null) {
-          return 0;
-        } else {
-          return isQuick ? 1 : -1;
-        }
-      })();
       final response = await dio.get(
-        '/orders',
+        '/payments/users/me',
         queryParameters: queryParameter,
       );
       return response.data['rows'];
@@ -864,6 +890,59 @@ class IncleClientAPI {
     }
   }
 
+  Future<void> updateReview(
+      {required String reviewID,
+      required int rating,
+      required int height,
+      required int weight,
+      required String suitability,
+      required String review,
+      List<File>? images}) async {
+    try {
+      final dio = getClientDioClient(
+          baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+      final formData = FormData.fromMap({
+        'evaluate': rating,
+        'height': height,
+        'weight': weight,
+        'suitability': suitability,
+        'comment': review
+      });
+      if (images != null) {
+        for (final image in images) {
+          formData.files.add(MapEntry(
+              'reviewFile',
+              await MultipartFile.fromFile(image.path,
+                  filename: image.path.split('/').last,
+                  contentType: MediaType.parse('image/jpeg'))));
+        }
+      }
+      await dio.patch('/reviews/$reviewID', data: formData);
+    } on DioError catch (e) {
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> deleteReivew(String reviewID) async {
+    try {
+      final dio = getClientDioClient(
+          baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+      await dio.delete('/reviews/$reviewID');
+    } on DioError catch (e) {
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   //
   // Notification
   //
@@ -912,6 +991,24 @@ class IncleClientAPI {
     try {
       final response = await dio.get('/points/accumulation-rate');
       return response.data;
+    } on DioError catch (e) {
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List> getMyPointHistory(
+      {required int page, required int perPage}) async {
+    final dio = getClientDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+    try {
+      final response = await dio.get('/points/user/me',
+          queryParameters: {'page': page, 'perPage': perPage});
+      return response.data['rows'];
     } on DioError catch (e) {
       throw Exception(
           'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
