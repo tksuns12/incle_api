@@ -30,6 +30,7 @@ class IncleClientAPI {
       final res = await dio
           .post('/login-user', data: {'userName': id, 'password': password});
       await storage.write(key: 'accessToken', value: res.data['accessToken']);
+      await storage.write(key: 'refreshToken', value: res.data['refreshToken']);
     } on DioError catch (e) {
       throw Exception(
           'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
