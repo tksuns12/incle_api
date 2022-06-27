@@ -572,6 +572,40 @@ class IncleClientAPI {
     }
   }
 
+  Future<List> getFavoriteProducts(
+      {required int page,
+      required int perPage,
+      String? productCategoryID,
+      OrderValue? orderValue,
+      OrderProperty? orderProperty}) async {
+    final dio = getClientDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+    try {
+      final queryParameter = <String, dynamic>{
+        'page': page,
+        'perPage': perPage,
+      };
+      if (productCategoryID != null) {
+        queryParameter['productCategoryUid'] = productCategoryID;
+      }
+      if (orderValue != null) {
+        queryParameter['orderValue'] = orderValue;
+      }
+      if (orderProperty != null) {
+        queryParameter['orderProperty'] = orderProperty;
+      }
+      final response = await dio.get('/stores/products/subscribing',
+          queryParameters: queryParameter);
+      return response.data['rows'];
+    } on DioError catch (e) {
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
+    } catch (e) {
+      rethrow;
+    }
+  }
   //
   // Order
   //
