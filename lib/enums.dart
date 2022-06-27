@@ -1,8 +1,15 @@
+part of 'incle_api.dart';
+
 enum OrderProperty { createDate, price, todayGet }
+
 enum OrderValue { ASC, DESC }
+
 enum FindType { Where, Like }
+
 enum FilterType { only, all, exclude }
+
 enum DuplicateProperty { userName, phone, email }
+
 enum OrderStatusEnum {
   preparing,
   onDelivery,
@@ -16,9 +23,10 @@ enum OrderStatusEnum {
   returned,
   pickedUp,
 }
+
 enum DeliveryStatus { beingDelivered, delivered, pickedUp }
 
-enum NoticeTarget {CLIENT, PARTNERS}
+enum NoticeTarget { CLIENT, PARTNERS }
 
 extension OrderStatusIntParser on OrderStatusEnum {
   int get number {
@@ -42,7 +50,7 @@ extension OrderStatusIntParser on OrderStatusEnum {
       case OrderStatusEnum.returned:
         return 8;
       case OrderStatusEnum.returning:
-        return 9; 
+        return 9;
       default:
         return -1;
     }

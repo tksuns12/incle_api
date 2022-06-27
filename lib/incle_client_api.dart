@@ -707,7 +707,7 @@ class IncleClientAPI {
 
   Future<void> generatePayment({
     required String merchantUid,
-    required List orders,
+    required List<StoreWiseOrderProducts> orders,
     required int point,
     required bool isQuick,
     required String recipient,
@@ -720,22 +720,36 @@ class IncleClientAPI {
   }) async {
     final dio = getClientDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+    final data = FormData.fromMap({
+      'merchantUid': merchantUid,
+      'point': point,
+      'isQuick': isQuick ? 1 : 0,
+      'recipient': recipient,
+      'phone': phone,
+      'address': address,
+      'addressDetail': addressDetail,
+      'deliveryRemark': deliveryRemark,
+      'longitude': longitude,
+      'latitude': latitude,
+    });
+
+    for (final storewiseproducts in orders) {
+      for (final product
+          in storewiseproducts.productOptionGroupUidQuantity.entries) {
+        data.fields.add(MapEntry(
+            'orders',
+            json.encode({
+              'productOptionGroupUid': product.key,
+              'count': product.value,
+              'couponUid': storewiseproducts.couponUid
+            })));
+      }
+    }
+
     try {
       await dio.post(
         '/payments',
-        data: {
-          'merchantUid': merchantUid,
-          'orders': orders,
-          'point': point,
-          'isQuick': isQuick,
-          'recipient': recipient,
-          'phone': phone,
-          'address': address,
-          'addressDetail': addressDetail,
-          'deliveryRemark': deliveryRemark,
-          'longitude': longitude,
-          'latitude': latitude,
-        },
+        data: data,
       );
     } on DioError catch (e) {
       throw Exception(
