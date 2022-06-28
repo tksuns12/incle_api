@@ -398,7 +398,7 @@ class IncleClientAPI {
   // Coupon
   //
 
-    Future<List> getCouponList(String storeUid) async {
+  Future<List> getCouponList(String storeUid) async {
     final dio = getClientDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
@@ -494,7 +494,9 @@ class IncleClientAPI {
         queryParameter['storeUid'] = storeUid;
       }
       if (isReplied != null) {
-        queryParameter['isReplied'] = isReplied ? 1 : 0;
+        queryParameter['isReplied'] = isReplied ? 1 : -1;
+      } else {
+        queryParameter['isReplied'] = 0;
       }
 
       final response = await dio.get(
@@ -659,7 +661,8 @@ class IncleClientAPI {
       rethrow;
     }
   }
-   Future<List> getProductList({
+
+  Future<List> getProductList({
     OrderProperty orderProperty = OrderProperty.createDate,
     OrderValue orderValue = OrderValue.DESC,
     String? findProperty,
@@ -673,7 +676,8 @@ class IncleClientAPI {
     FilterType discoundFilter = FilterType.all,
     FilterType recommendedFilter = FilterType.all,
   }) async {
-    final dio = getClientDioClient(baseUrl: baseUrl, secureStorage: storage,needAuthorization: true);
+    final dio = getClientDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
       var queryParameter = <String, dynamic>{
         'orderProperty': orderProperty.name,
