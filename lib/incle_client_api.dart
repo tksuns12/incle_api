@@ -649,10 +649,10 @@ class IncleClientAPI {
         queryParameter['productCategoryUid'] = productCategoryID;
       }
       if (orderValue != null) {
-        queryParameter['orderValue'] = orderValue;
+        queryParameter['orderValue'] = orderValue.name;
       }
       if (orderProperty != null) {
-        queryParameter['orderProperty'] = orderProperty;
+        queryParameter['orderProperty'] = orderProperty.name;
       }
       final response = await dio.get('/stores/products/subscribing',
           queryParameters: queryParameter);
