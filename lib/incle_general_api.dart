@@ -1,7 +1,7 @@
 part of 'incle_api.dart';
 
 class IncleGeneralAPI {
-  final baseUrl = "http://backend.wim.kro.kr:5000/api/v1";
+  final baseUrl = "http://incle-staging.kro.kr:5000/api/v1";
   final FlutterSecureStorage storage;
 
   IncleGeneralAPI(this.storage);
@@ -13,7 +13,7 @@ class IncleGeneralAPI {
   Future<bool> isServerHealthy() async {
     try {
       final dio = getPartnersDioClient(
-          baseUrl: 'http://backend.wim.kro.kr:5000/api/health',
+          baseUrl: 'http://incle-staging.kro.kr:5000/api/health',
           secureStorage: storage,
           needAuthorization: false);
       await dio.get('/health');
