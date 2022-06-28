@@ -421,7 +421,7 @@ class IncleClientAPI {
     try {
       final dio = getClientDioClient(
           baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
-      await dio.get('/coupons/$couponUid');
+      await dio.post('/coupons/$couponUid');
     } on DioError catch (e) {
       throw Exception(
           'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
