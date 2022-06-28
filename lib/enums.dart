@@ -1,6 +1,6 @@
 part of 'incle_api.dart';
 
-enum OrderProperty { createDate, price, todayGet }
+enum OrderProperty { createDate, price, todayGet, subscriberCount }
 
 enum OrderValue { ASC, DESC }
 
