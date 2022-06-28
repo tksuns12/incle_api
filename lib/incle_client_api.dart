@@ -458,12 +458,17 @@ class IncleClientAPI {
   //
 
   Future<void> postQuestion(
-      {required String productID, required String comment}) async {
+      {required String productID,
+      required String comment,
+      required isSecret}) async {
     try {
       final dio = getClientDioClient(
           baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
-      await dio.post('/stores/products/questions',
-          data: {'comment': comment, 'productUid': productID});
+      await dio.post('/stores/products/questions', data: {
+        'comment': comment,
+        'productUid': productID,
+        'isPublic': isSecret ? 0 : 1
+      });
     } on DioError catch (e) {
       throw Exception(
           'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
