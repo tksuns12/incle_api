@@ -703,7 +703,7 @@ class InclePartnersAPI {
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
       final response = await dio.get(
-        '/products/$productUid/relates',
+        '/stores/products/$productUid/relates',
       );
       return response.data['rows'];
     } on DioError catch (e) {

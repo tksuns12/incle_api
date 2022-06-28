@@ -619,7 +619,7 @@ class IncleClientAPI {
     final dio = getClientDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
-      final response = await dio.get('/products/$productID/relates');
+      final response = await dio.get('/stores/products/$productID/relates');
 
       return response.data['rows'];
     } on DioError catch (e) {
