@@ -851,7 +851,7 @@ class IncleClientAPI {
 
   Future<void> generatePayment({
     required String merchantUid,
-    required List<StoreWiseOrderProducts> orders,
+    required List<OrderProducts> orders,
     required int point,
     required bool isQuick,
     required String recipient,
@@ -877,17 +877,14 @@ class IncleClientAPI {
       'latitude': latitude,
     });
 
-    for (final storewiseproducts in orders) {
-      for (final product
-          in storewiseproducts.productOptionGroupUidQuantity.entries) {
-        data.fields.add(MapEntry(
-            'orders',
-            json.encode({
-              'productOptionGroupUid': product.key,
-              'count': product.value,
-              'couponUid': storewiseproducts.couponUid
-            })));
-      }
+    for (final orderProduct in orders) {
+      data.fields.add(MapEntry(
+          'orders',
+          json.encode({
+            'productOptionGroupUid': orderProduct.productOptionGroupUid,
+            'count': orderProduct.quantity,
+            'couponUid': orderProduct.couponUid
+          })));
     }
 
     try {

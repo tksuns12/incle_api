@@ -1,9 +1,12 @@
 part of 'incle_api.dart';
 
-class StoreWiseOrderProducts {
+class OrderProducts {
   final String couponUid;
-  final Map<String, int> productOptionGroupUidQuantity;
+  final String productOptionGroupUid;
+  final int quantity;
 
-  StoreWiseOrderProducts(
-      {required this.couponUid, required this.productOptionGroupUidQuantity});
+  OrderProducts(
+      {required this.couponUid,
+      required this.productOptionGroupUid,
+      required this.quantity});
 }
