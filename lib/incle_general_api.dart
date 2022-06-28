@@ -130,25 +130,6 @@ class IncleGeneralAPI {
     }
   }
 
-  Future<List> getCouponList(String storeUid) async {
-    final dio = getPartnersDioClient(
-        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
-    try {
-      final response = await dio.get(
-        '/coupons',
-        queryParameters: {'storeUid': storeUid, 'page': 0, 'perPage': 1000},
-      );
-      return response.data['rows'];
-    } on DioError catch (e) {
-      throw Exception(
-          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
-    } on PlatformException catch (e) {
-      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
-    } catch (e) {
-      rethrow;
-    }
-  }
-
   Future<List> getStoreByRanking(
       {required int page,
       required int pageSize,
@@ -255,62 +236,6 @@ class IncleGeneralAPI {
   // Product
   //
 
-  Future<List> getProductList({
-    OrderProperty orderProperty = OrderProperty.createDate,
-    OrderValue orderValue = OrderValue.DESC,
-    String? findProperty,
-    String? findValue,
-    FindType? findType,
-    int page = 0,
-    int perPage = 10,
-    String? searchKeyword,
-    String? storeUid,
-    String? productParentCategoryUid,
-    FilterType discoundFilter = FilterType.all,
-    FilterType recommendedFilter = FilterType.all,
-  }) async {
-    final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
-    try {
-      var queryParameter = <String, dynamic>{
-        'orderProperty': orderProperty.name,
-        'orderValue': orderValue.name,
-        'page': page,
-        'perPage': perPage,
-        'isDiscountedProduct': discoundFilter.number,
-        'isRecommendedProduct': recommendedFilter.number,
-      };
-      if (findProperty != null) {
-        queryParameter['findProperty'] = findProperty;
-      }
-      if (findValue != null) {
-        queryParameter['findValue'] = findValue;
-      }
-      if (findType != null) {
-        queryParameter['findType'] = findType.name;
-      }
-      if (storeUid != null) {
-        queryParameter['storeUid'] = storeUid;
-      }
-      if (productParentCategoryUid != null) {
-        queryParameter['productCategoryUid'] = productParentCategoryUid;
-      }
-      if (searchKeyword != null) {
-        queryParameter['q'] = searchKeyword;
-      }
-
-      final response =
-          await dio.get('/stores/products', queryParameters: queryParameter);
-      return response.data['rows'];
-    } on DioError catch (e) {
-      throw Exception(
-          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
-    } on PlatformException catch (e) {
-      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
-    } catch (e) {
-      rethrow;
-    }
-  }
-
   Future<List> getProductsByRanking(
       {required int page,
       required int perPage,
@@ -332,24 +257,6 @@ class IncleGeneralAPI {
       final response = await dio.get(
         '/stores/products/ranks',
         queryParameters: queryParameters,
-      );
-      return response.data['rows'];
-    } on DioError catch (e) {
-      throw Exception(
-          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
-    } on PlatformException catch (e) {
-      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future<List> getRelatedProducts(String productUid) async {
-    final dio = getPartnersDioClient(
-        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
-    try {
-      final response = await dio.get(
-        '/products/$productUid/relates',
       );
       return response.data['rows'];
     } on DioError catch (e) {
