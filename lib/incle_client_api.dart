@@ -1024,6 +1024,22 @@ class IncleClientAPI {
     }
   }
 
+  Future<List> getMyReviews() async {
+    try {
+      final dio = getClientDioClient(
+          baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+      final res = await dio.get('/reviews/me');
+      return res.data['rows'];
+    } on DioError catch (e) {
+      throw Exception(
+          'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
+    } on PlatformException catch (e) {
+      throw Exception('${e.code}: ${e.message} //// Detail: ${e.details}');
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   //
   // Notification
   //
