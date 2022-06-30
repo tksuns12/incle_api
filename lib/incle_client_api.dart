@@ -759,7 +759,7 @@ class IncleClientAPI {
     final dio = getClientDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
-      final response = await dio.get('/orders/$uid');
+      final response = await dio.get('/payments/$uid');
       return response.data;
     } on DioError catch (e) {
       throw Exception(
