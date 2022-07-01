@@ -691,9 +691,12 @@ class IncleClientAPI {
     String? productParentCategoryUid,
     FilterType discoundFilter = FilterType.all,
     FilterType recommendedFilter = FilterType.all,
+    required bool needAuthorization,
   }) async {
     final dio = getClientDioClient(
-        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+        baseUrl: baseUrl,
+        secureStorage: storage,
+        needAuthorization: needAuthorization);
     try {
       var queryParameter = <String, dynamic>{
         'orderProperty': orderProperty.name,
