@@ -465,10 +465,10 @@ class IncleClientAPI {
   Future<void> postQuestion(
       {required String productID,
       required String comment,
-      required isSecret, required bool needAuthorization}) async {
+      required isSecret}) async {
     try {
       final dio = getClientDioClient(
-          baseUrl: baseUrl, secureStorage: storage, needAuthorization: needAuthorization);
+          baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
       await dio.post('/stores/products/questions', data: {
         'comment': comment,
         'productUid': productID,
@@ -489,9 +489,12 @@ class IncleClientAPI {
       int perPage = 10,
       String? productUid,
       String? storeUid,
-      required bool? isReplied}) async {
+      required bool? isReplied,
+      required bool needAuthorization}) async {
     final dio = getClientDioClient(
-        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+        baseUrl: baseUrl,
+        secureStorage: storage,
+        needAuthorization: needAuthorization);
     try {
       final queryParameter = <String, dynamic>{
         'page': page,
@@ -602,9 +605,12 @@ class IncleClientAPI {
   // Product
   //
 
-  Future<Map> getProductDetail({required String productID, required bool needAuthorization}) async {
+  Future<Map> getProductDetail(
+      {required String productID, required bool needAuthorization}) async {
     final dio = getClientDioClient(
-        baseUrl: baseUrl, secureStorage: storage, needAuthorization: needAuthorization);
+        baseUrl: baseUrl,
+        secureStorage: storage,
+        needAuthorization: needAuthorization);
     try {
       final response = await dio.get(
         '/stores/products/$productID',
