@@ -371,9 +371,14 @@ class IncleClientAPI {
   }
 
   Future<Map> getStoreDetail(
-      {required String storeUid, double? latitude, double? longitude}) async {
+      {required String storeUid,
+      double? latitude,
+      double? longitude,
+      required bool authorized}) async {
     final dio = getClientDioClient(
-        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+        baseUrl: baseUrl,
+        secureStorage: storage,
+        needAuthorization: authorized);
     try {
       final queryParameter = <String, dynamic>{
         'latitude': latitude,
@@ -460,10 +465,10 @@ class IncleClientAPI {
   Future<void> postQuestion(
       {required String productID,
       required String comment,
-      required isSecret}) async {
+      required isSecret, required bool needAuthorization}) async {
     try {
       final dio = getClientDioClient(
-          baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+          baseUrl: baseUrl, secureStorage: storage, needAuthorization: needAuthorization);
       await dio.post('/stores/products/questions', data: {
         'comment': comment,
         'productUid': productID,
@@ -597,9 +602,9 @@ class IncleClientAPI {
   // Product
   //
 
-  Future<Map> getProductDetail({required String productID}) async {
+  Future<Map> getProductDetail({required String productID, required bool needAuthorization}) async {
     final dio = getClientDioClient(
-        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: needAuthorization);
     try {
       final response = await dio.get(
         '/stores/products/$productID',

@@ -661,9 +661,9 @@ class InclePartnersAPI {
       int perPage = 10,
       String? productUid,
       String? storeUid,
-      required bool? isReplied}) async {
+      required bool? isReplied, required bool needAuthorization}) async {
     final dio = getPartnersDioClient(
-        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: needAuthorization);
     try {
       final queryParameter = <String, dynamic>{
         'page': page,
@@ -698,9 +698,9 @@ class InclePartnersAPI {
   // Product
   //
 
-    Future<List> getRelatedProducts(String productUid) async {
+    Future<List> getRelatedProducts({required String productUid,required bool needAuthorization}) async {
     final dio = getPartnersDioClient(
-        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: needAuthorization);
     try {
       final response = await dio.get(
         '/stores/products/$productUid/relates',

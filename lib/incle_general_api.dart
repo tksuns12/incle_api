@@ -176,8 +176,7 @@ class IncleGeneralAPI {
   //
 
   Future<List> getProductParentCategories() async {
-    final dio = getPartnersDioClient(
-        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
+    final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage);
     try {
       final response = await dio.get(
         '/categories',
