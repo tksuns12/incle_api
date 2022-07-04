@@ -752,7 +752,7 @@ class IncleClientAPI {
       final queryParameter = <String, dynamic>{
         'page': page,
         'perPage': perPage,
-        'orderStatuses': orderStatuses.map((e) => e.number).toList(),
+        'orderStatuses': orderStatuses.map((e) => e.serverFormat).toList(),
       };
       final response = await dio.get(
         '/payments/users/me',

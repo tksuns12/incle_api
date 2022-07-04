@@ -29,30 +29,30 @@ enum DeliveryStatus { beingDelivered, delivered, pickedUp }
 enum NoticeTarget { CLIENT, PARTNERS }
 
 extension OrderStatusIntParser on OrderStatusEnum {
-  int get number {
+  String get serverFormat {
     switch (this) {
       case OrderStatusEnum.preparing:
-        return 0;
+        return 'PREARE';
       case OrderStatusEnum.onDelivery:
-        return 1;
+        return 'SHIPPING';
       case OrderStatusEnum.delivered:
-        return 2;
+        return 'DELIVERY_COMPLETE';
       case OrderStatusEnum.returnRejected:
-        return 3;
+        return 'RETURN_REFUSE';
       case OrderStatusEnum.pickedUp:
-        return 4;
+        return 'PICKUP_COMPLETE';
       case OrderStatusEnum.cancelRequested:
-        return 5;
+        return 'CANCEL_REQUEST';
       case OrderStatusEnum.canceled:
-        return 6;
+        return 'CANCEL_COMPLETE';
       case OrderStatusEnum.returnRequested:
-        return 7;
+        return 'RETURN_REQUEST';
       case OrderStatusEnum.returned:
-        return 8;
+        return 'RETURN_COMPLETE';
       case OrderStatusEnum.returning:
-        return 9;
+        return 'RETURN_APPROVE';
       default:
-        return -1;
+        return 'WRONG_VALUE';
     }
   }
 }

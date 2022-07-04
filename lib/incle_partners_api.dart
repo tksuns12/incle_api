@@ -437,7 +437,7 @@ class InclePartnersAPI {
     }
   }
 
-    Future<List> getCouponList(String storeUid) async {
+  Future<List> getCouponList(String storeUid) async {
     final dio = getPartnersDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
@@ -661,9 +661,12 @@ class InclePartnersAPI {
       int perPage = 10,
       String? productUid,
       String? storeUid,
-      required bool? isReplied, required bool needAuthorization}) async {
+      required bool? isReplied,
+      required bool needAuthorization}) async {
     final dio = getPartnersDioClient(
-        baseUrl: baseUrl, secureStorage: storage, needAuthorization: needAuthorization);
+        baseUrl: baseUrl,
+        secureStorage: storage,
+        needAuthorization: needAuthorization);
     try {
       final queryParameter = <String, dynamic>{
         'page': page,
@@ -698,9 +701,12 @@ class InclePartnersAPI {
   // Product
   //
 
-    Future<List> getRelatedProducts({required String productUid,required bool needAuthorization}) async {
+  Future<List> getRelatedProducts(
+      {required String productUid, required bool needAuthorization}) async {
     final dio = getPartnersDioClient(
-        baseUrl: baseUrl, secureStorage: storage, needAuthorization: needAuthorization);
+        baseUrl: baseUrl,
+        secureStorage: storage,
+        needAuthorization: needAuthorization);
     try {
       final response = await dio.get(
         '/stores/products/$productUid/relates',
@@ -716,7 +722,7 @@ class InclePartnersAPI {
     }
   }
 
-   Future<List> getProductList({
+  Future<List> getProductList({
     OrderProperty orderProperty = OrderProperty.createDate,
     OrderValue orderValue = OrderValue.DESC,
     String? findProperty,
@@ -730,7 +736,8 @@ class InclePartnersAPI {
     FilterType discoundFilter = FilterType.all,
     FilterType recommendedFilter = FilterType.all,
   }) async {
-    final dio = getPartnersDioClient(baseUrl: baseUrl, secureStorage: storage,needAuthorization: true);
+    final dio = getPartnersDioClient(
+        baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
       var queryParameter = <String, dynamic>{
         'orderProperty': orderProperty.name,
@@ -1098,7 +1105,7 @@ class InclePartnersAPI {
         queryParameters: {
           'page': page,
           'perPage': perPage,
-          'orderStatus': orderStatuses.map((e) => e.number).toList(),
+          'orderStatus': orderStatuses.map((e) => e.serverFormat).toList(),
           'isQuick': (() {
             if (isQuick == null) {
               return 0;
@@ -1258,7 +1265,7 @@ class InclePartnersAPI {
       };
       if (orderStatus != null) {
         queryParameters['orderStatus'] =
-            orderStatus.map((e) => e.number).toList();
+            orderStatus.map((e) => e.serverFormat).toList();
       }
       final response = await dio.get(
         '/payments',
