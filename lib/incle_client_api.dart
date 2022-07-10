@@ -1117,7 +1117,7 @@ class IncleClientAPI {
     final dio = getClientDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
     try {
-      final response = await dio.get('/points/user/me',
+      final response = await dio.get('/points/users/me',
           queryParameters: {'page': page, 'perPage': perPage});
       return response.data['rows'];
     } on DioError catch (e) {
