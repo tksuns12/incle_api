@@ -21,7 +21,7 @@ class PartnersTokenInterceptor extends Interceptor {
           .timeout(const Duration(seconds: 30));
       final refreshDio = Dio();
       refreshDio.options = BaseOptions(
-        baseUrl: 'http://backend.wim.kro.kr:5000/api/v1',
+        baseUrl: 'http://incle-staging.kro.kr:5000/api/v1',
       );
       refreshDio.options.headers['Authorization'] = 'Bearer $refreshToken';
       refreshDio.interceptors.addAll([
@@ -97,7 +97,7 @@ class ClientTokenInterceptor extends Interceptor {
           .timeout(const Duration(seconds: 30));
       final refreshDio = Dio();
       refreshDio.options = BaseOptions(
-        baseUrl: 'http://backend.wim.kro.kr:5000/api/v1',
+        baseUrl: 'http://incle-staging.kro.kr:5000/api/v1',
       );
       refreshDio.options.headers['Authorization'] = 'Bearer $refreshToken';
       refreshDio.interceptors.addAll([

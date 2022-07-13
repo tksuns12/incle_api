@@ -1,7 +1,7 @@
 part of 'incle_api.dart';
 
 class IncleClientAPI {
-  final baseUrl = "http://incle-staging.kro.kr:5000//api/v1";
+  final baseUrl = "http://incle-staging.kro.kr:5000/api/v1";
   final FlutterSecureStorage storage;
 
   IncleClientAPI(this.storage);
