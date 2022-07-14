@@ -527,11 +527,12 @@ class IncleClientAPI {
     }
   }
 
-  Future<List> getMyQuestions() async {
+  Future<List> getMyQuestions({required int page, required int perPage}) async {
     try {
       final dio = getClientDioClient(
           baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
-      final res = await dio.get('/stores/products/questions/me');
+      final res = await dio.get('/stores/products/questions/me',
+          queryParameters: {'page': page, 'perPage': perPage});
       return res.data['rows'];
     } on DioError catch (e) {
       throw Exception(
