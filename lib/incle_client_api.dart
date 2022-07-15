@@ -278,7 +278,7 @@ class IncleClientAPI {
   // Store
   //
 
-  Future<List> getFavoriteStores(
+  Future<ListWithMaxCount> getFavoriteStores(
       {int page = 0,
       int perPage = 10,
       String? storeCategoryUid,
@@ -308,7 +308,8 @@ class IncleClientAPI {
 
       final res =
           await dio.get('/stores/subscribing', queryParameters: queryParameter);
-      return res.data['rows'];
+      return ListWithMaxCount(
+          res.data['rows'], res.data['maxCount'] ?? 0);
     } on DioError catch (e) {
       throw Exception(
           'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
@@ -644,7 +645,7 @@ class IncleClientAPI {
     }
   }
 
-  Future<List> getFavoriteProducts(
+  Future<ListWithMaxCount> getFavoriteProducts(
       {required int page,
       required int perPage,
       String? productCategoryID,
@@ -668,7 +669,8 @@ class IncleClientAPI {
       }
       final response = await dio.get('/stores/products/subscribing',
           queryParameters: queryParameter);
-      return response.data['rows'];
+      return ListWithMaxCount(
+          response.data['rows'], response.data['maxCount'] ?? 0);
     } on DioError catch (e) {
       throw Exception(
           'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
@@ -679,7 +681,7 @@ class IncleClientAPI {
     }
   }
 
-  Future<List> getProductList({
+  Future<ListWithMaxCount> getProductList({
     OrderProperty orderProperty = OrderProperty.createDate,
     OrderValue orderValue = OrderValue.DESC,
     String? findProperty,
@@ -728,7 +730,8 @@ class IncleClientAPI {
 
       final response =
           await dio.get('/stores/products', queryParameters: queryParameter);
-      return response.data['rows'];
+      return ListWithMaxCount(
+          response.data['rows'], response.data['maxCount'] ?? 0);
     } on DioError catch (e) {
       throw Exception(
           'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');

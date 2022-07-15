@@ -10,3 +10,10 @@ class OrderProducts {
       required this.productOptionGroupUid,
       required this.quantity});
 }
+
+class ListWithMaxCount {
+  final List data;
+  final int maxCount;
+
+  ListWithMaxCount(this.data, this.maxCount);
+}
