@@ -96,13 +96,15 @@ class IncleClientAPI {
     }
   }
 
-  Future<void> editUserInfo({
-    required String? password,
-    required String? name,
-    required String? displayName,
-    required String? phoneNumber,
-    required File? profileImage,
-  }) async {
+  Future<void> editUserInfo(
+      {required String? password,
+      required String? name,
+      required String? displayName,
+      required String? phoneNumber,
+      required File? profileImage,
+      required String? email,
+      required Gender? gender,
+      required DateTime? birthday}) async {
     try {
       final dio = getClientDioClient(
           baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
@@ -111,6 +113,11 @@ class IncleClientAPI {
       if (name != null) formDataMap['name'] = name;
       if (displayName != null) formDataMap['displayName'] = displayName;
       if (phoneNumber != null) formDataMap['phone'] = phoneNumber;
+      if (email != null) formDataMap['email'] = email;
+      if (gender != null) formDataMap['gender'] = gender.toJsonString();
+      if (birthday != null) {
+        formDataMap['birth'] = DateFormat('yyMMdd').format(birthday);
+      }
       final formData = FormData.fromMap(formDataMap);
       if (profileImage != null) {
         formData.files.add(MapEntry(

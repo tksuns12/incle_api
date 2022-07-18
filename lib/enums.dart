@@ -10,6 +10,21 @@ enum FilterType { only, all, exclude }
 
 enum DuplicateProperty { userName, phone, email }
 
+enum Gender { male, female }
+
+extension GenderToString on Gender {
+  String toJsonString() {
+    switch (this) {
+      case Gender.female:
+        return 'F';
+      case Gender.male:
+        return 'M';
+      default:
+        throw UnimplementedError();
+    }
+  }
+}
+
 enum OrderStatusEnum {
   preparing,
   onDelivery,
