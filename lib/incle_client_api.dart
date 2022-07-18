@@ -106,12 +106,12 @@ class IncleClientAPI {
     try {
       final dio = getClientDioClient(
           baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
-      final formData = FormData.fromMap({
-        'password': password ?? '',
-        'name': name ?? '',
-        'displayName': displayName ?? '',
-        'phone': phoneNumber ?? '',
-      });
+      final formDataMap = <String, dynamic>{};
+      if (password != null) formDataMap['password'] = password;
+      if (name != null) formDataMap['name'] = name;
+      if (displayName != null) formDataMap['displayName'] = displayName;
+      if (phoneNumber != null) formDataMap['phone'] = phoneNumber;
+      final formData = FormData.fromMap(formDataMap);
       if (profileImage != null) {
         formData.files.add(MapEntry(
             'userProfile',
@@ -308,8 +308,7 @@ class IncleClientAPI {
 
       final res =
           await dio.get('/stores/subscribing', queryParameters: queryParameter);
-      return ListWithMaxCount(
-          res.data['rows'], res.data['maxCount'] ?? 0);
+      return ListWithMaxCount(res.data['rows'], res.data['maxCount'] ?? 0);
     } on DioError catch (e) {
       throw Exception(
           'Error Type: ${e.type} | Status Code: ${e.response?.statusCode ?? 'No Code'} | Message: ${e.message}');
