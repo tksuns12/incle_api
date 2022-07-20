@@ -894,11 +894,6 @@ class IncleClientAPI {
       'isQuick': isQuick ? 1 : 0,
       'recipient': recipient,
       'phone': phone,
-      'address': address,
-      'addressDetail': addressDetail,
-      'deliveryRemark': deliveryRemark,
-      'longitude': longitude,
-      'latitude': latitude,
       "orders": orders.map((e) => e.toJson()).toList()
     };
     if (address != null) data['address'] = address;
