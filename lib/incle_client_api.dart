@@ -899,6 +899,7 @@ class IncleClientAPI {
       'deliveryRemark': deliveryRemark,
       'longitude': longitude,
       'latitude': latitude,
+      "orders" : [orders.map((e) => e.toJson())]
     };
     if (address != null) formDataMap['address'] = address;
     if (addressDetail != null) formDataMap['addressDetail'] = addressDetail;
@@ -906,16 +907,6 @@ class IncleClientAPI {
     if (longitude != null) formDataMap['longitude'] = longitude;
     if (latitude != null) formDataMap['latitude'] = latitude;
     final data = FormData.fromMap(formDataMap);
-
-    for (final orderProduct in orders) {
-      data.fields.add(MapEntry(
-          'orders',
-          json.encode({
-            'productOptionGroupUid': orderProduct.productOptionGroupUid,
-            'count': orderProduct.quantity,
-            'couponUid': orderProduct.couponUid
-          })));
-    }
 
     try {
       await dio.post(

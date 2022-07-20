@@ -9,6 +9,14 @@ class OrderProducts {
       {this.couponUid,
       required this.productOptionGroupUid,
       required this.quantity});
+
+  Map<String, dynamic> toJson() {
+    return {
+      'productOptionGroupUid': productOptionGroupUid,
+      'count': quantity,
+      'couponUid': couponUid
+    };
+  }
 }
 
 class ListWithMaxCount {
