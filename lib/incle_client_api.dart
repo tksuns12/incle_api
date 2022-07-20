@@ -899,7 +899,7 @@ class IncleClientAPI {
       'deliveryRemark': deliveryRemark,
       'longitude': longitude,
       'latitude': latitude,
-      "orders" : [orders.map((e) => e.toJson())]
+      "orders": orders.map((e) => e.toJson()).toList()
     };
     if (address != null) data['address'] = address;
     if (addressDetail != null) data['addressDetail'] = addressDetail;
