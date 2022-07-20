@@ -888,7 +888,7 @@ class IncleClientAPI {
   }) async {
     final dio = getClientDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
-    final formDataMap = {
+    final data = {
       'merchantUid': merchantUid,
       'point': point,
       'isQuick': isQuick ? 1 : 0,
@@ -901,12 +901,11 @@ class IncleClientAPI {
       'latitude': latitude,
       "orders" : [orders.map((e) => e.toJson())]
     };
-    if (address != null) formDataMap['address'] = address;
-    if (addressDetail != null) formDataMap['addressDetail'] = addressDetail;
-    if (deliveryRemark != null) formDataMap['deliveryRemark'] = deliveryRemark;
-    if (longitude != null) formDataMap['longitude'] = longitude;
-    if (latitude != null) formDataMap['latitude'] = latitude;
-    final data = FormData.fromMap(formDataMap);
+    if (address != null) data['address'] = address;
+    if (addressDetail != null) data['addressDetail'] = addressDetail;
+    if (deliveryRemark != null) data['deliveryRemark'] = deliveryRemark;
+    if (longitude != null) data['longitude'] = longitude;
+    if (latitude != null) data['latitude'] = latitude;
 
     try {
       await dio.post(
