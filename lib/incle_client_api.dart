@@ -880,15 +880,15 @@ class IncleClientAPI {
     required bool isQuick,
     required String recipient,
     required String phone,
-    required String address,
-    required String addressDetail,
-    required String deliveryRemark,
-    required double longitude,
-    required double latitude,
+    required String? address,
+    required String? addressDetail,
+    required String? deliveryRemark,
+    required double? longitude,
+    required double? latitude,
   }) async {
     final dio = getClientDioClient(
         baseUrl: baseUrl, secureStorage: storage, needAuthorization: true);
-    final data = FormData.fromMap({
+    final formDataMap = {
       'merchantUid': merchantUid,
       'point': point,
       'isQuick': isQuick ? 1 : 0,
@@ -899,7 +899,13 @@ class IncleClientAPI {
       'deliveryRemark': deliveryRemark,
       'longitude': longitude,
       'latitude': latitude,
-    });
+    };
+    if (address != null) formDataMap['address'] = address;
+    if (addressDetail != null) formDataMap['addressDetail'] = addressDetail;
+    if (deliveryRemark != null) formDataMap['deliveryRemark'] = deliveryRemark;
+    if (longitude != null) formDataMap['longitude'] = longitude;
+    if (latitude != null) formDataMap['latitude'] = latitude;
+    final data = FormData.fromMap(formDataMap);
 
     for (final orderProduct in orders) {
       data.fields.add(MapEntry(
